@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Creative Coding Webcam Demos — Real-time Transformations</title>
+  <link rel="stylesheet" href="/src/styles/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="theme-dark">
+  <div id="app">
+    <!-- Main Render Canvas -->
+    <canvas id="render-canvas"></canvas>
+
+    <!-- Hidden Offscreen Video & Processing Canvas -->
+    <video id="webcam-video" playsinline muted autoplay></video>
+    <canvas id="processing-canvas" style="display: none;"></canvas>
+
+    <!-- Permission & Initialization Overlay -->
+    <div id="start-screen" class="overlay-modal active">
+      <div class="modal-card">
+        <div class="modal-badge">ECAL Creative Coding 2027</div>
+        <h1 class="modal-title">Live Webcam Transformations</h1>
+        <div class="modal-accent-bar"></div>
+        <p class="modal-subtitle">An interactive creative coding suite exploring rasterization, halftone screens, duotone luminance mapping, MediaPipe pose detection, and fluid particle simulations.</p>
+        
+        <div class="modal-features">
+          <div class="feature-item">
+            <span class="key-badge">0 – 8</span>
+            <span class="feature-label">Direct demo jump</span>
+          </div>
+          <div class="feature-item">
+            <span class="key-badge">← / →</span>
+            <span class="feature-label">Previous / Next demo</span>
+          </div>
+          <div class="feature-item">
+            <span class="key-badge">Space / P</span>
+            <span class="feature-label">Auto Showcase Tour</span>
+          </div>
+          <div class="feature-item">
+            <span class="key-badge">Esc / H</span>
+            <span class="feature-label">Toggle UI / Presentation mode</span>
+          </div>
+          <div class="feature-item">
+            <span class="key-badge">F</span>
+            <span class="feature-label">Toggle Fullscreen</span>
+          </div>
+        </div>
+
+        <button id="btn-start-camera" class="btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+            <circle cx="12" cy="13" r="3"/>
+          </svg>
+          Enable Camera & Start Demos
+        </button>
+
+        <p class="camera-notice">
+          All image processing and AI body tracking run 100% locally on your device GPU/CPU via WebAssembly. No video data ever leaves your computer.
+        </p>
+      </div>
+    </div>
+
+    <!-- HUD Overlay -->
+    <div id="hud-container" class="hud-container">
+      <!-- Top Bar: Demo Carousel Navigation -->
+      <header class="hud-top-bar">
+        <div class="brand">
+          <span class="brand-pill">ECAL</span>
+          <span class="brand-title">VISION LAB</span>
+        </div>
+
+        <!-- Demos Pill Carousel -->
+        <nav class="demo-nav" id="demo-nav" aria-label="Demo Selector">
+          <!-- Dynamically populated buttons 0-9 -->
+        </nav>
+
+        <div class="hud-actions">
+          <button id="btn-toggle-showcase" class="btn-tour" title="Auto Showcase Tour (P or Space)">
+            <svg class="tour-icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="6 4 20 12 6 20 6 4"></polygon>
+            </svg>
+            <svg class="tour-icon-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+            <span class="tour-label" id="tour-label">Tour</span>
+            <div class="tour-progress-bar" id="tour-progress-bar"></div>
+            <span class="btn-tooltip">Showcase Tour (P)</span>
+          </button>
+
+          <!-- Parameters Drawer (Integrated in General Header) -->
+          <div class="controls-drawer collapsed" id="controls-drawer">
+            <div class="controls-drawer-header" title="Toggle Parameters">
+              <div class="controls-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                <span>Parameters</span>
+              </div>
+              <button id="btn-toggle-drawer" class="btn-drawer-toggle" title="Toggle Parameters">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+            </div>
+            <div class="controls-content" id="controls-content">
+              <!-- Dynamic control inputs (sliders, checkboxes, selects) injected by active demo -->
+            </div>
+          </div>
+
+          <button id="btn-toggle-mirror" class="btn-icon" title="Toggle Mirror (M)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v20M2 12h5M17 12h5M7 7l5-5 5 5M7 17l5 5 5-5"/>
+            </svg>
+            <span class="btn-tooltip">Mirror (M)</span>
+          </button>
+          <button id="btn-toggle-hud" class="btn-icon" title="Hide Interface (H)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <span class="btn-tooltip">Hide UI (H)</span>
+          </button>
+          <button id="btn-toggle-fullscreen" class="btn-icon" title="Fullscreen (F)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+            </svg>
+            <span class="btn-tooltip">Fullscreen (F)</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Left & Right Floating Quick Navigation Arrows -->
+      <button id="btn-prev-demo" class="nav-arrow nav-arrow-left" title="Previous Demo (← or ↑)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <button id="btn-next-demo" class="nav-arrow nav-arrow-right" title="Next Demo (→ or ↓)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+
+      <!-- Bottom Info & Concept Explainer -->
+      <footer class="hud-bottom-bar">
+        <div class="concept-card" id="concept-card">
+          <div class="concept-header">
+            <span class="demo-tag" id="demo-index-tag">DEMO 0</span>
+            <h2 class="demo-title" id="demo-title">Original Webcam Feed</h2>
+          </div>
+          <p class="demo-description" id="demo-description">
+            Live unadulterated camera stream serving as the baseline ground truth.
+          </p>
+        </div>
+      </footer>
+
+      <!-- Mini Toast Notification -->
+      <div id="hud-toast" class="hud-toast"></div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
