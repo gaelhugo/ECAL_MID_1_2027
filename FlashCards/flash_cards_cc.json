@@ -1,0 +1,498 @@
+{
+  "flashcards": [
+    {
+      "front": {
+        "text": "Agent",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "En creative coding classique, un agent est une simple entité programmée avec quelques règles physiques ou comportementales (comme un boid qui évite ses voisins dans une nuée). Dans le contexte de l'IA agentique (Agentic AI), la notion change d'échelle : l'agent est un modèle de langage (LLM) ou un système autonome doté de mémoire, d'une capacité de raisonnement et d'accès à des outils externes (fichiers, API, terminal, moteurs de rendu). Plutôt que de simplement répondre à une question comme un chatbot passif, l'agent IA se voit confier un objectif complexe (ex. 'crée une animation interactive réagissant au micro'), décompose lui-même le problème en sous-tâches, écrit le code, l'exécute, observe ses propres erreurs dans la console et ajuste sa stratégie de manière autonome jusqu'à obtenir le résultat.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Du simple pixel autonome à l'entité IA capable de raisonner, planifier et manipuler des outils."
+      }
+    },
+    {
+      "front": {
+        "text": "Seed",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "En programmation classique, la seed initialise un générateur de pseudo-hasard pour répéter une même suite de nombres mathématiques. Dans le contexte de l'IA générative (modèles de diffusion comme Midjourney ou Stable Diffusion, ou LLM avec température fixée), la seed détermine la 'bruiture' initiale : l'image démarre sous la forme d'un canevas de pixels bruités purement aléatoires, calculé à partir de ce chiffre. Si vous conservez le même prompt textuel, le même modèle et la même seed, l'IA partira exactement de la même texture de bruit de départ et convergera vers la même composition, la même pose et les mêmes détails. Modifier ne serait-ce que d'un chiffre cette seed change tout le point de départ du débruitage et produit une image totalement différente.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Le point de départ du bruit visuel qui fige ou décline une composition générée par IA."
+      }
+    },
+    {
+      "front": {
+        "text": "Déterminisme vs Stochastique",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Un système déterministe fonctionne comme une horloge : avec les mêmes données de départ, il donnera toujours un résultat 100 % identique et prévisible. Un système stochastique, au contraire, intègre des probabilités et du hasard : chaque exécution prend un chemin différent et produit un résultat unique. En design génératif, on combine souvent les deux pour créer des structures cohérentes qui ne sont jamais tout à fait identiques.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "La certitude mathématique absolue face au tirage de dés."
+      }
+    },
+    {
+      "front": {
+        "text": "Librairie",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Une librairie (ou bibliothèque) est une boîte à outils de code déjà écrit par d'autres pour vous éviter de réinventer la roue (comme Three.js pour la 3D ou p5.js pour le dessin). Vous restez le maître absolu de votre programme : vous écrivez votre propre logique et vous allez piocher ponctuellement dans la librairie uniquement quand vous avez besoin d'une fonction précise, comme tracer un cercle ou charger une texture.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Une boîte à outils spécialisée que vous appelez à votre convenance."
+      }
+    },
+    {
+      "front": {
+        "text": "SDK",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Le SDK (Software Development Kit) est un atelier complet fourni par un constructeur ou un éditeur pour créer des applications sur sa plateforme. Là où une librairie n'offre que du code, le SDK regroupe tout : du code tout fait, des exemples, de la documentation technique, des outils de test et parfois des simulateurs. C'est la boîte officielle complète nécessaire pour dialoguer avec un écosystème spécifique (comme iOS, un casque VR ou une API).",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "L'atelier officiel tout équipé pour développer sur un système donné."
+      }
+    },
+    {
+      "front": {
+        "text": "IDE",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "L'IDE (Integrated Development Environment) est l'atelier logiciel dans lequel le développeur passe ses journées. Plutôt que d'écrire son code dans un simple bloc-notes et de lancer des commandes à la main dans un terminal, l'IDE réunit tout sous une même interface : un éditeur avec coloration syntaxique, l'autocomplétion qui suggère les commandes, un détecteur d'erreurs en direct et des boutons pour lancer et inspecter son programme.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Le logiciel central de travail du codeur (ex. VS Code, Processing)."
+      }
+    },
+    {
+      "front": {
+        "text": "Tableau",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Un tableau (array) est un casier de rangement numérique où chaque case possède un numéro fixe (son index, qui démarre généralement à 0). Il permet de stocker une série d'éléments ordonnés : une liste de couleurs, une suite de coordonnées de points ou des milliers de particules. Grâce à cet index, le code peut retrouver ou modifier instantanément n'importe quel élément de la collection.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Un meuble à tiroirs numérotés pour ranger des listes de données."
+      }
+    },
+    {
+      "front": {
+        "text": "Boucle",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Une boucle est un mécanisme qui répète un groupe d'instructions des centaines ou des millions de fois sans qu'on ait besoin de réécrire le code. C'est le moteur du dessin procédural : avec trois lignes de code, une boucle peut disposer 10 000 cercles sur une grille ou mettre à jour la position de chaque particule à chaque image affichée à l'écran.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "L'instruction qui automatise la répétition instantanée."
+      }
+    },
+    {
+      "front": {
+        "text": "Draw call",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Un draw call est un ordre direct envoyé par le processeur principal (CPU) à la carte graphique (GPU) lui disant : 'Prends cet objet avec sa matière et dessine-le à l'écran'. Le GPU dessine à une vitesse fulgurante, mais passer la commande prend du temps. Si votre scène donne 10 000 ordres séparés au lieu de regrouper les objets en un seul envoi, l'ordinateur s'essouffle et l'animation commence à ramer.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "La commande passée au GPU pour chaque objet à afficher."
+      }
+    },
+    {
+      "front": {
+        "text": "CPU vs GPU",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Le CPU (processeur central) est comme un chef d'orchestre surdoué capable de résoudre des tâches logiques complexes l'une après l'autre de manière très rapide. Le GPU (processeur graphique), lui, ressemble à une armée de milliers d'ouvriers travaillant en même temps sur des tâches simples. C'est pour cela que le GPU règne sur la 3D, les pixels et l'IA : il peut calculer la couleur de 8 millions de pixels simultanément là où le CPU les traiterait un par un.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Le cerveau polyvalent séquentiel face à l'armée de calcul parallèle."
+      }
+    },
+    {
+      "front": {
+        "text": "Model",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "En intelligence artificielle, un modèle est le résultat figé d'un très long apprentissage. C'est un fichier contenant une structure mathématique et des millions (ou milliards) de réglages numériques (les poids). Il agit comme une 'boîte noire' qui a digéré d'immenses volumes d'exemples et qui est maintenant capable de reconnaître un motif, de prédire la suite d'un texte ou d'inventer une image cohérente à partir d'une consigne.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Le cerveau artificiel résultant de l'apprentissage machine."
+      }
+    },
+    {
+      "front": {
+        "text": "Entrainement (ML)",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "L'entraînement est l'étape où l'on 'éduque' un réseau de neurones en lui montrant des millions d'exemples. Au début, le programme devine au hasard et se trompe totalement. À chaque erreur, un algorithme ajuste subtilement ses réglages internes pour réduire la marge d'erreur. Répétée des milliards de fois sur de puissantes cartes graphiques, cette phase permet au modèle d'extraire des concepts abstraits et d'apprendre par lui-même.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "La phase intensive d'apprentissage par correction d'erreurs."
+      }
+    },
+    {
+      "front": {
+        "text": "Inference",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "L'inférence est le moment où l'intelligence artificielle est mise au travail dans la vraie vie. Le modèle ne s'entraîne plus, il applique simplement ce qu'il sait. Dès que vous tapez un prompt pour générer une image, que votre téléphone identifie un visage ou qu'un filtre détecte votre main, le modèle réalise une inférence : il traite instantanément une entrée fraîche et produit le résultat.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "L'utilisation pratique et en direct d'un modèle déjà formé."
+      }
+    },
+    {
+      "front": {
+        "text": "Espace latent",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "C'est la carte mentale intérieure d'une IA, représentée sous la forme d'un espace géométrique à des centaines de dimensions. Le modèle y range les concepts selon leur ressemblance : deux visages souriants seront très proches dans cet espace, tandis qu'un camion sera très éloigné. En creative coding, on navigue dans cet espace en modifiant des coordonnées pour faire muter en continu une forme ou une image vers une autre de façon fluide.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "La carte multidimensionnelle où l'IA organise ses idées et ses formes."
+      }
+    },
+    {
+      "front": {
+        "text": "Fonction",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Une fonction est une recette réutilisable au sein d'un programme. Au lieu de réécrire dix lignes d'instructions chaque fois qu'on veut, par exemple, calculer la distance entre deux formes et leur appliquer une couleur, on emballe cette logique dans une fonction nommée. On peut lui passer des ingrédients (des paramètres), elle effectue son calcul et nous redonne un résultat propre.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Un bloc de recette étiqueté qu'on peut réappeler à tout moment."
+      }
+    },
+    {
+      "front": {
+        "text": "Variable global vs variable locale",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Une variable est une boîte qui stocke une information. Si elle est 'globale', elle est visible et modifiable par l'ensemble de votre programme à tout moment, ce qui peut créer des effets de bord imprévus si plusieurs parties y touchent en même temps. Si elle est 'locale', elle n'existe qu'à l'intérieur d'un bloc ou d'une fonction spécifique : dès que le calcul de cette fonction est terminé, la boîte est détruite et oubliée.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Une information accessible partout face à une donnée temporaire enfermée dans sa fonction."
+      }
+    },
+    {
+      "front": {
+        "text": "Class",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "En programmation objet, une classe est le plan d'architecte ou le moule de fabrication. Elle ne représente rien de concret à l'écran, mais décrit précisément ce que sera l'objet une fois créé : quelles seront ses propriétés (position, taille, couleur) et ce qu'il sera capable de faire (se déplacer, rebondir, clignoter). C'est le patron de conception réutilisable à l'infini.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Le plan de fabrication ou le moule d'un objet."
+      }
+    },
+    {
+      "front": {
+        "text": "Object",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "L'objet est l'élément concret coulé dans le moule de la classe. Si la classe est le plan d'une voiture, l'objet est la voiture physique qui roule dans la mémoire de votre ordinateur, avec sa propre couleur et sa propre vitesse. En programmation créative, chaque particule, monstre ou bouton interactif qui s'anime à l'écran est un objet vivant issu d'une classe.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "L'entité réelle créée d'après le plan de la classe."
+      }
+    },
+    {
+      "front": {
+        "text": "Fonction anonyme",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "C'est une fonction qui n'a pas de petit nom officiel pour être réappelée plus tard. On la fabrique 'à la volée', directement là où on en a besoin pour une action immédiate et jetable. Par exemple, quand on écrit : 'dès que l'utilisateur clique, fais immédiatement ceci', on glisse souvent cette action sous forme de fonction anonyme sans encombrer le reste du code avec un nouveau nom de fonction.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Une petite fonction sans nom écrite sur mesure pour une action ponctuelle."
+      }
+    },
+    {
+      "front": {
+        "text": "Json",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Le JSON est la langue universelle pour ranger et échanger des données informatiques sous forme de texte simple. Il organise les données comme une fiche pratique avec des étiquettes et des valeurs bien rangées (par exemple 'largeur': 800, 'couleur': 'rouge'). Parce qu'il est facile à lire pour un être humain et instantané à déchiffrer pour un ordinateur, c'est le standard mondial pour faire dialoguer deux applications ou sauvegarder des réglages.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Le format texte standard pour échanger des données structurées."
+      }
+    },
+    {
+      "front": {
+        "text": "Evénement",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Un événement est un signal émis par le système dès qu'il se passe quelque chose : un bouton est cliqué, une touche est pressée, la souris a bougé d'un pixel ou un fichier a fini de charger. Le programme ne passe pas son temps à vérifier si vous touchez à l'écran ; il attend passivement qu'un événement soit déclenché pour se réveiller et réagir.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Le signal envoyé au code quand une action survient."
+      }
+    },
+    {
+      "front": {
+        "text": "Ecouteur",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "L'écouteur d'événement (event listener) est une sentinelle que vous placez dans votre code pour surveiller un élément précis. Vous lui dites : 'Reste à l'écoute de ce bouton, et si l'événement 'clic' se produit, déclenche immédiatement telle fonction'. C'est le mécanisme de base qui transforme une page statique en un dispositif interactif réactif à vos moindres gestes.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "La sentinelle logicielle qui attend un geste pour lancer une réaction."
+      }
+    },
+    {
+      "front": {
+        "text": "Websocket",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "D'ordinaire sur le web, le navigateur doit réclamer une information pour que le serveur lui réponde. Le WebSocket ouvre un canal permanent et direct (comme un appel téléphonique toujours branché) entre deux appareils ou entre un serveur et un navigateur. Les messages circulent instantanément dans les deux sens sans temps de latence, ce qui est parfait pour synchroniser deux téléphones, piloter du son ou animer une fresque collective en direct.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Un fil de communication permanent et ultra-rapide entre deux machines."
+      }
+    },
+    {
+      "front": {
+        "text": "Serveur",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Un serveur est une machine ou un programme qui reste allumé en permanence pour 'servir' les autres ordinateurs (les clients). Dès qu'un utilisateur arrive sur une page web, le serveur lui envoie les images, le code et les polices nécessaires. Dans les installations interactives, le serveur centralise les données de tous les participants, coordonne les capteurs et s'assure que tout le monde voit la même chose.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "La tour de contrôle qui stocke, distribue et coordonne les données."
+      }
+    },
+    {
+      "front": {
+        "text": "GUI",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "GUI (Graphical User Interface) désigne l'ensemble des boutons, curseurs, menus et fenêtres qui permettent de piloter un programme à la souris ou au doigt sans taper de code. En creative coding, on utilise souvent des mini-GUI (comme Tweakpane ou lil-gui) superposées à l'écran : elles permettent de modifier en direct la vitesse d'une animation ou la taille des particules avec des curseurs pour trouver les réglages visuels parfaits.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Les boutons et panneaux visuels pour contrôler un logiciel sans coder."
+      }
+    },
+    {
+      "front": {
+        "text": "UX",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "L'UX (User Experience / Expérience Utilisateur) ne concerne pas la beauté des boutons, mais ce que ressent la personne qui manipule l'outil : est-ce limpide ou confus ? fluide ou frustrant ? rapide ou pénible ? Une bonne UX fait en sorte que l'utilisateur comprenne naturellement comment fonctionne le dispositif sans mode d'emploi et arrive à ses fins avec un minimum d'effort mental.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Le ressenti, la clarté et la fluidité vécus par l'utilisateur."
+      }
+    },
+    {
+      "front": {
+        "text": "UI",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "L'UI (User Interface / Interface Utilisateur) est la surface visible et graphique de l'application : le choix des polices, les couleurs, les bordures, l'espacement des cartes, les icônes et le look des boutons. Alors que l'UX conçoit le parcours logique et le confort d'usage dans l'ombre, l'UI habille et matérialise concrètement cette expérience pour les yeux et les doigts de l'utilisateur.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "L'aspect visuel, graphique et tactile que l'on voit à l'écran."
+      }
+    },
+    {
+      "front": {
+        "text": "User flow",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Le user flow est le schéma pas-à-pas du chemin que suit un utilisateur pour accomplir une action précise dans un dispositif : par exemple, de la première page d'accueil jusqu'à la validation d'une création et son exportation. Dessiner ce parcours à l'avance permet aux designers de repérer les impasses, d'éliminer les clics inutiles et de rendre l'aventure la plus fluide possible.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Le tracé étape par étape de l'itinéraire emprunté par l'utilisateur."
+      }
+    },
+    {
+      "front": {
+        "text": "Interface nodale",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "C'est une façon visuelle de programmer sans taper de texte : chaque fonction ou effet est représenté par une boîte (un nœud), et l'on relie ces boîtes entre elles avec des câbles virtuels pour faire circuler l'information (image, son, géométrie). C'est le principe central d'outils comme TouchDesigner ou les shaders de Blender : brancher une caméra sur un filtre, puis le filtre sur un projecteur.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Programmer visuellement en reliant des boîtes avec des câbles."
+      }
+    },
+    {
+      "front": {
+        "text": "Brut force",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "L'attaque ou la résolution par force brute est la stratégie du coffre-fort : au lieu de chercher un raccourci malin ou d'analyser le problème, l'ordinateur essaie bêtement toutes les combinaisons existantes, de 0000 à 9999. Cela fonctionne toujours à condition d'avoir assez de temps, mais dès que le nombre de choix devient immense, la machine peut y passer des siècles entiers.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Tester bêtement et sans réflexion toutes les options possibles."
+      }
+    },
+    {
+      "front": {
+        "text": "Dataset",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Un dataset est une collection rigoureusement rassemblée et triée de données (des milliers d'enregistrements audio, de photos d'affiches ou d'échantillons typographiques). C'est la nourriture indispensable pour nourrir et former une intelligence artificielle : si les exemples du dataset sont pauvres ou répétitifs, le modèle sera médiocre et reproduira tous ses défauts.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Le jeu de données d'exemples utilisé pour nourrir une IA."
+      }
+    },
+    {
+      "front": {
+        "text": "DOM",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Le DOM (Document Object Model) est l'arbre généalogique vivant d'une page web. Quand le navigateur lit votre fichier HTML, il crée une structure d'objets imbriqués où chaque titre, paragraphe ou bouton devient une branche ou une feuille. Grâce au DOM, le code JavaScript peut venir attraper n'importe quel élément sur la page, changer son texte, modifier sa couleur ou le faire disparaître en direct.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "La structure en arbre d'une page web qu'on peut manipuler par le code."
+      }
+    },
+    {
+      "front": {
+        "text": "Raster",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Une image raster (matricielle) est un tableau géant de points colorés fixes appelés pixels (comme une photo en JPG ou PNG). Si vous regardez de loin, vous voyez une forme nette ; si vous zoomez trop près, les carrés deviennent visibles et l'image devient floue ou pixelisée. Cela s'oppose aux images vectorielles qui sont des formules mathématiques redessinées à l'infini sans jamais perdre en netteté.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Une image faite de carrés de pixels fixes dépendante de la résolution."
+      }
+    },
+    {
+      "front": {
+        "text": "Particle system",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Un système de particules est une technique permettant de créer des effets visuels vivants en manipulant des centaines ou des milliers de petits points graphiques. Au lieu de dessiner une flamme ou de la fumée, on émet une foule de particules dotées de règles simples : elles naissent à un endroit, sont poussées par le vent ou la gravité, changent de couleur au fil des secondes et finissent par mourir.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "L'outil roi pour simuler poussières, explosions, fumée et feux d'artifice."
+      }
+    },
+    {
+      "front": {
+        "text": "FUI",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Les FUI (Fictional User Interfaces) sont les interfaces futuristes et stylisées que l'on voit briller dans les films de science-fiction (les écrans d'Iron Man ou les cockpits de vaisseaux spatiaux). Souvent peu pratiques dans la vraie vie car surchargées de graphiques, de données abstraites et de typographies techniques luisantes, elles servent avant tout à raconter une histoire et à donner une impression de haute technologie.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Les écrans holographiques ultra-complexes du cinéma de science-fiction."
+      }
+    },
+    {
+      "front": {
+        "text": "Facemesh",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Facemesh est un modèle de vision par ordinateur qui analyse l'image d'une webcam pour y coller un masque 3D composé de plusieurs centaines de points repères (coins des yeux, contour des lèvres, arête du nez). En creative coding, cela permet d'attacher des objets 3D ou des déformations visuelles qui épousent en temps réel les mouvements et les mimiques du visage.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Le maillage de points qui traque et épouse un visage en temps réel."
+      }
+    },
+    {
+      "front": {
+        "text": "Noise vs Perlin Noise",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Le bruit pur (random) tire des nombres au hasard sans aucun lien entre eux, produisant un grésillement chaotique et saccadé comme la neige sur une vieille télévision. Le bruit de Perlin, inventé pour le cinéma, crée un hasard progressif et ondulé : chaque valeur est douce et très proche de sa voisine. C'est l'ingrédient secret pour générer des vagues, des collines, de la fumée ou des mouvements qui ont l'air vivants et organiques.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Le grésillement brutal de la neige TV face aux ondulations douces du vivant."
+      }
+    },
+    {
+      "front": {
+        "text": "FFT",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "La FFT (Fast Fourier Transform) est un tour de magie mathématique qui écoute un son brut et le découpe en temps réel en tranches de fréquences bien distinctes : les basses, les médiums et les aigus. C'est le moteur absolu de toute création audio-réactive : sans la FFT, le code ne sait pas distinguer un coup de grosse caisse d'un tintement de cymbale.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "L'algorithme qui découpe un son en basses, médiums et aigus pour le code."
+      }
+    }
+  ]
+}

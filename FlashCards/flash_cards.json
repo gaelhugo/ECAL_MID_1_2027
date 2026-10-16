@@ -1,0 +1,354 @@
+{
+  "flashcards": [
+    {
+      "front": {
+        "text": "Vibe coding",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Pratique de développement intuitive basée sur le dialogue en langage naturel avec des IA, sans compréhension obligatoire des sous-couches informatiques.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Concept popularisé par Andrej Karpathy au début de l'année 2025.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Pensée computationnelle en design",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Démarche conceptualisée par Karl Gerstner consistant à concevoir non pas un visuel statique, mais le programme méthodique capable de générer l'ensemble des solutions possibles.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Théorisée dans l'ouvrage 'Designing Programmes' (1964).",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Consommation stochastique vs Modélisation déterministe",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "L'amateur subit l'instabilité des graines (seeds) de l'IA, tandis que le creative coder définit des règles mathématiques rigoureuses et reproductibles.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Différence entre dépendre du hasard de la boîte noire et contrôler l'algorithme.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Shaders (GLSL / WGSL)",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Programmes hautement optimisés exécutés en parallèle sur le processeur graphique (GPU) pour calculer la géométrie et le rendu pixel par pixel à haute fréquence.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Langages de programmation bas niveau pour WebGL et WebGPU.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Fragment Shader",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Sous-programme exécuté sur le GPU chargé de déterminer la couleur et les attributs visuels de chaque pixel à l'écran.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Composant du pipeline de rendu intervenant après la transformation des sommets.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Optimisation de performance graphique",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Ensemble de techniques visant à éliminer les goulots d'étranglement, réduire les appels de dessin (draw calls) et optimiser la mémoire VRAM.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Discipline indispensable pour éviter l'effondrement du taux de rafraîchissement (frame drops).",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Creative Tooling",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Conception et développement de logiciels d'auteur sur-mesure ou de micro-applications permettant de générer des identités visuelles et des actifs conformes.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Démarche visant à remplacer la charte graphique statique par un outil interactif.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Cas d'étude DEMO (Studio Dumbar/DEPT®)",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Création de modules JavaScript personnalisés intégrés dans le logiciel Cavalry pour générer des milliers d'animations typographiques cohérentes.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Exemple emblématique de festival de motion design piloté par des outils propriétaires.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Pratique du Creative Tooling selon DIA Studio",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Développement de micro-logiciels interactifs remis aux équipes clients pour leur permettre de générer des déclinaisons visuelles sans casser l'identité de marque.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Studio cofondé par Mitch Paone, pionnier de l'identité cinétique.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Aplatissement algorithmique (Algorithmic flattening)",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Tendance des modèles d'IA générative à converger vers la moyenne statistique de leurs données d'entraînement, produisant une esthétique lisse et générique.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Phénomène d'uniformisation culturelle lié aux modèles de diffusion.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Polices variables (Variable Fonts)",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Fichiers typographiques intégrant des axes de variation paramétriques pouvant être animés et contrôlés dynamiquement par le code.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Permet de lier la graisse, la chasse ou des axes custom à des flux de données.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Décomposition vectorielle typographique",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Extraction et manipulation algorithmique des points d'ancrage et courbes de Bézier des lettres via des outils comme OpenType.js ou textToContours.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Technique permettant de déformer la structure même du dessin de caractères.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "ControlNet",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Adaptateur conditionnel permettant de soumettre la génération d'images par IA à des contraintes géométriques et structurales strictes.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Composant clé pour marier le code déterministe avec les modèles de diffusion.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Tenseurs de guidage visuel",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Structures géométriques issues du code (cartes de profondeur, détection de contours Canny) utilisées pour cadrer la génération sémantique d'une IA.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Squelette d'information contrôlé transmis au modèle génératif.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Agentic Experience (AX)",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Paradigme d'interaction où des agents intelligents accomplissent directement des tâches complexes sans nécessiter la navigation dans des interfaces graphiques traditionnelles.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Évolution conceptuelle succédant à l'ère de l'User Experience (UX).",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Tree-shaped designer",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Profil de créatif théorisé par John Maeda, dont le socle repose sur des principes computationnels profonds pour déployer une variété d'applications visuelles.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Évolution du profil traditionnel de designer en 'T'.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Design Engineer",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Rôle professionnel combinant direction artistique et ingénierie logicielle pour concevoir et prototaper directement dans le code de production.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Poste clé recherché par les entreprises technologiques comme Stripe ou Vercel.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Systèmes de réaction-diffusion",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Algorithmes simulant des interactions chimiques pour générer des motifs organiques et des textures évolutives complexes de manière procédurale.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Exemple de modélisation biologique utilisée en creative coding.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Attracteurs étranges",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Systèmes d'équations différentielles décrivant des trajectoires chaotiques mais structurées, impossibles à générer fidèlement par un prompt textuel.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Forme de géométrie mathématique pure générée par code.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Model Context Protocol (MCP)",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Standard d'interconnexion permettant à des agents d'IA de communiquer de façon structurée avec des outils informatiques, des API et des bases de données.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Protocole indispensable pour l'intégration des architectures hybrides.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "SDK de canevas modulaire",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Kit de développement (tel que tldraw SDK) permettant de concevoir des espaces de création visuelle interactifs et des générateurs collaboratifs.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Outil logiciel de base pour créer des environnements de travail sur-mesure.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Souveraineté formelle",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Capacité du designer à maîtriser totalement les règles, la logique et la chaîne technique de production sans dépendre d'outils ou de modèles tiers.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Indépendance artistique et technique face à l'uniformisation logicielle.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Limitation de l'IA matricielle en typographie",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Incapacité structurelle des modèles de diffusion de pixels à appréhender la rigueur géométrique et optique des contours vectoriels de la lettre.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Raison pour laquelle l'IA seule produit des déformations sur le texte.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Parallélisme massif du GPU",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Mode d'exécution matériel qui traite simultanément des milliers d'opérations matricielles, indispensable pour la 3D et les shaders temps réel.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "S'oppose au traitement séquentiel instruction par instruction du CPU.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Évolution du livrable de marque",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Mutation du secteur où la charte graphique sous forme de document PDF est remplacée par une application logicielle propriétaire générative.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Passage de la livraison d'images figées à celle de méta-systèmes vivants.",
+        "language": "fr-FR"
+      }
+    }
+  ]
+}

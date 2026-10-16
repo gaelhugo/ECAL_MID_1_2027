@@ -1,0 +1,284 @@
+{
+  "flashcards": [
+    {
+      "front": {
+        "text": "AI Slop",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Contenu textuel, visuel ou audio généré en masse par IA, de piètre qualité et non sollicité, qui sature le web.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "L'équivalent du 'spam' pour l'ère générative.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Origine et contextualisation du terme 'AI Slop'",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Popularisé fin 2023 / début 2024 par des commentateurs tech comme John Gruber pour désigner la bouillie de contenu optimisée pour le SEO et l'engagement.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Période d'émergence post-explosion des LLM grands publics.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Model Collapse",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Dégénérescence progressive d'un modèle d'IA entraîné sur des données elles-mêmes produites par une IA, entraînant une perte de diversité et des hallucinations absurdes.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Problème théorique majeur lié à l'empoisonnement des données d'entraînement.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Origine scientifique du concept de 'Model Collapse'",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Théorisé en mai 2023 dans une publication scientifique par Shumailov et al.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Papier de recherche paru au printemps 2023.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Lien entre AI Slop et Model Collapse",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Le 'slop' polluant le web public sert de donnée d'entraînement aux futurs LLM, ce qui accélère la dégénérescence des modèles (Model Collapse).",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Effet de boucle rétroactive négative sur l'écosystème web.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Shrimp Jesus",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Mème et archétype d'images absurdes générées par IA représentant le Christ fusionné avec des crustacés, créées pour appâter les interactions d'utilisateurs crédules.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Exemple emblématique apparu début 2024 sur Facebook.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Vecteurs et objectifs derrière les visuels type 'Shrimp Jesus'",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Générés principalement via Midjourney ou DALL-E 3 pour alimenter du 'slop d'engagement' diffusé par des réseaux de bots et des arnaques aux clics.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Exploitation algorithmique du fil d'actualité Facebook.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Hallucination (IA)",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Fait pour un modèle d'IA d'affirmer avec assurance un fait totalement faux, inexistant ou inventé de toutes pièces.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Comportement problématique majeur des modèles de langage.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Cause sous-jacente des hallucinations d'IA",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Le modèle privilégie la cohérence statistique de l'enchaînement des mots au détriment de la véracité réelle de l'information.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Fonctionnement probabiliste et non factuel des LLM.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Historique du terme 'Hallucination' en IA",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Issu de la recherche en traitement automatique du langage naturel (TALN) vers 2017, puis popularisé auprès du grand public fin 2022.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Précède la sortie de ChatGPT mais s'est généralisé avec lui.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Dead Internet Theory (à l'ère de l'IA)",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Théorie selon laquelle la majorité du trafic, des contenus et des interactions du web est désormais produite par des bots et des IA s'adressant à d'autres bots.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Concept apparu vers 2021 et revitalisé en 2023-2024.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Évolution de la 'Dead Internet Theory'",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Passée d'une théorie du complot marginale à une observation quasi factuelle sur plusieurs plateformes (X, Facebook, LinkedIn).",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Transformation d'un mythe en réalité observable sur les réseaux sociaux.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "SEO Spam / AI Churn",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Production industrielle d'articles et de guides d'achat générés automatiquement pour capturer le trafic Google sans apport de valeur.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Pratique apparue début 2023 via des outils comme Jasper, Copy.ai ou l'API OpenAI.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Conséquence du SEO Spam et réaction des moteurs de recherche",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Dégradation notable des résultats de recherche ayant poussé Google à déployer des mises à jour majeures (ex. Google Helpful Content).",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Réponse algorithmique de Google à la pollution par l'IA.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Brain rot",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Détérioration de l'état mental ou intellectuel attribuée à la surconsommation répétitive de contenus triviaux en ligne.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Traduit littéralement par 'pourriture cérébrale'.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Reconnaissance culturelle du terme 'Brain rot'",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Élu mot de l'année 2024 par Oxford University Press (OUP).",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Distinction lexicographique majeure reçue fin 2024.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Lien entre IA générative, flux courts et 'Brain rot'",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "L'IA générative massifie la production de mèmes et vidéos courtes (TikTok, Reels) qui alimentent des boucles dopaminergiques addictives.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Effet cognitif de l'immersion continue dans du contenu algorithmé.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Slop d'engagement vs Slop informatif",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Le slop d'engagement vise à susciter des clics/commentaires (ex: Shrimp Jesus), tandis que le slop informatif sature les recherches de faits erronés ou générés (ex: SEO Spam).",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Deux manifestations distinctes du contenu génératif de basse qualité.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Rôle des modèles de diffusion dans le Slop visuel",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Permettent de générer instantanément des images photoréalistes mais hyper-stéréotypées ou absurdes à très bas coût de production.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Outils comme Midjourney ou DALL-E 3.",
+        "language": "fr-FR"
+      }
+    },
+    {
+      "front": {
+        "text": "Impact du Slop sur la confiance des utilisateurs en ligne",
+        "language": "fr-FR"
+      },
+      "back": {
+        "text": "Érosion de la crédibilité des contenus web, rendant les utilisateurs sceptiques face à l'authenticité des images, textes et profils.",
+        "language": "fr-FR"
+      },
+      "hint": {
+        "text": "Conséquence sociétale de la Dead Internet Theory.",
+        "language": "fr-FR"
+      }
+    }
+  ]
+}
