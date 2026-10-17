@@ -41,12 +41,18 @@ npm start                   # run the desktop app without packaging (after --web
 
 ## Installing on another Mac
 
-The app is **ad-hoc signed** (no paid Apple Developer ID), so macOS shows an "unidentified developer" warning the first time:
+The app is **ad-hoc signed** (no paid Apple Developer ID), so macOS blocks the first launch:
 
 1. Open the `.dmg` and drag **proce55us** into **Applications**.
-2. In Applications, **right-click the app → Open → Open** (only the first time).
-   On recent macOS versions, if there is no "Open" button: try to open it once, then go to **System Settings → Privacy & Security** and click **Open Anyway**.
-3. When a webcam step runs, macOS asks for camera access → **Allow**.
+2. Double-click it once — macOS shows « cannot be opened ». Click **Done**.
+3. Go to **System Settings → Privacy & Security** and click **Open Anyway** (the blocked app is listed there), then confirm. From then on it opens normally.
+   On macOS 14 or earlier, **right-click → Open** also works.
+
+Alternative without any dialog: remove the quarantine flag —
+`xattr -dr com.apple.quarantine /Applications/proce55us.app`
+(the flag is only set on files downloaded through a browser; `curl` or `brew` installs don't trigger Gatekeeper).
+
+When a webcam step runs, macOS asks for camera access → **Allow**.
 
 To remove the warning entirely, the app must be signed with an Apple **Developer ID Application** certificate and notarized (Apple Developer Program). electron-builder does this automatically if such a certificate is in the keychain (remove `"identity": "-"` from `package.json`) and notarization credentials are provided.
 
