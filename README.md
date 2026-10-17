@@ -70,7 +70,7 @@ cd Tools/AgentCodingWithLMStudio-mac
 ./build-mac.sh
 ```
 
-Produces `dist/proce55us-1.0.0-universal.dmg`, installable on any Mac (macOS 12+, Apple Silicon and Intel) without Node.js. First launch on another Mac: right-click the app → **Open** (the app isn't signed with a paid Apple Developer ID). See its README for details.
+Produces `dist/proce55us-universal.dmg`, installable on any Mac (macOS 12+, Apple Silicon and Intel) without Node.js. First launch on another Mac: **System Settings → Privacy & Security → Open Anyway** (the app isn't signed with a paid Apple Developer ID). See its README for details.
 
 ## Notes
 

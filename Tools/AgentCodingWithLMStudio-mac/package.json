@@ -25,6 +25,7 @@
     },
     "mac": {
       "icon": "build/icon.icns",
+      "artifactName": "proce55us-universal-mac.${ext}",
       "category": "public.app-category.education",
       "minimumSystemVersion": "12.0",
       "identity": "-",
@@ -44,7 +45,8 @@
       }
     },
     "dmg": {
-      "title": "proce55us"
+      "title": "proce55us",
+      "artifactName": "proce55us-universal.${ext}"
     }
   },
   "devDependencies": {

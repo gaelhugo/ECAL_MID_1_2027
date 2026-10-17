@@ -15,11 +15,11 @@ cd Tools/AgentCodingWithLMStudio-mac
 
 Output in `dist/`:
 
-| File                                | Use                                                 |
-| ----------------------------------- | --------------------------------------------------- |
-| `proce55us-1.0.0-universal.dmg`     | Installer to share (drag the app into Applications) |
-| `proce55us-1.0.0-universal-mac.zip` | Same app, zipped                                    |
-| `mac-universal/proce55us.app`       | The app itself                                      |
+| File                          | Use                                                 |
+| ----------------------------- | --------------------------------------------------- |
+| `proce55us-universal.dmg`     | Installer to share (drag the app into Applications) |
+| `proce55us-universal-mac.zip` | Same app, zipped                                    |
+| `mac-universal/proce55us.app` | The app itself                                      |
 
 - **Universal binary**: runs natively on Apple Silicon and Intel Macs.
 - **Requires macOS 12 (Monterey) or later** (Electron 43; Electron 44+ would require macOS 13).
