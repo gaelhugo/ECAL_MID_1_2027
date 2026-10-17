@@ -7,7 +7,7 @@ import { CodeExporter } from "../export/CodeExporter.js";
  * « Télécharger » et un indicateur d'état (Prêt / Exécution…).
  */
 export class Toolbar {
-  constructor(root, notebook) {
+  constructor(root, notebook, getTitle = () => "processus") {
     const add = Toolbar.#button(icons.add, "Cellule", "Ctrl + M puis B");
     const runAll = Toolbar.#button(
       icons.playAll,
@@ -34,10 +34,9 @@ export class Toolbar {
     const status = el("span", "toolbar__status", "Prêt");
 
     add.addEventListener("click", () => notebook.insert());
-    download.addEventListener("click", () => {
-      const title = document.querySelector("h1")?.textContent ?? "notebook";
-      CodeExporter.download(notebook.contents, title);
-    });
+    download.addEventListener("click", () =>
+      CodeExporter.download(notebook.contents, getTitle()),
+    );
     runAll.addEventListener("click", () => notebook.runAll());
     restart.addEventListener("click", () => notebook.restart());
     notebook.addEventListener(

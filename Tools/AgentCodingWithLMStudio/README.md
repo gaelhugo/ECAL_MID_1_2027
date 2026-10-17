@@ -20,7 +20,8 @@ The app works fully offline for browsing and running the steps. **LM Studio is o
 
 ## How it works
 
-- The left pane is a **notebook**: ordered cells, each showing a prompt and its resulting code in a highlighted editor.
+- The left pane is a **processus** (notebook): ordered cells, each showing a prompt and its resulting code in a highlighted editor.
+- The **title is a dropdown** to pick what to load: **Nouveau processus** (first entry, a single empty cell) or **Raster Image** (loaded by default, the 8-step webcam rasterization). Switching resets the preview; the snackbar's **Annuler** restores the previous processus.
 - The right pane is a **preview**: a sandboxed `<iframe>` in which the cells' code runs, each in its own `<script>` tag, replayed in order by the `Kernel`.
 - Editing a prompt and regenerating sends the code of the cells above plus the active function signatures (`ProgramSummary`) to a local **LM Studio** server, which writes the new code.
 
@@ -49,17 +50,36 @@ Each cell executes in its own `<script>` tag inside the preview iframe, replayed
 ```
 src/
 ├── main.js                     # Assembles notebook, preview, kernel, toolbar, splitter, shortcuts
-├── steps/
-│   ├── steps.js                # Ordered steps: prompt + code (imported as ?raw text)
-│   └── code/NN-*.js            # The reference code for each step (01-canvas … 08-mouse)
+├── examples/
+│   ├── index.js                # Auto-loads every *.json here; sets the default (DEFAULT_FILE)
+│   └── raster-image.json       # Demo processus: 8 steps (prompt + code), 01-canvas … 08-mouse
 ├── notebook/                   # Cell, CellActions, CellInserter, CellOutput, CodeEditor,
 │                               #   Highlighter, Notebook, RunButton
 ├── runtime/                    # Kernel (replays cells in the iframe), RuntimeDocument
 ├── preview/                    # Preview (sandboxed iframe)
 ├── llm/                        # LlmClient, PromptBuilder, CodeGenerator, CodeCleaner, ProgramSummary
 ├── export/                     # CodeExporter
-├── ui/                         # Toolbar, Splitter, Shortcuts, Snackbar, dom, icons
+├── ui/                         # Toolbar, ExamplePicker, Splitter, Shortcuts, Snackbar, dom, icons
 └── styles/                     # Modular CSS (base, layout, cell, editor, preview, structure)
 ```
+
+### Adding a demo processus
+
+Drop a JSON file into `src/examples/` — it appears in the dropdown automatically (after "Nouveau processus", sorted by file name):
+
+```json
+{
+  "title": "Name shown in the dropdown",
+  "steps": [
+    {
+      "title": "Step title",
+      "prompt": "What the code should do…",
+      "code": ["// one string per line", "const x = 1;"]
+    }
+  ]
+}
+```
+
+`code` may also be a single string. To load a different file at startup, change `DEFAULT_FILE` in `src/examples/index.js`.
 
 See `AGENTS.md` for maintainer notes (in French).

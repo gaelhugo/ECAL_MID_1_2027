@@ -45,6 +45,11 @@ export class Notebook extends EventTarget {
     return this.#cells[this.#selected];
   }
 
+  /** Étapes d'origine actuellement chargées (l'exemple en cours). */
+  get steps() {
+    return this.#steps;
+  }
+
   /**
    * Cellules actuellement rendues dans l'aperçu, dans l'ordre du notebook,
    * avec le code tel qu'il a été exécuté (pour l'export).
@@ -164,22 +169,25 @@ export class Notebook extends EventTarget {
   /**
    * Réinitialise tout : l'aperçu est vidé et les cellules reviennent à leur
    * état d'origine (prompts et code prédéfinis, cellules ajoutées retirées).
+   * Avec d'autres étapes, charge un autre exemple à la place.
    */
-  restart() {
-    this.#beforeRestart = this.#cells;
+  restart(steps = this.#steps) {
+    const changed = steps !== this.#steps;
+    this.#beforeRestart = { cells: this.#cells, steps: this.#steps };
+    this.#steps = steps;
     this.#lastDeleted = null;
     this.#resetExecution();
     this.#cells = this.#steps.map((step) => this.#createCell(step));
     this.#render();
     this.select(0);
-    this.dispatchEvent(new Event("restart"));
+    this.dispatchEvent(new CustomEvent("restart", { detail: { changed } }));
   }
 
-  /** Retrouve les cellules d'avant la réinitialisation (à réexécuter). */
+  /** Retrouve les cellules (et l'exemple) d'avant la réinitialisation (à réexécuter). */
   undoRestart() {
     if (!this.#beforeRestart) return;
     this.#resetExecution();
-    this.#cells = this.#beforeRestart;
+    ({ cells: this.#cells, steps: this.#steps } = this.#beforeRestart);
     this.#beforeRestart = null;
     this.#cells.forEach((cell) => {
       cell.runButton.setCount(0);

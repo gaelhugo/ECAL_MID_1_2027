@@ -22,6 +22,8 @@ export class Shortcuts {
   }
 
   #onKeyDown(event) {
+    // Le menu des exemples garde ses propres touches (flèches, Entrée)
+    if (event.target.tagName === "SELECT") return;
     const nb = this.notebook;
     const mod = event.ctrlKey || event.metaKey;
     const chord = this.#chord;
