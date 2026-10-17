@@ -1,0 +1,192 @@
+/* Une cellule : marge (bouton) | contenu ; la sortie passe en dessous */
+.cell {
+  position: relative;
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  padding: 8px 8px 8px 0;
+  border-radius: var(--radius);
+  transition: box-shadow 0.2s;
+}
+
+.cell.is-selected {
+  box-shadow: var(--shadow);
+}
+
+.cell__gutter {
+  display: flex;
+  justify-content: center;
+  padding-top: 6px;
+}
+
+/* Prompt et code côte à côte, empilés si la cellule est étroite */
+.cell__body {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: 8px;
+}
+
+@container (max-width: 620px) {
+  .cell__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Prompt */
+.prompt {
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: var(--grey-50);
+}
+
+.prompt__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--grey-700);
+}
+
+.prompt__label svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+/* Prompt modifiable : léger fond au survol et pendant l'édition */
+.prompt__text {
+  margin: 0 -6px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.55;
+  cursor: text;
+  white-space: pre-wrap;
+  transition: background 0.15s;
+}
+
+.prompt__text:hover,
+.prompt__text:focus {
+  background: var(--white);
+}
+
+/* Texte indicatif d'un prompt vide (nouvelle cellule) */
+.prompt__text:empty::before {
+  content: attr(data-placeholder);
+  font-style: italic;
+  color: var(--grey-500);
+}
+
+/* Prompt modifié : il sera envoyé au modèle à la prochaine exécution */
+.cell.is-modified .prompt__label::after {
+  content: 'modifié';
+  margin-left: auto;
+  padding: 0 8px;
+  border-radius: 10px;
+  font-weight: 400;
+  line-height: 18px;
+  background: var(--grey-200);
+}
+
+/* Génération en cours : l'étincelle pulse */
+.cell.is-generating .prompt__label svg {
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Bouton d'exécution : compteur au repos, ▶ au survol, anneau en cours */
+.run-button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.run-button__count {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--grey-500);
+}
+
+.run-button__icon {
+  display: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: var(--grey-700);
+  background: var(--grey-200);
+  transition: background 0.15s, color 0.15s;
+}
+
+.run-button__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.cell:hover .run-button__icon,
+.cell.is-selected .run-button__icon {
+  display: grid;
+}
+
+.cell:hover .run-button__count,
+.cell.is-selected .run-button__count {
+  display: none;
+}
+
+.run-button:hover .run-button__icon {
+  color: var(--white);
+  background: var(--grey-900);
+}
+
+.run-button.is-running .run-button__icon,
+.run-button.is-running .run-button__count {
+  display: none;
+}
+
+.run-button.is-running::after {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--grey-200);
+  border-top-color: var(--grey-700);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Sortie de la cellule */
+.cell-output {
+  grid-column: 2;
+  margin-top: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--grey-700);
+}
+
+.cell-output__line--error {
+  color: var(--grey-900);
+  font-weight: 500;
+}
+
+.cell-output:has(.cell-output__line--error) {
+  background: var(--grey-100);
+}

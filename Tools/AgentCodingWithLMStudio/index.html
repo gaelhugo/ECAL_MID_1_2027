@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atelier · Prompts pas à pas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Roboto+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Mise en page : notebook à gauche, séparateur, aperçu à droite -->
+    <div class="layout" id="layout">
+      <section class="panel panel--notebook">
+        <header class="topbar">
+          <div class="topbar__title">
+            <h1>Raster Image</h1>
+            <p>Prompts + Code, pas à pas</p>
+          </div>
+          <div class="toolbar" id="toolbar"></div>
+        </header>
+        <main class="notebook" id="notebook"></main>
+      </section>
+
+      <div class="splitter" id="splitter"></div>
+
+      <section class="panel panel--preview" id="preview"></section>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

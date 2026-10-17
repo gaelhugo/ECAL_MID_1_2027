@@ -1,0 +1,7 @@
+/* Point d'entrée des styles : un fichier par zone de l'interface */
+@import './base.css';
+@import './layout.css';
+@import './cell.css';
+@import './structure.css';
+@import './editor.css';
+@import './preview.css';

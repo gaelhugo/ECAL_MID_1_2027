@@ -1,0 +1,114 @@
+/* Barre d'actions flottante, visible sur la cellule sélectionnée */
+.cell-actions {
+  position: absolute;
+  top: -14px;
+  right: 12px;
+  z-index: 1;
+  display: none;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 16px;
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.cell.is-selected .cell-actions {
+  display: flex;
+}
+
+.icon-button--small {
+  width: 28px;
+  height: 28px;
+}
+
+.icon-button--small svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Zone d'insertion entre deux cellules : invisible jusqu'au survol */
+.cell-inserter {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20px;
+  margin-left: 48px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.cell-inserter:hover {
+  opacity: 1;
+}
+
+/* Fine ligne grise derrière le bouton */
+.cell-inserter::before {
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto;
+  height: 1px;
+  background: var(--grey-200);
+}
+
+.cell-inserter__button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 10px 0 6px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--grey-700);
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.cell-inserter__button:hover {
+  background: var(--grey-100);
+}
+
+.cell-inserter__button svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Message temporaire (annuler une suppression) */
+.snackbar {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 6px 8px 6px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  color: var(--grey-100);
+  background: var(--grey-900);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.snackbar.is-visible {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.snackbar__action {
+  padding: 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  color: var(--white);
+}
+
+.snackbar__action:hover {
+  background: rgba(255, 255, 255, 0.1);
+}

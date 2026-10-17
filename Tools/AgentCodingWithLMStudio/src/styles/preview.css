@@ -1,0 +1,52 @@
+/* Panneau d'aperçu */
+.panel--preview {
+  background: var(--grey-50);
+}
+
+.preview__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 12px 24px;
+}
+
+.preview__header h2 {
+  font-size: 18px;
+}
+
+.preview__info {
+  font-size: 12px;
+  color: var(--grey-700);
+}
+
+/* Scène : l'iframe et le message d'attente superposés */
+.preview__stage {
+  position: relative;
+  flex: 1;
+  margin: 0 16px 16px;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.preview__frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.preview__empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  color: var(--grey-500);
+  background: var(--white);
+}
+
+.preview__empty[hidden] {
+  display: none;
+}
