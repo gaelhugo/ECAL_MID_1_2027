@@ -1,0 +1,54 @@
+{
+  "name": "proce55us-mac",
+  "productName": "proce55us",
+  "version": "1.0.0",
+  "description": "Application macOS autonome (Electron) de proce55us, l'Atelier prompts webcam",
+  "private": true,
+  "type": "module",
+  "main": "electron/main.js",
+  "scripts": {
+    "icon": "node make-icon.js",
+    "build:web": "./build-mac.sh --web-only",
+    "start": "electron .",
+    "dist": "./build-mac.sh"
+  },
+  "build": {
+    "appId": "ch.ecal.proce55us",
+    "productName": "proce55us",
+    "files": [
+      "electron/**",
+      "app/**",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "icon": "build/icon.icns",
+      "category": "public.app-category.education",
+      "minimumSystemVersion": "12.0",
+      "identity": "-",
+      "hardenedRuntime": false,
+      "target": [
+        {
+          "target": "dmg",
+          "arch": "universal"
+        },
+        {
+          "target": "zip",
+          "arch": "universal"
+        }
+      ],
+      "extendInfo": {
+        "NSCameraUsageDescription": "L'aperçu utilise la caméra pour les exercices webcam."
+      }
+    },
+    "dmg": {
+      "title": "proce55us"
+    }
+  },
+  "devDependencies": {
+    "electron": "43.7.9",
+    "electron-builder": "26.17.0"
+  }
+}

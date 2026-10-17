@@ -1,0 +1,8 @@
+node_modules
+# Application web construite par build-mac.sh (copie générée, ne pas modifier)
+app
+# Applications produites (.app, .dmg, .zip)
+dist
+# Icône générée par make-icon.js
+build
+.DS_Store

@@ -61,6 +61,15 @@ Open <http://localhost:5173>. Pick a processus in the title dropdown (**Raster I
 - **LM Studio (default):** start the LM Studio local server (default `http://localhost:1234`); the model can be set in `.env` (`VITE_LMSTUDIO_MODEL`).
 - **Or a free online model:** open the ⚙︎ settings in the header, choose Google AI Studio, Groq, Mistral or OpenRouter, and paste a free API key (each needs a free account, no credit card).
 
+### `Tools/AgentCodingWithLMStudio-mac/` — **proce55us**, the same app as a macOS application
+
+```bash
+cd Tools/AgentCodingWithLMStudio-mac
+./build-mac.sh
+```
+
+Produces `dist/proce55us-1.0.0-universal.dmg`, installable on any Mac (macOS 12+, Apple Silicon and Intel) without Node.js. First launch on another Mac: right-click the app → **Open** (the app isn't signed with a paid Apple Developer ID). See its README for details.
+
 ## Notes
 
 - Camera-based demos require browser webcam permission and run 100% client-side.
