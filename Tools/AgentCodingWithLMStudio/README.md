@@ -1,6 +1,6 @@
 # Atelier Prompts Webcam — Agent Coding with LM Studio
 
-A pedagogical, notebook-style web app for teaching creative coding through prompting. Each step pairs a **natural-language prompt** (in French) with the **JavaScript code** it produces, building up a webcam-processing program cell by cell — canvas setup, webcam capture, grid rasterization, color sampling, shapes, luminosity, duotone, and mouse interaction.
+A pedagogical web app for teaching creative coding through prompting. A **processus** is an ordered list of steps; each step pairs a **natural-language prompt** (in French) with the **JavaScript code** it produces, building up a program cell by cell. The built-in **Raster Image** processus goes from canvas setup and webcam capture to grid rasterization, color sampling, shapes, luminosity, duotone, and mouse interaction.
 
 Vanilla JavaScript + **Vite** (no framework). UI and comments are in **French**.
 
@@ -41,6 +41,8 @@ The app works fully offline for browsing and running the steps. **A model is onl
 
 The gear icon opens a side panel to pick the service that generates code. **LM Studio stays the default.** Any other choice asks for an API key, stored only in this browser (`localStorage`) and sent only through the local Vite server.
 
+Each free service still needs **its own free API key**: sign up for a free account (no credit card), then create a key at the link below or via "Obtenir une clé" in the panel. Never commit a key or share it publicly. If a request fails, the error under the cell shows a short French hint plus the service's exact message (e.g. invalid key, daily limit reached).
+
 | Choice           | Model                                 | Cost                      | Get a key                             |
 | ---------------- | ------------------------------------- | ------------------------- | ------------------------------------- |
 | LM Studio        | model loaded locally                  | free, local               | —                                     |
@@ -63,7 +65,7 @@ Each cell executes in its own `<script>` tag inside the preview iframe, replayed
 
 ```
 src/
-├── main.js                     # Assembles notebook, preview, kernel, toolbar, splitter, shortcuts
+├── main.js                     # Assembles processus, preview, kernel, toolbar, dropdown, settings, shortcuts
 ├── examples/
 │   ├── index.js                # Auto-loads every *.json here; sets the default (DEFAULT_FILE)
 │   └── raster-image.json       # Demo processus: 8 steps (prompt + code), 01-canvas … 08-mouse

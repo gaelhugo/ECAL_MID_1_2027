@@ -9,7 +9,7 @@ Vanilla JS + Vite. Commentaires en français.
   « Nouveau processus » (1er du menu) = une seule cellule vide. Côté interface, on dit « processus » (pas « notebook »).
 - Le code de chaque étape s'exécute dans sa propre balise `<script>` (iframe), rejouée dans l'ordre :
   déclarer chaque `const`/`let` une seule fois ; ce qui évolue est une `function` redéfinie plus tard.
-- Prompt modifié → génération via LM Studio (`src/llm/`), relayé par le proxy Vite `/lmstudio`
+- Prompt modifié → génération (`src/llm/`), par défaut via LM Studio, relayé par le proxy Vite `/lmstudio`
   (cible `LMSTUDIO_URL`, défaut `http://localhost:1234` ; modèle `VITE_LMSTUDIO_MODEL` dans `.env`,
   actuellement `qwen2.5-coder-14b-instruct`, sinon le modèle chargé).
 - Réglages (⚙︎, `src/ui/SettingsPanel.js`, localStorage `atelier.settings`) : choix du service, LM Studio par défaut.
