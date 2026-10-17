@@ -10,9 +10,10 @@ Course repository for ECAL Master Media & Interaction Design. A monorepo of demo
 | [`FlashCards/`](FlashCards/) | Flashcard app for learning French creative-coding / agentic-AI vocabulary, with an animated Voronoi background                                                                  | Vue 3 + Vite                              |
 | [`Themes/`](Themes/)         | Standalone creative coding exercises (currently: an interactive particle system)                                                                                                | Plain HTML/JS, no build step              |
 | [`Tools/`](Tools/)           | Teaching tools: a step-by-step "processus" app pairing prompts with generated creative-coding code, using local LM Studio or a free online model                                | Vanilla JS + Vite                         |
-| [`docs/`](docs/)             | Landing page for **proce55us** (project presentation + app download) — ready for GitHub Pages                                                                                   | Static HTML, no build step                |
 
 Each project has its own `README.md` with more detail.
+
+The **proce55us** landing page lives in its own repository ([gaelhugo/proce55us](https://github.com/gaelhugo/proce55us)) and is served at <https://gaelhugo.github.io/proce55us/>.
 
 ## Running each project
 
@@ -70,10 +71,6 @@ cd Tools/AgentCodingWithLMStudio-mac
 ```
 
 Produces `dist/proce55us-1.0.0-universal.dmg`, installable on any Mac (macOS 12+, Apple Silicon and Intel) without Node.js. First launch on another Mac: right-click the app → **Open** (the app isn't signed with a paid Apple Developer ID). See its README for details.
-
-### `docs/` — landing page for proce55us
-
-A single static page (`docs/index.html`, no build). Open it locally with any static server, or publish it via **GitHub Pages**: repo Settings → Pages → deploy from branch `main`, folder `/docs`.
 
 ## Notes
 
