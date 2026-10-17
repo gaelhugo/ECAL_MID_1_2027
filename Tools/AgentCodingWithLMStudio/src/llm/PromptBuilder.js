@@ -41,16 +41,16 @@ export class PromptBuilder {
    */
   static messages({ prompt, originalPrompt, code, before, after }) {
     const previous = before.filter((cell) => cell.code.trim());
-    const reserved = PromptBuilder.#declaredNames(after.join("\n"));
+    const reserved = PromptBuilder.declaredNames(after.join("\n"));
     const system = [
       RULES,
       previous.length
-        ? `Cellules précédentes déjà exécutées, dans l'ordre (code complet) :\n${PromptBuilder.#fence(
-            previous.map(PromptBuilder.#cellBlock).join("\n\n"),
+        ? `Cellules précédentes déjà exécutées, dans l'ordre (code complet) :\n${PromptBuilder.fence(
+            previous.map(PromptBuilder.cellBlock).join("\n\n"),
           )}`
         : "Cellules précédentes : aucune. Rien n'existe encore.",
       previous.length &&
-        `Fonctions actives (la dernière définition de chacune, celle qui s'exécute réellement) :\n${PromptBuilder.#fence(
+        `Fonctions actives (la dernière définition de chacune, celle qui s'exécute réellement) :\n${PromptBuilder.fence(
           ProgramSummary.activeFunctions(previous.map((cell) => cell.code)),
         )}`,
       reserved.length &&
@@ -58,7 +58,7 @@ export class PromptBuilder {
       originalPrompt &&
         `Demande ayant produit le code actuel de la cellule : « ${originalPrompt} »`,
       code.trim()
-        ? `Code actuel de la cellule :\n${PromptBuilder.#fence(code)}`
+        ? `Code actuel de la cellule :\n${PromptBuilder.fence(code)}`
         : "La cellule est nouvelle et vide : écris son code à partir de zéro.",
     ];
     return [
@@ -68,17 +68,17 @@ export class PromptBuilder {
   }
 
   /** Une cellule précédente : en-tête (titre + prompt) en commentaire, puis son code. */
-  static #cellBlock({ label, prompt, code }) {
+  static cellBlock({ label, prompt, code }) {
     const header = `// ===== ${label}${prompt ? ` — prompt : « ${prompt.replace(/\s+/g, " ")} »` : ""} =====`;
     return `${header}\n${code.trim()}`;
   }
 
-  static #fence(code) {
+  static fence(code) {
     return code.trim() && `\`\`\`js\n${code.trim()}\n\`\`\``;
   }
 
   /** Noms déclarés au premier niveau avec const ou let. */
-  static #declaredNames(code) {
+  static declaredNames(code) {
     return [...code.matchAll(/^(?:const|let)\s+(\w+)/gm)].map(
       (match) => match[1],
     );

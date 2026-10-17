@@ -14,21 +14,21 @@
  *   Échap               quitter l'édition
  */
 export class Shortcuts {
-  #chord = false; // vrai juste après Ctrl + M
+  chord = false; // vrai juste après Ctrl + M
 
   constructor(notebook) {
     this.notebook = notebook;
-    document.addEventListener("keydown", (event) => this.#onKeyDown(event));
+    document.addEventListener("keydown", (event) => this.onKeyDown(event));
   }
 
-  #onKeyDown(event) {
-    // Le menu des exemples garde ses propres touches (flèches, Entrée)
-    if (event.target.tagName === "SELECT") return;
+  onKeyDown(event) {
+    // Le menu des exemples et les champs des réglages gardent leurs propres touches
+    if (["SELECT", "INPUT"].includes(event.target.tagName)) return;
     const nb = this.notebook;
     const mod = event.ctrlKey || event.metaKey;
-    const chord = this.#chord;
+    const chord = this.chord;
     const key = event.key.toLowerCase();
-    this.#chord = event.ctrlKey && key === "m";
+    this.chord = event.ctrlKey && key === "m";
 
     // Seconde touche après Ctrl + M
     const chordActions = {
@@ -42,7 +42,7 @@ export class Shortcuts {
     };
 
     const action = (() => {
-      if (this.#chord) return () => {};
+      if (this.chord) return () => {};
       if (chord && chordActions[key]) return chordActions[key];
       if (event.key === "Enter" && event.shiftKey)
         return () => {

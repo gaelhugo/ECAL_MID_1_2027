@@ -11,13 +11,17 @@ import { Splitter } from "./ui/Splitter.js";
 import { Shortcuts } from "./ui/Shortcuts.js";
 import { Snackbar } from "./ui/Snackbar.js";
 import { ExamplePicker } from "./ui/ExamplePicker.js";
+import { SettingsPanel } from "./ui/SettingsPanel.js";
+import { CodeGenerator } from "./llm/CodeGenerator.js";
 
 const preview = new Preview(document.querySelector("#preview"));
 const kernel = new Kernel(preview);
+const generator = new CodeGenerator();
 const notebook = new Notebook(
   document.querySelector("#notebook"),
   defaultExample.steps,
   kernel,
+  generator,
 );
 
 // Le menu du titre charge un autre exemple dans le processus
@@ -51,6 +55,12 @@ notebook.addEventListener("restart", ({ detail }) =>
 );
 
 new Toolbar(document.querySelector("#toolbar"), notebook, () => picker.title);
+
+// Réglages (⚙︎) : service utilisé pour générer le code (LM Studio par défaut)
+const settings = new SettingsPanel(document.querySelector("#toolbar"));
+const useSettings = () => (generator.client = settings.createClient());
+useSettings();
+settings.addEventListener("change", useSettings);
 new Splitter(
   document.querySelector("#splitter"),
   document.querySelector("#layout"),

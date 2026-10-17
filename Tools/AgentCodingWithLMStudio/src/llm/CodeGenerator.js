@@ -19,7 +19,7 @@ export class CodeGenerator {
   async generate(request, onCode) {
     const messages = PromptBuilder.messages(request);
     // Visible dans la console du navigateur : permet de vérifier le contexte envoyé
-    console.debug("[LM Studio] messages envoyés", messages);
+    console.debug(`[${this.client.name}] messages envoyés`, messages);
     let text = "";
     for await (const chunk of this.client.stream(messages)) {
       text += chunk;

@@ -10,13 +10,13 @@ export class CellActions {
   constructor({ onMove, onDelete }) {
     this.element = el("div", "cell-actions");
     this.element.append(
-      CellActions.#button(icons.up, "Monter (Ctrl + M puis K)", () => onMove(-1)),
-      CellActions.#button(icons.down, "Descendre (Ctrl + M puis J)", () => onMove(1)),
-      CellActions.#button(icons.delete, "Supprimer (Ctrl + M puis D)", onDelete),
+      CellActions.button(icons.up, "Monter (Ctrl + M puis K)", () => onMove(-1)),
+      CellActions.button(icons.down, "Descendre (Ctrl + M puis J)", () => onMove(1)),
+      CellActions.button(icons.delete, "Supprimer (Ctrl + M puis D)", onDelete),
     );
   }
 
-  static #button(icon, title, onClick) {
+  static button(icon, title, onClick) {
     const button = el("button", "icon-button icon-button--small", icon);
     button.title = title;
     button.addEventListener("click", onClick);

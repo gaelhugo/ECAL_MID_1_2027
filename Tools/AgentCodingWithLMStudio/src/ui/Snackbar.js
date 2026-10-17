@@ -5,7 +5,7 @@ import { el } from "./dom.js";
  * (ex. « Cellule supprimée · Annuler »), à la manière de Google.
  */
 export class Snackbar {
-  #timer;
+  timer;
 
   constructor(duration = 5000) {
     this.duration = duration;
@@ -24,8 +24,8 @@ export class Snackbar {
       onAction();
     };
     this.element.classList.add("is-visible");
-    clearTimeout(this.#timer);
-    this.#timer = setTimeout(() => this.hide(), this.duration);
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => this.hide(), this.duration);
   }
 
   hide() {

@@ -15,8 +15,8 @@ export const EMPTY_STEP = { title: "", prompt: "", code: "" };
  * Sous chaque cellule, une zone permet d'en insérer une nouvelle.
  */
 export class Cell {
-  #generated;
-  #sourcePrompt; // prompt qui a produit le code actuel
+  generated;
+  sourcePrompt; // prompt qui a produit le code actuel
 
   /**
    * @param {{ title: string, prompt: string, code: string }} step
@@ -26,29 +26,29 @@ export class Cell {
   constructor(step, id, { onRun, onSelect, onInsert, onMove, onDelete }) {
     this.step = step;
     this.id = id;
-    this.#sourcePrompt = step.prompt;
+    this.sourcePrompt = step.prompt;
     // Une cellule sans code prédéfini est directement modifiable
-    this.#generated = !step.code;
+    this.generated = !step.code;
     this.runButton = new RunButton(() => onRun(this));
     this.editor = new CodeEditor(
-      this.#generated
+      this.generated
         ? "Écrivez du code, ou un prompt à gauche"
         : "Exécutez la cellule pour générer le code",
     );
-    this.editor.readOnly = !this.#generated;
+    this.editor.readOnly = !this.generated;
     this.output = new CellOutput();
     this.actions = new CellActions({
       onMove: (delta) => onMove(this, delta),
       onDelete: () => onDelete(this),
     });
     this.inserter = new CellInserter(() => onInsert(this));
-    this.element = this.#build();
+    this.element = this.build();
     this.element.addEventListener("mousedown", () => onSelect(this));
   }
 
   /** Code actuel (le code prédéfini tant que la cellule n'a pas été générée). */
   get code() {
-    return this.#generated ? this.editor.value : this.step.code;
+    return this.generated ? this.editor.value : this.step.code;
   }
 
   get prompt() {
@@ -56,12 +56,12 @@ export class Cell {
   }
 
   get isGenerated() {
-    return this.#generated;
+    return this.generated;
   }
 
   /** Vrai si le prompt a changé depuis la génération du code actuel. */
   get isPromptModified() {
-    return this.prompt !== this.#sourcePrompt;
+    return this.prompt !== this.sourcePrompt;
   }
 
   /**
@@ -74,9 +74,9 @@ export class Cell {
    */
   async generate(generator, context) {
     if (this.isPromptModified && this.prompt)
-      return this.#generateFromPrompt(generator, context);
-    if (this.#generated) return;
-    this.#generated = true;
+      return this.generateFromPrompt(generator, context);
+    if (this.generated) return;
+    this.generated = true;
     await this.editor.type(this.step.code);
     this.editor.readOnly = false;
   }
@@ -98,7 +98,7 @@ export class Cell {
     this.promptText.focus();
   }
 
-  async #generateFromPrompt(generator, context) {
+  async generateFromPrompt(generator, context) {
     const prompt = this.prompt;
     const previous = this.editor.value;
     this.editor.readOnly = true;
@@ -107,33 +107,33 @@ export class Cell {
       const request = {
         ...context,
         prompt,
-        originalPrompt: this.#sourcePrompt,
+        originalPrompt: this.sourcePrompt,
         code: this.code,
       };
       this.editor.value = await generator.generate(
         request,
         (code) => (this.editor.value = code),
       );
-      this.#sourcePrompt = prompt;
-      this.#generated = true;
-      this.#updateModified();
+      this.sourcePrompt = prompt;
+      this.generated = true;
+      this.updateModified();
     } catch (error) {
       this.editor.value = previous; // en cas d'échec, on retrouve le code d'avant
       throw error;
     } finally {
-      this.editor.readOnly = !this.#generated;
+      this.editor.readOnly = !this.generated;
       this.element.classList.remove("is-generating");
     }
   }
 
-  #updateModified() {
+  updateModified() {
     this.element.classList.toggle(
       "is-modified",
       this.isPromptModified && this.prompt !== "",
     );
   }
 
-  #build() {
+  build() {
     const prompt = el(
       "div",
       "prompt",
@@ -145,7 +145,7 @@ export class Cell {
     this.promptText.dataset.placeholder = "Décrivez ce que le code doit faire…";
     this.promptText.contentEditable = "plaintext-only";
     this.promptText.spellcheck = false;
-    this.promptText.addEventListener("input", () => this.#updateModified());
+    this.promptText.addEventListener("input", () => this.updateModified());
     prompt.append(this.promptText);
 
     const body = el("div", "cell__body");

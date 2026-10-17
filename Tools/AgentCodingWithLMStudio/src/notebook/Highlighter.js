@@ -33,14 +33,14 @@ export class Highlighter {
     for (const match of code.matchAll(TOKEN)) {
       const type =
         TYPES[match.slice(1).findIndex((group) => group !== undefined)];
-      html += Highlighter.#escape(code.slice(last, match.index));
-      html += `<span class="tok-${type}">${Highlighter.#escape(match[0])}</span>`;
+      html += Highlighter.escape(code.slice(last, match.index));
+      html += `<span class="tok-${type}">${Highlighter.escape(match[0])}</span>`;
       last = match.index + match[0].length;
     }
-    return html + Highlighter.#escape(code.slice(last));
+    return html + Highlighter.escape(code.slice(last));
   }
 
-  static #escape(text) {
+  static escape(text) {
     return text
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")

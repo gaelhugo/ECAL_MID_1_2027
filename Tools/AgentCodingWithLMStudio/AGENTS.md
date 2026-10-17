@@ -12,6 +12,9 @@ Vanilla JS + Vite. Commentaires en français.
 - Prompt modifié → génération via LM Studio (`src/llm/`), relayé par le proxy Vite `/lmstudio`
   (cible `LMSTUDIO_URL`, défaut `http://localhost:1234` ; modèle `VITE_LMSTUDIO_MODEL` dans `.env`,
   actuellement `qwen2.5-coder-14b-instruct`, sinon le modèle chargé).
+- Réglages (⚙︎, `src/ui/SettingsPanel.js`, localStorage `atelier.settings`) : choix du service, LM Studio par défaut.
+  Services dans `src/llm/providers.js` ; chacun passe par un proxy Vite (`/gemini`, `/groq`, `/mistral`,
+  `/openrouter`). `LlmClient` = API OpenAI, `GeminiClient` = API Gemini (clé dans `x-goog-api-key`).
 - Contexte envoyé au modèle : code complet des cellules rendues au-dessus + fonctions actives (`ProgramSummary`).
 - Cellules : `id` unique et stable (≠ position) ; le noyau rejoue dans l'ordre du notebook (`kernel.run(cells, order)`).
 - Le code utilise des guillemets doubles (formatage Prettier de l'utilisateur).

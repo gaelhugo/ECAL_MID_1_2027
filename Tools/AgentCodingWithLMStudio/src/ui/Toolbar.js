@@ -8,18 +8,18 @@ import { CodeExporter } from "../export/CodeExporter.js";
  */
 export class Toolbar {
   constructor(root, notebook, getTitle = () => "processus") {
-    const add = Toolbar.#button(icons.add, "Cellule", "Ctrl + M puis B");
-    const runAll = Toolbar.#button(
+    const add = Toolbar.button(icons.add, "Cellule", "Ctrl + M puis B");
+    const runAll = Toolbar.button(
       icons.playAll,
       "Tout exécuter",
       "Ctrl/⌘ + F9",
     );
-    const restart = Toolbar.#button(
+    const restart = Toolbar.button(
       icons.restart,
       "Redémarrer",
       "Ctrl + M puis .",
     );
-    const download = Toolbar.#button(
+    const download = Toolbar.button(
       icons.download,
       "Télécharger",
       "cellules rendues, en fichier HTML",
@@ -48,7 +48,7 @@ export class Toolbar {
     root.append(add, runAll, restart, download, status);
   }
 
-  static #button(icon, label, shortcut) {
+  static button(icon, label, shortcut) {
     const button = el("button", "tool-button", `${icon}<span>${label}</span>`);
     button.title = `${label} (${shortcut})`;
     return button;

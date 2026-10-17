@@ -12,7 +12,7 @@ export class CodeExporter {
   static toHtml(cells, title) {
     const scripts = cells
       .filter((cell) => cell.code.trim())
-      .map((cell) => CodeExporter.#script(cell))
+      .map((cell) => CodeExporter.script(cell))
       .join("\n\n");
 
     return `<!doctype html>
@@ -20,7 +20,7 @@ export class CodeExporter {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>${CodeExporter.#escape(title)}</title>
+    <title>${CodeExporter.escape(title)}</title>
     <style>
       html, body { margin: 0; height: 100%; overflow: hidden; background: #fff; }
       canvas { display: block; }
@@ -40,14 +40,14 @@ ${scripts}
     });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `${CodeExporter.#slug(title)}.html`;
+    link.download = `${CodeExporter.slug(title)}.html`;
     link.click();
     // On libère l'URL une fois le téléchargement lancé
     setTimeout(() => URL.revokeObjectURL(link.href), 1000);
   }
 
   /** Une cellule : commentaire (titre + prompt) puis son code. */
-  static #script({ label, prompt, code }) {
+  static script({ label, prompt, code }) {
     const comment = [label, ...prompt.split("\n")]
       .filter(Boolean)
       .map((line) => `// ${line}`)
@@ -56,7 +56,7 @@ ${scripts}
     return `<script>\n${comment}\n\n${body}\n</script>`;
   }
 
-  static #slug(text) {
+  static slug(text) {
     return (
       text
         .normalize("NFD")
@@ -67,7 +67,7 @@ ${scripts}
     );
   }
 
-  static #escape(text) {
+  static escape(text) {
     return text.replace(/&/g, "&amp;").replace(/</g, "&lt;");
   }
 }

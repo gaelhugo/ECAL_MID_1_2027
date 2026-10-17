@@ -16,9 +16,9 @@ export class CodeEditor {
     layer.append(this.pre, this.textarea);
     this.element.append(layer);
 
-    this.textarea.addEventListener('input', () => this.#render());
-    this.textarea.addEventListener('keydown', (event) => this.#onKeyDown(event));
-    this.#render();
+    this.textarea.addEventListener('input', () => this.render());
+    this.textarea.addEventListener('keydown', (event) => this.onKeyDown(event));
+    this.render();
   }
 
   get value() {
@@ -27,7 +27,7 @@ export class CodeEditor {
 
   set value(text) {
     this.textarea.value = text;
-    this.#render();
+    this.render();
   }
 
   set readOnly(state) {
@@ -54,15 +54,15 @@ export class CodeEditor {
   }
 
   /** Met à jour la coloration (l'espace final garde la hauteur d'une ligne vide). */
-  #render() {
+  render() {
     this.pre.innerHTML = `${Highlighter.toHtml(this.textarea.value)} `;
   }
 
   /** La touche Tab insère deux espaces au lieu de changer de champ. */
-  #onKeyDown(event) {
+  onKeyDown(event) {
     if (event.key !== 'Tab' || this.textarea.readOnly) return;
     event.preventDefault();
     this.textarea.setRangeText('  ', this.textarea.selectionStart, this.textarea.selectionEnd, 'end');
-    this.#render();
+    this.render();
   }
 }

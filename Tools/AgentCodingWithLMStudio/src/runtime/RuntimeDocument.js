@@ -12,7 +12,7 @@ export class RuntimeDocument {
    */
   static build(entries, runId, focusId) {
     const scripts = entries
-      .map(({ id, code }) => `${RuntimeDocument.#script(`window.__cell = ${id};`)}\n${RuntimeDocument.#script(code)}`)
+      .map(({ id, code }) => `${RuntimeDocument.script(`window.__cell = ${id};`)}\n${RuntimeDocument.script(code)}`)
       .join('\n');
 
     return `<!doctype html>
@@ -20,19 +20,19 @@ export class RuntimeDocument {
   html, body { margin: 0; height: 100%; overflow: hidden; background: #fff; }
   canvas { display: block; }
 </style></head><body>
-${RuntimeDocument.#script(RuntimeDocument.#bridge(runId))}
+${RuntimeDocument.script(RuntimeDocument.bridge(runId))}
 ${scripts}
-${RuntimeDocument.#script(`window.__cell = ${focusId}; window.__kernelDone();`)}
+${RuntimeDocument.script(`window.__cell = ${focusId}; window.__kernelDone();`)}
 </body></html>`;
   }
 
   /** Enveloppe du code dans une balise <script> (en neutralisant un éventuel "</script>"). */
-  static #script(code) {
+  static script(code) {
     return `<script>${code.replace(/<\/script/gi, '<\\/script')}</script>`;
   }
 
   /** Pont iframe → parent : renvoie erreurs, console.log et fin d'exécution. */
-  static #bridge(runId) {
+  static bridge(runId) {
     return `(() => {
   const send = (type, text) =>
     parent.postMessage({ source: 'kernel', runId: ${runId}, cell: window.__cell, type, text }, '*');
