@@ -16,7 +16,7 @@ export class SettingsPanel extends EventTarget {
   constructor(buttonRoot) {
     super();
     this.load();
-    this.button = el("button", "icon-button", icons.settings);
+    this.button = el("button", "icon-button settings__button", icons.settings);
     this.button.addEventListener("click", () => this.toggle());
     buttonRoot.append(this.button);
 
