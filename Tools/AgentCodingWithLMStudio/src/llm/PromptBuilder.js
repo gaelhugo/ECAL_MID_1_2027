@@ -6,28 +6,37 @@
  *   chacune précédée de son prompt ;
  * - la version active de chaque fonction (ProgramSummary) ;
  * - le code actuel de la cellule à modifier.
+ * Les règles dépendent du mode du processus (JavaScript, p5.js, three.js, DOM).
  */
 import { ProgramSummary } from "./ProgramSummary.js";
+import { DEFAULT_MODE } from "../runtime/modes.js";
 
-const RULES = `Tu es un assistant de code JavaScript dans un notebook pédagogique (canvas 2D + webcam).
+const bullets = (lines) => lines.map((line) => `- ${line}`).join("\n");
+
+/** Instruction de base, complétée par les règles propres au mode. */
+const rules = (
+  mode,
+) => `Tu es un assistant de code JavaScript dans un notebook pédagogique (${mode.context}).
 
 Fonctionnement du programme (à respecter absolument) :
-- Chaque cellule est exécutée dans une balise <script> classique, l'une après l'autre. Ta cellule s'exécute juste après les « cellules précédentes » fournies ci-dessous.
-- SEULS les variables et fonctions définies dans ces cellules précédentes sont disponibles : n'en suppose aucune autre. S'il te manque quelque chose (canvas, contexte, boucle…), crée-le toi-même.
-- Une redéfinition « function nom() » remplace la précédente partout, y compris pour les appels faits par la boucle d'animation.
-- S'il existe une boucle requestAnimationFrame, elle redessine TOUT le canvas à chaque image en appelant ses fonctions (souvent draw()). Tout ce qui est dessiné en dehors de cette boucle (dans un écouteur de clic, par exemple) est effacé à l'image suivante.
-- Les objets temporaires créés pendant une image (par exemple les cellules passées par forEachCell) sont recréés à chaque image : les modifier ne dure qu'une image.
-- Donc, pour tout effet animé ou qui dure (explosion, déplacement, traînée…) : stocke son état dans une variable globale (let/const de premier niveau), mets cet état à jour à chaque image, et applique-le en redéfinissant la fonction de dessin appelée par la boucle (draw(), drawCell()…). Les écouteurs d'événements ne font que modifier cet état.
+${bullets([
+  "Chaque cellule est exécutée dans une balise <script> classique, l'une après l'autre. Ta cellule s'exécute juste après les « cellules précédentes » fournies ci-dessous.",
+  "SEULS les variables et fonctions définies dans ces cellules précédentes sont disponibles : n'en suppose aucune autre. S'il te manque quelque chose (canvas, contexte, boucle…), crée-le toi-même.",
+  "Une redéfinition « function nom() » remplace la précédente partout, y compris pour les appels faits par la boucle d'animation.",
+  ...mode.rules,
+])}
 
 Règles impératives :
-- Réponds UNIQUEMENT avec le code JavaScript de la cellule, sans explication ni balise markdown.
-- Ne redéclare jamais avec const/let un nom déjà déclaré. Pour changer un comportement existant, redéfinis la fonction concernée avec "function", uniquement si elle existe déjà.
-- Pour redéfinir une fonction, pars EXACTEMENT de sa version active (section « Fonctions actives ») : garde toutes ses lignes et modifie seulement ce que la demande exige.
-- Appelle les fonctions existantes (ex. drawCell(cell)) au lieu de recopier leur contenu.
-- N'utilise une propriété (ex. cell.color) que si le code existant l'assigne avant.
-- Pas d'import, pas de module, pas de HTML.
-- Pars du code actuel de la cellule et adapte-le à la nouvelle demande.
-- Même style que le code existant : simple, lisible, commentaires courts en français.`;
+${bullets([
+  "Réponds UNIQUEMENT avec le code JavaScript de la cellule, sans explication ni balise markdown.",
+  'Ne redéclare jamais avec const/let un nom déjà déclaré. Pour changer un comportement existant, redéfinis la fonction concernée avec "function", uniquement si elle existe déjà.',
+  "Pour redéfinir une fonction, pars EXACTEMENT de sa version active (section « Fonctions actives ») : garde toutes ses lignes et modifie seulement ce que la demande exige.",
+  "Appelle les fonctions existantes (ex. drawCell(cell)) au lieu de recopier leur contenu.",
+  "N'utilise une propriété (ex. cell.color) que si le code existant l'assigne avant.",
+  mode.output,
+  "Pars du code actuel de la cellule et adapte-le à la nouvelle demande.",
+  "Même style que le code existant : simple, lisible, commentaires courts en français.",
+])}`;
 
 export class PromptBuilder {
   /**
@@ -38,12 +47,20 @@ export class PromptBuilder {
    * @param {{ label: string, prompt: string, code: string }[]} request.before
    *   cellules précédentes réellement rendues, dans l'ordre
    * @param {string[]} request.after code des cellules suivantes
+   * @param {object} [request.mode] mode du processus (voir runtime/modes.js)
    */
-  static messages({ prompt, originalPrompt, code, before, after }) {
+  static messages({
+    prompt,
+    originalPrompt,
+    code,
+    before,
+    after,
+    mode = DEFAULT_MODE,
+  }) {
     const previous = before.filter((cell) => cell.code.trim());
     const reserved = PromptBuilder.declaredNames(after.join("\n"));
     const system = [
-      RULES,
+      rules(mode),
       previous.length
         ? `Cellules précédentes déjà exécutées, dans l'ordre (code complet) :\n${PromptBuilder.fence(
             previous.map(PromptBuilder.cellBlock).join("\n\n"),

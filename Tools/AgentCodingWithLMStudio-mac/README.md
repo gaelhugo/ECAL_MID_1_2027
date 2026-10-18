@@ -24,6 +24,7 @@ Output in `dist/`:
 - **Universal binary**: runs natively on Apple Silicon and Intel Macs.
 - **Requires macOS 12 (Monterey) or later** (Electron 43; Electron 44+ would require macOS 13).
 - Rebuild after any change to the web app: `./build-mac.sh` always rebuilds from the current sources.
+- All four modes (JavaScript, p5.js, three.js, DOM) work **offline**: p5.js and three.js are bundled into `app/assets/` by the web build (no CDN in the preview). Only the HTML export loads them from a CDN.
 
 Other commands:
 

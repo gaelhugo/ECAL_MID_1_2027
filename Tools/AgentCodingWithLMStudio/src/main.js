@@ -24,13 +24,20 @@ const notebook = new Notebook(
   generator,
 );
 
-// Le menu du titre charge un autre exemple dans le processus
+// Le mode du processus (JavaScript, p5.js, three.js, DOM) règle l'aperçu et la génération
+const useMode = (mode) => (kernel.mode = generator.mode = mode);
+
+// Le menu du titre charge un autre exemple (ou un autre mode) dans le processus
 const picker = new ExamplePicker(
   document.querySelector("#examples"),
   examples,
-  (example) => notebook.restart(example.steps),
+  (example) => {
+    useMode(example.mode);
+    notebook.restart(example.steps);
+  },
 );
 picker.show(defaultExample.steps);
+useMode(picker.mode);
 
 // « Relancer » applique les modifications de code des cellules déjà exécutées
 preview.onReload = () => notebook.rerun();
@@ -50,11 +57,17 @@ notebook.addEventListener("restart", ({ detail }) =>
     () => {
       notebook.undoRestart();
       picker.show(notebook.steps);
+      useMode(picker.mode);
     },
   ),
 );
 
-new Toolbar(document.querySelector("#toolbar"), notebook, () => picker.title);
+new Toolbar(
+  document.querySelector("#toolbar"),
+  notebook,
+  () => picker.title,
+  () => picker.mode,
+);
 
 // Réglages (⚙︎) : service utilisé pour générer le code (LM Studio par défaut)
 const settings = new SettingsPanel(document.querySelector("#toolbar"));

@@ -7,6 +7,8 @@ import { CodeCleaner } from "./CodeCleaner.js";
  * Le code est transmis au fur et à mesure (onCode) pour s'afficher en direct.
  */
 export class CodeGenerator {
+  mode; // mode du processus (voir runtime/modes.js), choisi par main.js
+
   constructor(client = new LlmClient()) {
     this.client = client;
   }
@@ -17,7 +19,7 @@ export class CodeGenerator {
    * @returns {Promise<string>} le code final
    */
   async generate(request, onCode) {
-    const messages = PromptBuilder.messages(request);
+    const messages = PromptBuilder.messages({ mode: this.mode, ...request });
     // Visible dans la console du navigateur : permet de vérifier le contexte envoyé
     console.debug(`[${this.client.name}] messages envoyés`, messages);
     let text = "";

@@ -4,12 +4,12 @@ Course repository for ECAL Master Media & Interaction Design. A monorepo of demo
 
 ## Projects
 
-| Folder                       | What it is                                                                                                                                                                      | Stack                                     |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| [`Demo/`](Demo/)             | Fullscreen webcam demos for lectures/projection: rasterization, halftone, duotone, MediaPipe pose tracking, fluid particles, ASCII, slit-scan — with an automated showcase tour | Vanilla JS + Vite, MediaPipe Tasks Vision |
-| [`FlashCards/`](FlashCards/) | Flashcard app for learning French creative-coding / agentic-AI vocabulary, with an animated Voronoi background                                                                  | Vue 3 + Vite                              |
-| [`Themes/`](Themes/)         | Standalone creative coding exercises (currently: an interactive particle system)                                                                                                | Plain HTML/JS, no build step              |
-| [`Tools/`](Tools/)           | Teaching tools: a step-by-step "processus" app pairing prompts with generated creative-coding code, using local LM Studio or a free online model                                | Vanilla JS + Vite                         |
+| Folder                       | What it is                                                                                                                                                                        | Stack                                     |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| [`Demo/`](Demo/)             | Fullscreen webcam demos for lectures/projection: rasterization, halftone, duotone, MediaPipe pose tracking, fluid particles, ASCII, slit-scan — with an automated showcase tour   | Vanilla JS + Vite, MediaPipe Tasks Vision |
+| [`FlashCards/`](FlashCards/) | Flashcard app for learning French creative-coding / agentic-AI vocabulary, with an animated Voronoi background                                                                    | Vue 3 + Vite                              |
+| [`Themes/`](Themes/)         | Standalone creative coding exercises (currently: an interactive particle system)                                                                                                  | Plain HTML/JS, no build step              |
+| [`Tools/`](Tools/)           | Teaching tools: a step-by-step "processus" app pairing prompts with generated creative-coding code (canvas, p5.js, three.js or DOM), using local LM Studio or a free online model | Vanilla JS + Vite, p5.js, three.js        |
 
 Each project has its own `README.md` with more detail.
 
@@ -58,7 +58,7 @@ npm install
 npm run dev
 ```
 
-Open <http://localhost:5173>. Pick a processus in the title dropdown (**Raster Image** by default, or **Nouveau processus** for an empty one). Browsing and running the steps works as-is — **a model is only needed to regenerate code from a modified prompt**:
+Open <http://localhost:5173>. Pick a mode in the pill next to the title — **JavaScript** canvas (default), **p5.js**, **three.js** or **DOM** — then a processus in the title dropdown (**Raster Image** by default, one example per mode, or **Nouveau processus** for an empty one). Browsing and running the steps works as-is — **a model is only needed to regenerate code from a modified prompt**:
 
 - **LM Studio (default):** start the LM Studio local server (default `http://localhost:1234`); the model can be set in `.env` (`VITE_LMSTUDIO_MODEL`).
 - **Or a free online model:** open the ⚙︎ settings in the header, choose Google AI Studio, Groq, Mistral or OpenRouter, and paste a free API key (each needs a free account, no credit card).

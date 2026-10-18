@@ -3,16 +3,25 @@
  * ou hébergé (la webcam exige https ou localhost).
  * Chaque cellule devient une balise <script>, précédée de son titre et
  * de son prompt en commentaire : le fichier se comporte comme l'aperçu.
+ * La bibliothèque du mode (p5.js, three.js) est chargée depuis un CDN.
  */
+import {
+  DEFAULT_MODE,
+  DEFERRED_RUNNER,
+  headTags,
+  scriptTag,
+} from "../runtime/modes.js";
+
 export class CodeExporter {
   /**
    * @param {{ label: string, prompt: string, code: string }[]} cells dans l'ordre du notebook
    * @param {string} title titre du document
+   * @param {object} mode mode du processus (voir runtime/modes.js)
    */
-  static toHtml(cells, title) {
+  static toHtml(cells, title, mode = DEFAULT_MODE) {
     const scripts = cells
       .filter((cell) => cell.code.trim())
-      .map((cell) => CodeExporter.script(cell))
+      .map((cell) => CodeExporter.script(cell, mode))
       .join("\n\n");
 
     return `<!doctype html>
@@ -22,20 +31,22 @@ export class CodeExporter {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${CodeExporter.escape(title)}</title>
     <style>
-      html, body { margin: 0; height: 100%; overflow: hidden; background: #fff; }
-      canvas { display: block; }
+${mode.style}
     </style>
   </head>
   <body>
+${headTags(mode, "export").join("\n")}
+
 ${scripts}
+${mode.deferred ? `\n${DEFERRED_RUNNER}` : ""}
   </body>
 </html>
 `;
   }
 
   /** Construit le fichier puis déclenche son téléchargement. */
-  static download(cells, title) {
-    const blob = new Blob([CodeExporter.toHtml(cells, title)], {
+  static download(cells, title, mode) {
+    const blob = new Blob([CodeExporter.toHtml(cells, title, mode)], {
       type: "text/html",
     });
     const link = document.createElement("a");
@@ -47,13 +58,12 @@ ${scripts}
   }
 
   /** Une cellule : commentaire (titre + prompt) puis son code. */
-  static script({ label, prompt, code }) {
+  static script({ label, prompt, code }, mode) {
     const comment = [label, ...prompt.split("\n")]
       .filter(Boolean)
       .map((line) => `// ${line}`)
       .join("\n");
-    const body = code.trim().replace(/<\/script/gi, "<\\/script");
-    return `<script>\n${comment}\n\n${body}\n</script>`;
+    return scriptTag(`\n${comment}\n\n${code.trim()}\n`, mode.deferred);
   }
 
   static slug(text) {

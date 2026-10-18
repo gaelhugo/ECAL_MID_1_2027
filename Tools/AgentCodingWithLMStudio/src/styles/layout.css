@@ -56,6 +56,29 @@
   background-color: var(--grey-100);
 }
 
+/* Menu du mode (JavaScript, p5.js, three.js, DOM) : petite pastille après le titre */
+.mode-picker {
+  appearance: none;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--grey-700);
+  vertical-align: middle;
+  margin-left: 6px;
+  padding: 3px 22px 3px 10px;
+  border: 1px solid var(--grey-300);
+  border-radius: 999px;
+  cursor: pointer;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%235f6368'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E")
+    no-repeat right 4px center / 16px;
+  transition: background-color 0.15s;
+}
+
+.mode-picker:hover,
+.mode-picker:focus-visible {
+  background-color: var(--grey-100);
+}
+
 .topbar p {
   font-size: 12px;
   color: var(--grey-700);

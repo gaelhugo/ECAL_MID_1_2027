@@ -1,34 +1,35 @@
+import { DEFAULT_MODE, DEFERRED_RUNNER, headTags, scriptTag } from "./modes.js";
+
 /**
  * Fabrique le document HTML exécuté dans l'iframe d'aperçu.
  * Chaque cellule devient une balise <script> distincte, précédée d'un
  * marqueur qui indique au document quelle cellule est en cours d'exécution :
  * ainsi, chaque erreur est rapportée à la bonne cellule.
+ * Le mode (JavaScript, p5.js, three.js, DOM) fournit le style de base et la bibliothèque.
  */
 export class RuntimeDocument {
   /**
    * @param {{ id: number, code: string }[]} entries cellules à exécuter, dans l'ordre
    * @param {number} runId identifiant de l'exécution (ignore les messages périmés)
    * @param {number} focusId cellule qui reçoit les erreurs asynchrones (après chargement)
+   * @param {object} mode voir modes.js
    */
-  static build(entries, runId, focusId) {
+  static build(entries, runId, focusId, mode = DEFAULT_MODE) {
+    const tag = (code) => scriptTag(code, mode.deferred);
     const scripts = entries
-      .map(({ id, code }) => `${RuntimeDocument.script(`window.__cell = ${id};`)}\n${RuntimeDocument.script(code)}`)
-      .join('\n');
+      .map(({ id, code }) => `${tag(`window.__cell = ${id};`)}\n${tag(code)}`)
+      .join("\n");
 
     return `<!doctype html>
 <html><head><meta charset="utf-8"><style>
-  html, body { margin: 0; height: 100%; overflow: hidden; background: #fff; }
-  canvas { display: block; }
+${mode.style}
 </style></head><body>
-${RuntimeDocument.script(RuntimeDocument.bridge(runId))}
+${scriptTag(RuntimeDocument.bridge(runId))}
+${headTags(mode, "preview").join("\n")}
 ${scripts}
-${RuntimeDocument.script(`window.__cell = ${focusId}; window.__kernelDone();`)}
+${tag(`window.__cell = ${focusId}; window.__kernelDone();`)}
+${mode.deferred ? DEFERRED_RUNNER : ""}
 </body></html>`;
-  }
-
-  /** Enveloppe du code dans une balise <script> (en neutralisant un éventuel "</script>"). */
-  static script(code) {
-    return `<script>${code.replace(/<\/script/gi, '<\\/script')}</script>`;
   }
 
   /** Pont iframe → parent : renvoie erreurs, console.log et fin d'exécution. */

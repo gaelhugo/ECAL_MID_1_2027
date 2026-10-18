@@ -1,4 +1,5 @@
 import { RuntimeDocument } from "./RuntimeDocument.js";
+import { DEFAULT_MODE } from "./modes.js";
 
 /**
  * Le « noyau » : équivalent simplifié du runtime de Colab.
@@ -15,6 +16,7 @@ export class Kernel extends EventTarget {
   runId = 0;
   seen = new Set(); // évite de répéter un même message (boucle d'animation)
   done = null; // résout la promesse de l'exécution en cours
+  mode = DEFAULT_MODE; // environnement de l'aperçu (voir modes.js)
 
   constructor(preview) {
     super();
@@ -58,7 +60,7 @@ export class Kernel extends EventTarget {
       (a, b) => order.indexOf(a.id) - order.indexOf(b.id),
     );
     this.preview.load(
-      RuntimeDocument.build(entries, this.runId, focusId),
+      RuntimeDocument.build(entries, this.runId, focusId, this.mode),
       entries.length,
     );
 

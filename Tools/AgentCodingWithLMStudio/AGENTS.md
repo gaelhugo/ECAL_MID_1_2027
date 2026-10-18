@@ -7,6 +7,12 @@ Vanilla JS + Vite. Commentaires en français.
   (`import.meta.glob`, triés par nom) ; format décrit en tête de `src/examples/index.js`
   (`{ title, steps: [{ title, prompt, code: [lignes] }] }`). `DEFAULT_FILE` = chargé au démarrage (`raster-image.json`).
   « Nouveau processus » (1er du menu) = une seule cellule vide. Côté interface, on dit « processus » (pas « notebook »).
+- Modes (`src/runtime/modes.js`) : `vanilla` (JavaScript canvas, défaut), `p5` (p5.js 1.11.13, mode global),
+  `three` (three.js r186 → `window.THREE` + `THREE.OrbitControls`, via `runtime/libs/three-global.js?worker&url`,
+  module ES donc cellules « deferred »), `dom` (page entière, helper `css()`). Champ `"mode"` du JSON ;
+  le menu n'affiche que les processus du mode choisi, chaque mode a son « Nouveau processus ».
+  Un mode fournit : style de base, bibliothèque (aperçu = fichiers locaux, export = CDN), règles du prompt système.
+  Bibliothèques épinglées dans `package.json` (versions exactes) : garder `P5_VERSION`/`THREE_VERSION` synchronisées.
 - Le code de chaque étape s'exécute dans sa propre balise `<script>` (iframe), rejouée dans l'ordre :
   déclarer chaque `const`/`let` une seule fois ; ce qui évolue est une `function` redéfinie plus tard.
 - Prompt modifié → génération (`src/llm/`), par défaut via LM Studio, relayé par le proxy Vite `/lmstudio`
