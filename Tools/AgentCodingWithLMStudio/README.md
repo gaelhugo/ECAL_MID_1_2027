@@ -1,6 +1,6 @@
-# Atelier Prompts Webcam — Agent Coding with LM Studio
+# Agent Coding with LM Studio
 
-A pedagogical web app for teaching creative coding through prompting. A **processus** is an ordered list of steps; each step pairs a **natural-language prompt** (in French) with the **JavaScript code** it produces, building up a program cell by cell. The built-in **Raster Image** processus goes from canvas setup and webcam capture to grid rasterization, color sampling, shapes, luminosity, duotone, and mouse interaction.
+A pedagogical web app for teaching creative coding through prompting. A **processus** is an ordered list of steps; each step pairs a **natural-language prompt** (in French) with the **JavaScript code** it produces, building up a program cell by cell.
 
 Vanilla JavaScript + **Vite** (no framework). UI and comments are in **French**.
 
