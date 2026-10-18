@@ -5,7 +5,7 @@ import { MODES } from "../runtime/modes.js";
  * Menus affichés à la place du titre :
  * - le processus chargé (seulement ceux du mode choisi) ;
  * - le mode : JavaScript (canvas), p5.js, three.js ou DOM.
- * Changer de mode charge son « Nouveau processus ». Tout choix appelle onChange(exemple).
+ * Changer de mode charge son premier exemple. Tout choix appelle onChange(exemple).
  */
 export class ExamplePicker {
   constructor(root, examples, onChange) {
@@ -24,6 +24,8 @@ export class ExamplePicker {
     });
     this.modeSelect.addEventListener("change", () => {
       this.fill(MODES[this.modeSelect.value]);
+      // On charge le premier exemple du mode (sinon son « Nouveau processus »)
+      this.select.selectedIndex = Math.min(1, this.visible.length - 1);
       onChange(this.current);
       this.modeSelect.blur();
     });
