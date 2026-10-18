@@ -34,6 +34,16 @@ npm start                   # run the desktop app without packaging (after --web
 
 > If you launch Electron from a terminal that is itself inside an Electron-based editor, unset `ELECTRON_RUN_AS_NODE` first (`env -u ELECTRON_RUN_AS_NODE npm start`) — otherwise Electron starts as plain Node and the window never opens.
 
+## Publishing a release
+
+```bash
+# 1. bump "version" in package.json (e.g. "1.0.0" → "1.1.0"), commit
+# 2. then:
+./release.sh
+```
+
+`release.sh` builds the app, tags `vX.Y.Z` (from `package.json`), pushes the tag, creates the GitHub release **proce55us vX.Y.Z** and uploads both `dist/` assets. The artifact names have no version in them (`proce55us-universal.dmg`), so the homepage's `releases/latest/download/…` link — and its version badge — always track the newest release automatically. It uses the GitHub token stored in the macOS keychain (created by `gh auth login` or GitHub Desktop); if your token lives elsewhere, export it: `GITHUB_TOKEN=… ./release.sh` — adapt the `TOKEN=` line accordingly.
+
 ## Model used for code generation
 
 - **LM Studio (default)**: the app uses whatever model is **currently loaded in LM Studio on that Mac** (the `.env` model is intentionally not forced, since other Macs have other models). To force one: `VITE_LMSTUDIO_MODEL=model-name ./build-mac.sh`.
@@ -62,6 +72,7 @@ To remove the warning entirely, the app must be signed with an Apple **Developer
 electron/main.js     # Window, camera permission (macOS prompt), external links → default browser
 electron/server.js   # Local server on 127.0.0.1: serves app/ + same relay routes as vite.config.js
 build-mac.sh         # vite build → app/, then electron-builder → dist/
+release.sh           # build + tag vX.Y.Z + GitHub release + upload artifacts
 make-icon.js         # generates build/icon.icns (pixel-mosaic "55"), run by build-mac.sh when missing
 package.json         # Electron 43.7.9, electron-builder 26.17.0, packaging config
 ```
