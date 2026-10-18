@@ -38,12 +38,12 @@ npm start                   # run the desktop app without packaging (after --web
 ## Publishing a release
 
 ```bash
-# 1. bump "version" in package.json (e.g. "1.0.0" → "1.1.0"), commit
+# 1. add a "## 1.2.0" section to CHANGELOG.md (it becomes the release notes), commit
 # 2. then:
-./release.sh
+./release.sh 1.2.0
 ```
 
-`release.sh` builds the app, tags `vX.Y.Z` (from `package.json`), pushes the tag, creates the GitHub release **proce55us vX.Y.Z** and uploads both `dist/` assets. The artifact names have no version in them (`proce55us-universal.dmg`), so the homepage's `releases/latest/download/…` link — and its version badge — always track the newest release automatically. It uses the GitHub token stored in the macOS keychain (created by `gh auth login` or GitHub Desktop); if your token lives elsewhere, export it: `GITHUB_TOKEN=… ./release.sh` — adapt the `TOKEN=` line accordingly.
+`release.sh 1.2.0` sets the version in `package.json` (and its lockfile) and commits it, builds the app, pushes `main` and the `v1.2.0` tag, creates the GitHub release **proce55us v1.2.0** with the CHANGELOG section as notes, and uploads both `dist/` assets. Without an argument it releases the version already in `package.json`; re-running for an existing tag updates its notes and replaces its assets. The artifact names have no version in them (`proce55us-universal.dmg`), so the homepage's `releases/latest/download/…` link — and its version badge — always track the newest release automatically. It uses the GitHub token stored in the macOS keychain (created by `gh auth login` or GitHub Desktop); if your token lives elsewhere, export it: `GITHUB_TOKEN=… ./release.sh` — adapt the `TOKEN=` line accordingly.
 
 ## Model used for code generation
 
@@ -73,7 +73,8 @@ To remove the warning entirely, the app must be signed with an Apple **Developer
 electron/main.js     # Window, camera permission (macOS prompt), external links → default browser
 electron/server.js   # Local server on 127.0.0.1: serves app/ + same relay routes as vite.config.js
 build-mac.sh         # vite build → app/, then electron-builder → dist/
-release.sh           # build + tag vX.Y.Z + GitHub release + upload artifacts
+release.sh           # [version] → bump + build + push main/tag + GitHub release + upload artifacts
+CHANGELOG.md         # one section per version, used as release notes
 make-icon.js         # generates build/icon.icns (pixel-mosaic "55"), run by build-mac.sh when missing
 package.json         # Electron 43.7.9, electron-builder 26.17.0, packaging config
 ```
