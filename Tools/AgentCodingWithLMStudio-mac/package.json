@@ -41,8 +41,17 @@
         }
       ],
       "extendInfo": {
-        "NSCameraUsageDescription": "L'aperçu utilise la caméra pour les exercices webcam."
-      }
+        "NSCameraUsageDescription": "The preview uses the camera for webcam exercises."
+      },
+      "extraResources": [
+        {
+          "from": "resources",
+          "to": ".",
+          "filter": [
+            "*.lproj/InfoPlist.strings"
+          ]
+        }
+      ]
     },
     "dmg": {
       "title": "proce55us",

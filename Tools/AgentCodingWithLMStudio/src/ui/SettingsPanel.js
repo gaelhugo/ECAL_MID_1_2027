@@ -1,6 +1,13 @@
 import { el } from "./dom.js";
 import { icons } from "./icons.js";
 import { providers, createClient } from "../llm/providers.js";
+import {
+  LANGUAGES,
+  languageSetting,
+  setLanguageSetting,
+  systemLanguage,
+  t,
+} from "../i18n/index.js";
 
 const STORAGE_KEY = "atelier.settings";
 
@@ -57,11 +64,11 @@ export class SettingsPanel extends EventTarget {
     const panel = el(
       "aside",
       "settings",
-      `<header class="settings__header"><h2>Réglages</h2></header>
-      <p class="settings__intro">Service utilisé pour générer le code à partir des prompts.</p>`,
+      `<header class="settings__header"><h2>${t("settings.title")}</h2></header>
+      <p class="settings__intro">${t("settings.intro")}</p>`,
     );
     const close = el("button", "icon-button", icons.close);
-    close.title = "Fermer (Échap)";
+    close.title = t("settings.close");
     close.addEventListener("click", () => this.toggle(false));
     panel.querySelector("header").append(close);
 
@@ -91,8 +98,8 @@ export class SettingsPanel extends EventTarget {
     this.keyField = el(
       "label",
       "settings__key",
-      `<span></span><input type="password" autocomplete="off" spellcheck="false" placeholder="Collez votre clé ici" />
-      <a target="_blank" rel="noopener">Obtenir une clé</a>`,
+      `<span></span><input type="password" autocomplete="off" spellcheck="false" placeholder="${t("settings.keyPlaceholder")}" />
+      <a target="_blank" rel="noopener">${t("settings.getKey")}</a>`,
     );
     this.keyInput = this.keyField.querySelector("input");
     this.keyInput.addEventListener("input", () => {
@@ -101,14 +108,38 @@ export class SettingsPanel extends EventTarget {
     });
     panel.append(
       this.keyField,
-      el(
-        "p",
-        "settings__note",
-        "Les clés restent dans ce navigateur et ne transitent que par le serveur Vite local.",
-      ),
+      el("p", "settings__note", t("settings.keysNote")),
+      ...this.buildLanguage(),
     );
     panel.inert = true;
     return panel;
+  }
+
+  /** Choix de la langue : automatique (système), français ou anglais. */
+  buildLanguage() {
+    const choices = {
+      auto: t("settings.language.auto", {
+        language: LANGUAGES[systemLanguage()],
+      }),
+      ...LANGUAGES,
+    };
+    const options = Object.entries(choices).map(([value, label]) => {
+      const option = el(
+        "label",
+        "settings__option",
+        `<input type="radio" name="language" value="${value}" />
+        <span><strong>${label}</strong></span>`,
+      );
+      const radio = option.querySelector("input");
+      radio.checked = value === languageSetting;
+      radio.addEventListener("change", () => setLanguageSetting(value));
+      return option;
+    });
+    return [
+      el("h3", "settings__group", t("settings.language")),
+      ...options,
+      el("p", "settings__note", t("settings.language.note")),
+    ];
   }
 
   /** Met l'affichage à jour selon le service choisi. */
@@ -116,11 +147,15 @@ export class SettingsPanel extends EventTarget {
     const provider = this.provider;
     const needsKey = provider.id !== "lmstudio";
     this.keyField.hidden = !needsKey;
-    this.keyField.querySelector("span").textContent =
-      `Clé API ${provider.name}`;
+    this.keyField.querySelector("span").textContent = t("settings.key", {
+      name: provider.name,
+    });
     this.keyField.querySelector("a").href = provider.keyUrl ?? "";
     this.keyInput.value = this.settings.keys[provider.id] ?? "";
-    this.button.title = `Réglages · ${provider.label} (${provider.name})`;
+    this.button.title = t("settings.button", {
+      label: provider.label,
+      name: provider.name,
+    });
   }
 
   load() {

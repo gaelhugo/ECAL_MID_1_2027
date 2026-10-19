@@ -7,35 +7,53 @@
  * - la version active de chaque fonction (ProgramSummary) ;
  * - le code actuel de la cellule à modifier.
  * Les règles dépendent du mode du processus (JavaScript, p5.js, three.js, DOM).
+ * Elles sont rédigées en anglais (mieux suivies par les petits modèles locaux) ;
+ * la langue des commentaires et des textes affichés suit celle de l'interface.
  */
 import { ProgramSummary } from "./ProgramSummary.js";
 import { DEFAULT_MODE } from "../runtime/modes.js";
+import { lang as uiLang } from "../i18n/index.js";
 
 const bullets = (lines) => lines.map((line) => `- ${line}`).join("\n");
 
-/** Instruction de base, complétée par les règles propres au mode. */
+// Rappel ajouté à la demande de l'utilisateur, écrit dans la langue voulue :
+// c'est le message que le modèle suit le plus (même si le prompt est dans une autre langue)
+const LANGUAGE_REMINDERS = {
+  fr: "(Écris tous les commentaires du code en français, et les textes affichés aussi.)",
+  en: "(Write all code comments in English, and any displayed text too.)",
+};
+
+// Langue des commentaires et des textes visibles du code généré
+const LANGUAGE_RULES = {
+  fr: "Write EVERY code comment in French — natural, correct French with all its accents (é, è, à, ç…), e.g. « // On redessine le fond à chaque image ». Any text displayed on the page (titles, labels, buttons, placeholders…) must also be in French. Keep identifiers (variable and function names) in English. Apply this even if the request or the existing code is written in another language.",
+  en: "Write every code comment in English. Any text displayed on the page (titles, labels, buttons, placeholders…) must also be in English. Keep identifiers (variable and function names) in English. Apply this even if the request or the existing code is written in another language.",
+};
+
+/** Instruction de base, complétée par les règles propres au mode et à la langue. */
 const rules = (
   mode,
-) => `Tu es un assistant de code JavaScript dans un notebook pédagogique (${mode.context}).
+  lang,
+) => `You are a JavaScript coding assistant in an educational notebook (${mode.context}).
 
-Fonctionnement du programme (à respecter absolument) :
+How the program works (follow strictly):
 ${bullets([
-  "Chaque cellule est exécutée dans une balise <script> classique, l'une après l'autre. Ta cellule s'exécute juste après les « cellules précédentes » fournies ci-dessous.",
-  "SEULS les variables et fonctions définies dans ces cellules précédentes sont disponibles : n'en suppose aucune autre. S'il te manque quelque chose (canvas, contexte, boucle…), crée-le toi-même.",
-  "Une redéfinition « function nom() » remplace la précédente partout, y compris pour les appels faits par la boucle d'animation.",
+  "Each cell runs in a classic <script> tag, one after the other. Your cell runs right after the “previous cells” given below.",
+  "ONLY the variables and functions defined in those previous cells are available: assume nothing else exists. If something is missing (canvas, context, loop…), create it yourself.",
+  "Redefining “function name()” replaces the previous definition everywhere, including for calls made by the animation loop.",
   ...mode.rules,
 ])}
 
-Règles impératives :
+Mandatory rules:
 ${bullets([
-  "Réponds UNIQUEMENT avec le code JavaScript de la cellule, sans explication ni balise markdown.",
-  'Ne redéclare jamais avec const/let un nom déjà déclaré. Pour changer un comportement existant, redéfinis la fonction concernée avec "function", uniquement si elle existe déjà.',
-  "Pour redéfinir une fonction, pars EXACTEMENT de sa version active (section « Fonctions actives ») : garde toutes ses lignes et modifie seulement ce que la demande exige.",
-  "Appelle les fonctions existantes (ex. drawCell(cell)) au lieu de recopier leur contenu.",
-  "N'utilise une propriété (ex. cell.color) que si le code existant l'assigne avant.",
+  "Reply ONLY with the JavaScript code of the cell, with no explanation and no markdown fence.",
+  'Never redeclare with const/let a name that is already declared. To change an existing behavior, redefine the relevant function with "function", only if it already exists.',
+  "To redefine a function, start EXACTLY from its active version (“Active functions” section): keep all its lines and change only what the request requires.",
+  "Call existing functions (e.g. drawCell(cell)) instead of copying their content.",
+  "Only use a property (e.g. cell.color) if the existing code assigns it first.",
   mode.output,
-  "Pars du code actuel de la cellule et adapte-le à la nouvelle demande.",
-  "Même style que le code existant : simple, lisible, commentaires courts en français.",
+  "Start from the current code of the cell and adapt it to the new request.",
+  "Same style as the existing code: simple, readable, short comments.",
+  LANGUAGE_RULES[lang] ?? LANGUAGE_RULES.en,
 ])}`;
 
 export class PromptBuilder {
@@ -48,6 +66,7 @@ export class PromptBuilder {
    *   cellules précédentes réellement rendues, dans l'ordre
    * @param {string[]} request.after code des cellules suivantes
    * @param {object} [request.mode] mode du processus (voir runtime/modes.js)
+   * @param {string} [request.lang] langue des commentaires : "fr" ou "en" (défaut : interface)
    */
   static messages({
     prompt,
@@ -56,37 +75,43 @@ export class PromptBuilder {
     before,
     after,
     mode = DEFAULT_MODE,
+    lang = uiLang,
   }) {
     const previous = before.filter((cell) => cell.code.trim());
     const reserved = PromptBuilder.declaredNames(after.join("\n"));
     const system = [
-      rules(mode),
+      rules(mode, lang),
       previous.length
-        ? `Cellules précédentes déjà exécutées, dans l'ordre (code complet) :\n${PromptBuilder.fence(
+        ? `Previous cells already run, in order (full code):\n${PromptBuilder.fence(
             previous.map(PromptBuilder.cellBlock).join("\n\n"),
           )}`
-        : "Cellules précédentes : aucune. Rien n'existe encore.",
+        : "Previous cells: none. Nothing exists yet.",
       previous.length &&
-        `Fonctions actives (la dernière définition de chacune, celle qui s'exécute réellement) :\n${PromptBuilder.fence(
+        `Active functions (the last definition of each one, the one that actually runs):\n${PromptBuilder.fence(
           ProgramSummary.activeFunctions(previous.map((cell) => cell.code)),
         )}`,
       reserved.length &&
-        `Noms réservés par les cellules suivantes : ils ne sont PAS disponibles ici, ne les utilise pas et ne les déclare pas avec const/let : ${reserved.join(", ")}`,
+        `Names reserved by the following cells: they are NOT available here, do not use them and do not declare them with const/let: ${reserved.join(", ")}`,
       originalPrompt &&
-        `Demande ayant produit le code actuel de la cellule : « ${originalPrompt} »`,
+        `Request that produced the current code of the cell: “${originalPrompt}”`,
       code.trim()
-        ? `Code actuel de la cellule :\n${PromptBuilder.fence(code)}`
-        : "La cellule est nouvelle et vide : écris son code à partir de zéro.",
+        ? `Current code of the cell:\n${PromptBuilder.fence(code)}`
+        : "The cell is new and empty: write its code from scratch.",
+      // Rappel final (les modèles suivent mieux une consigne placée en dernier)
+      `Reminder: ${LANGUAGE_RULES[lang] ?? LANGUAGE_RULES.en}`,
     ];
     return [
       { role: "system", content: system.filter(Boolean).join("\n\n") },
-      { role: "user", content: prompt },
+      {
+        role: "user",
+        content: `${prompt}\n\n${LANGUAGE_REMINDERS[lang] ?? LANGUAGE_REMINDERS.en}`,
+      },
     ];
   }
 
   /** Une cellule précédente : en-tête (titre + prompt) en commentaire, puis son code. */
   static cellBlock({ label, prompt, code }) {
-    const header = `// ===== ${label}${prompt ? ` — prompt : « ${prompt.replace(/\s+/g, " ")} »` : ""} =====`;
+    const header = `// ===== ${label}${prompt ? ` — prompt: “${prompt.replace(/\s+/g, " ")}”` : ""} =====`;
     return `${header}\n${code.trim()}`;
   }
 

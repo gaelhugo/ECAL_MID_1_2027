@@ -7,17 +7,10 @@
  * - GeminiClient : API Gemini (Google AI Studio).
  * Chacun renvoie le texte de la réponse morceau par morceau : stream(messages).
  */
-const UNREACHABLE =
-  "Impossible de joindre LM Studio. Lancez le serveur local (port 1234) et chargez un modèle.";
-const NO_PROXY = (baseUrl) =>
-  `Le proxy ${baseUrl} n'est pas actif : relancez « npm run dev » pour charger vite.config.js.`;
+import { t } from "../i18n/index.js";
+
 // Messages plus clairs pour les erreurs les plus fréquentes des services en ligne
-const HINTS = {
-  400: "requête refusée (clé API ou modèle invalide ?)",
-  401: "clé API invalide ou manquante (voir Réglages)",
-  403: "clé API refusée (voir Réglages)",
-  429: "limite d'utilisation atteinte, réessayez dans un moment",
-};
+const HINTED = [400, 401, 403, 429];
 
 export class LlmClient {
   constructor(options = {}) {
@@ -89,26 +82,29 @@ export class LlmClient {
     const { data = [] } = await (await this.request("/api/v0/models")).json();
     const chat = data.filter((model) => model.type !== "embeddings");
     const model = chat.find((m) => m.state === "loaded") ?? chat[0];
-    if (!model) throw new Error("Aucun modèle disponible dans LM Studio.");
+    if (!model) throw new Error(t("llm.noModel"));
     return model.id;
   }
 
   async request(path, options) {
     if (this.requiresKey && !this.apiKey)
-      throw new Error(
-        `${this.name} : ajoutez votre clé API dans les Réglages (icône ⚙︎).`,
-      );
+      throw new Error(t("llm.noKey", { name: this.name }));
     const response = await fetch(this.baseUrl + path, options).catch(
       () => null,
     );
     // Le proxy Vite répond 5xx quand LM Studio n'est pas lancé
     if (!response || (this.isLocal && response.status >= 500))
       throw new Error(
-        this.isLocal ? UNREACHABLE : `Impossible de joindre ${this.name}.`,
+        this.isLocal
+          ? t("llm.unreachable")
+          : t("llm.unreachableService", { name: this.name }),
       );
     if (!response.ok) {
-      // Aide en français + message exact du service (utile pour comprendre une clé refusée)
-      const hint = !this.isLocal && HINTS[response.status];
+      // Aide dans la langue de l'interface + message exact du service (utile pour comprendre une clé refusée)
+      const hint =
+        !this.isLocal &&
+        HINTED.includes(response.status) &&
+        t(`llm.hint.${response.status}`);
       const message = LlmClient.errorMessage(await response.text());
       throw new Error(
         `${this.name} (${response.status}) : ${hint ? `${hint} — ${message}` : message}`,
@@ -116,7 +112,7 @@ export class LlmClient {
     }
     // Une page HTML signifie que le proxy n'est pas actif
     if (response.headers.get("content-type")?.includes("text/html"))
-      throw new Error(NO_PROXY(this.baseUrl));
+      throw new Error(t("llm.noProxy", { baseUrl: this.baseUrl }));
     return response;
   }
 

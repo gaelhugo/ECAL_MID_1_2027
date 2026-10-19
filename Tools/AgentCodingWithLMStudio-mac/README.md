@@ -47,12 +47,16 @@ npm start                   # run the desktop app without packaging (after --web
 
 ## Update checker
 
-At launch (then every 6 hours), the app compares its version with the latest GitHub release (`api.github.com/repos/gaelhugo/ECAL_MID_1_2027/releases/latest`). If a newer one exists, a small capsule appears **at the top right** of the window: **Nouvelle version X.Y.Z** (opens the release notes) · **Télécharger** (opens the `.dmg` in the default browser) · **×** (hides it until the next version; remembered in `~/Library/Application Support/proce55us/updater.json`).
+At launch (then every 6 hours), the app compares its version with the latest GitHub release (`api.github.com/repos/gaelhugo/ECAL_MID_1_2027/releases/latest`). If a newer one exists, a small capsule appears **at the top right** of the window: **New version X.Y.Z** (opens the release notes) · **Download** (opens the `.dmg` in the default browser) · **×** (hides it until the next version; remembered in `~/Library/Application Support/proce55us/updater.json`). Its texts follow the app's language (French or English, see below).
 
 - Installing stays manual: open the downloaded `.dmg`, drag **proce55us** into Applications (replace), then **Open Anyway** once more (see below).
 - Fully automatic updates (download + replace + restart) are not possible: on macOS they require a paid Apple **Developer ID** signature.
 - Offline or GitHub unreachable → nothing is shown. The capsule is injected by Electron (Shadow DOM, `electron/updater.js`): the web app is not modified and the browser version never shows it.
 - To test it: set `"version": "1.0.0"` in `package.json`, run `./build-mac.sh --web-only && env -u ELECTRON_RUN_AS_NODE npm start`, then restore the version.
+
+## Language
+
+The app follows the **macOS language**: French if the preferred language is French (any region), English otherwise. It can be forced in ⚙︎ Settings → Langue / Language. The interface, the examples (including their code comments), the comments in generated code, the update capsule and the camera permission prompt all follow it. The camera prompt text is localized through `resources/fr.lproj` and `resources/en.lproj` (`InfoPlist.strings`, copied into the app by `extraResources`); macOS always uses the system language for that prompt.
 
 ## Model used for code generation
 
@@ -81,7 +85,8 @@ To remove the warning entirely, the app must be signed with an Apple **Developer
 ```
 electron/main.js     # Window, camera permission (macOS prompt), external links → default browser
 electron/server.js   # Local server on 127.0.0.1: serves app/ + same relay routes as vite.config.js
-electron/updater.js  # Checks the latest GitHub release, shows the "Nouvelle version" capsule
+electron/updater.js  # Checks the latest GitHub release, shows the "New version" capsule (FR/EN)
+resources/*.lproj/   # Localized camera permission text (InfoPlist.strings)
 build-mac.sh         # vite build → app/, then electron-builder → dist/
 release.sh           # [version] → bump + build + push main/tag + GitHub release + upload artifacts
 CHANGELOG.md         # one section per version, used as release notes

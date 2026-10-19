@@ -17,6 +17,22 @@ const LATEST = `https://api.github.com/repos/${REPO}/releases/latest`;
 const DOWNLOAD = `https://github.com/${REPO}/releases/latest/download/proce55us-universal.dmg`;
 const INTERVAL = 6 * 60 * 60 * 1000; // nouvelle vérification toutes les 6 h
 
+// Textes de la capsule : même langue que l'interface (choix des Réglages, sinon système)
+const TEXTS = {
+  fr: {
+    label: "Nouvelle version {version}",
+    notes: "Voir les nouveautés",
+    download: "Télécharger",
+    close: "Masquer jusqu’à la prochaine version",
+  },
+  en: {
+    label: "New version {version}",
+    notes: "See what's new",
+    download: "Download",
+    close: "Hide until the next version",
+  },
+};
+
 const stateFile = () => path.join(app.getPath("userData"), "updater.json");
 const readState = () => {
   try {
@@ -87,6 +103,10 @@ export function checkForUpdates(window) {
  */
 function capsule(version, notesUrl) {
   return `new Promise((resolve) => {
+  // Même règle que l'application web (src/i18n) : Réglages, sinon langue du système
+  const saved = localStorage.getItem("atelier.lang");
+  const system = (navigator.languages?.[0] ?? navigator.language ?? "en").toLowerCase();
+  const texts = ${JSON.stringify(TEXTS)}[saved === "fr" || saved === "en" ? saved : system.startsWith("fr") ? "fr" : "en"];
   document.getElementById("proce55us-update")?.remove();
   const host = document.createElement("div");
   host.id = "proce55us-update";
@@ -119,14 +139,18 @@ function capsule(version, notesUrl) {
   </style>
   <div class="capsule" role="status">
     <span class="dot"></span>
-    <a class="label" target="_blank" title="Voir les nouveautés"></a>
-    <a class="download" target="_blank">Télécharger</a>
-    <button class="close" title="Masquer jusqu’à la prochaine version">×</button>
+    <a class="label" target="_blank"></a>
+    <a class="download" target="_blank"></a>
+    <button class="close">×</button>
   </div>\`;
   const label = root.querySelector(".label");
-  label.textContent = "Nouvelle version " + ${JSON.stringify(version)};
+  label.textContent = texts.label.replace("{version}", ${JSON.stringify(version)});
+  label.title = texts.notes;
   label.href = ${JSON.stringify(notesUrl)};
-  root.querySelector(".download").href = ${JSON.stringify(DOWNLOAD)};
+  const download = root.querySelector(".download");
+  download.textContent = texts.download;
+  download.href = ${JSON.stringify(DOWNLOAD)};
+  root.querySelector(".close").title = texts.close;
   // Retrait différé : un lien retiré pendant le clic n'ouvrirait plus sa page
   const done = (action) => setTimeout(() => { host.remove(); resolve(action); });
   root.querySelector(".download").addEventListener("click", () => done("download"));

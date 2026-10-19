@@ -1,6 +1,7 @@
 import { LlmClient } from "./LlmClient.js";
 import { PromptBuilder } from "./PromptBuilder.js";
 import { CodeCleaner } from "./CodeCleaner.js";
+import { t } from "../i18n/index.js";
 
 /**
  * Génère le code d'une cellule à partir de son prompt modifié.
@@ -28,7 +29,7 @@ export class CodeGenerator {
       onCode(CodeCleaner.clean(text));
     }
     const code = CodeCleaner.clean(text);
-    if (!code.trim()) throw new Error("Le modèle n’a renvoyé aucun code.");
+    if (!code.trim()) throw new Error(t("llm.noCode"));
     return code;
   }
 }

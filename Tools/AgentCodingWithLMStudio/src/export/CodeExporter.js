@@ -11,6 +11,7 @@ import {
   headTags,
   scriptTag,
 } from "../runtime/modes.js";
+import { lang } from "../i18n/index.js";
 
 export class CodeExporter {
   /**
@@ -25,7 +26,7 @@ export class CodeExporter {
       .join("\n\n");
 
     return `<!doctype html>
-<html lang="fr">
+<html lang="${lang}">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

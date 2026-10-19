@@ -1,0 +1,2 @@
+/* Camera access prompt (macOS) */
+"NSCameraUsageDescription" = "The preview uses the camera for webcam exercises.";

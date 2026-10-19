@@ -1,6 +1,7 @@
 import { el } from "./dom.js";
 import { icons } from "./icons.js";
 import { CodeExporter } from "../export/CodeExporter.js";
+import { t } from "../i18n/index.js";
 
 /**
  * Barre d'outils du notebook : « + Cellule », « Tout exécuter », « Redémarrer »,
@@ -8,21 +9,25 @@ import { CodeExporter } from "../export/CodeExporter.js";
  */
 export class Toolbar {
   constructor(root, notebook, getTitle = () => "processus", getMode) {
-    const add = Toolbar.button(icons.add, "Cellule", "Ctrl + M puis B");
+    const add = Toolbar.button(
+      icons.add,
+      t("toolbar.add"),
+      t("toolbar.add.shortcut"),
+    );
     const runAll = Toolbar.button(
       icons.playAll,
-      "Tout exécuter",
+      t("toolbar.runAll"),
       "Ctrl/⌘ + F9",
     );
     const restart = Toolbar.button(
       icons.restart,
-      "Redémarrer",
-      "Ctrl + M puis .",
+      t("toolbar.restart"),
+      t("toolbar.restart.shortcut"),
     );
     const download = Toolbar.button(
       icons.download,
-      "Télécharger",
-      "cellules rendues, en fichier HTML",
+      t("toolbar.download"),
+      t("toolbar.download.hint"),
     );
     // Rien à télécharger tant qu'aucune cellule n'est rendue
     const updateDownload = () =>
@@ -31,7 +36,7 @@ export class Toolbar {
     ["idle", "delete", "restart"].forEach((type) =>
       notebook.addEventListener(type, updateDownload),
     );
-    const status = el("span", "toolbar__status", "Prêt");
+    const status = el("span", "toolbar__status", t("toolbar.ready"));
 
     add.addEventListener("click", () => notebook.insert());
     download.addEventListener("click", () =>
@@ -41,9 +46,12 @@ export class Toolbar {
     restart.addEventListener("click", () => notebook.restart());
     notebook.addEventListener(
       "busy",
-      () => (status.textContent = "Exécution…"),
+      () => (status.textContent = t("toolbar.busy")),
     );
-    notebook.addEventListener("idle", () => (status.textContent = "Prêt"));
+    notebook.addEventListener(
+      "idle",
+      () => (status.textContent = t("toolbar.ready")),
+    );
 
     root.append(add, runAll, restart, download, status);
   }

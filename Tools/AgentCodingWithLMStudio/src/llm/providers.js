@@ -4,21 +4,22 @@
  * Les offres « gratuit » ne demandent pas de carte bancaire (limites d'usage).
  */
 import { LlmClient, GeminiClient } from "./LlmClient.js";
+import { t } from "../i18n/index.js";
 
 export const providers = [
   {
     id: "lmstudio",
-    group: "Par défaut",
+    group: t("settings.group.default"),
     label: "LM Studio",
-    note: "Local, sur cet ordinateur · aucune clé",
+    note: t("provider.lmstudio.note"),
     name: "LM Studio",
     client: LlmClient,
   },
   {
     id: "gemini",
-    group: "Gratuit",
+    group: t("settings.group.free"),
     label: "Gemini 3.8 Flash",
-    note: "Google AI Studio · gratuit",
+    note: t("provider.gemini.note"),
     name: "Google AI Studio",
     client: GeminiClient,
     baseUrl: "/gemini",
@@ -28,9 +29,9 @@ export const providers = [
   },
   {
     id: "groq",
-    group: "Gratuit",
+    group: t("settings.group.free"),
     label: "GPT-OSS 120B",
-    note: "Groq · gratuit, 1 000 requêtes/jour",
+    note: t("provider.groq.note"),
     name: "Groq",
     client: LlmClient,
     baseUrl: "/groq",
@@ -39,9 +40,9 @@ export const providers = [
   },
   {
     id: "mistral",
-    group: "Gratuit",
+    group: t("settings.group.free"),
     label: "Mistral Small",
-    note: "Mistral · gratuit (mode Free)",
+    note: t("provider.mistral.note"),
     name: "Mistral",
     client: LlmClient,
     baseUrl: "/mistral",
@@ -50,9 +51,9 @@ export const providers = [
   },
   {
     id: "openrouter",
-    group: "Gratuit",
-    label: "Modèles gratuits",
-    note: "OpenRouter · gratuit, 50 requêtes/jour",
+    group: t("settings.group.free"),
+    label: t("provider.openrouter.label"),
+    note: t("provider.openrouter.note"),
     name: "OpenRouter",
     client: LlmClient,
     baseUrl: "/openrouter",

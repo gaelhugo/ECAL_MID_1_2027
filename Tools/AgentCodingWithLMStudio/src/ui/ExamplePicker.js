@@ -1,5 +1,6 @@
 import { el } from "./dom.js";
 import { MODES } from "../runtime/modes.js";
+import { t } from "../i18n/index.js";
 
 /**
  * Menus affichés à la place du titre :
@@ -11,9 +12,9 @@ export class ExamplePicker {
   constructor(root, examples, onChange) {
     this.examples = examples;
     this.select = el("select", "example-picker");
-    this.select.title = "Choisir un exemple";
+    this.select.title = t("picker.process");
     this.modeSelect = el("select", "mode-picker");
-    this.modeSelect.title = "Environnement du processus";
+    this.modeSelect.title = t("picker.mode");
     Object.values(MODES).forEach((mode) =>
       this.modeSelect.append(ExamplePicker.option(mode.id, mode.label)),
     );

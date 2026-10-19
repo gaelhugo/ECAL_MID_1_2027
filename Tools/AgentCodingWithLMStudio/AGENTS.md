@@ -1,11 +1,21 @@
 # Atelier prompts webcam
 
-Vanilla JS + Vite. Commentaires en français.
+Vanilla JS + Vite. Commentaires du code source en français.
+
+- Langues (`src/i18n/`) : interface, exemples et commentaires du code généré en français ou en anglais.
+  Langue = Réglages (localStorage `atelier.lang` : `fr`/`en`, absent = automatique), sinon système
+  (`navigator.languages[0]` commence par `fr` → français, sinon anglais). Changer de langue recharge la page.
+  Textes d'interface : `fr.json`/`en.json` via `t("clé", { variables })` — jamais de texte en dur dans le code.
+  Exemples : `title`, `prompt`, `code` = `{ fr, en }` (lus avec `pick()`) ; dans `code`, ne traduire que
+  commentaires et textes affichés, les instructions restent identiques.
+  Consignes au modèle (`PromptBuilder.js`, `modes.js`) en anglais ; `LANGUAGE_RULES` (règle + rappel final) et
+  `LANGUAGE_REMINDERS` (ajouté à la demande, dans la langue voulue) imposent la langue des commentaires.
 
 - Dev : `npm run dev` · Build (vérification) : `npm run build`
 - Processus de démo : un fichier JSON par processus dans `src/examples/*.json`, chargé automatiquement
   (`import.meta.glob`, triés par nom) ; format décrit en tête de `src/examples/index.js`
-  (`{ title, steps: [{ title, prompt, code: [lignes] }] }`). `DEFAULT_FILE` = chargé au démarrage (`raster-image.json`).
+  (`{ title, mode, steps: [{ title, prompt, code: [lignes] }] }`, champs localisables `{ fr, en }`).
+  `DEFAULT_FILE` = chargé au démarrage (`raster-image.json`).
   « Nouveau processus » (1er du menu) = une seule cellule vide. Côté interface, on dit « processus » (pas « notebook »).
 - Modes (`src/runtime/modes.js`) : `vanilla` (JavaScript canvas, défaut), `p5` (p5.js 1.11.13, mode global),
   `three` (three.js r186 → `window.THREE` + `THREE.OrbitControls`, via `runtime/libs/three-global.js?worker&url`,

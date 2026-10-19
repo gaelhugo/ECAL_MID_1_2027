@@ -13,6 +13,11 @@ import { Snackbar } from "./ui/Snackbar.js";
 import { ExamplePicker } from "./ui/ExamplePicker.js";
 import { SettingsPanel } from "./ui/SettingsPanel.js";
 import { CodeGenerator } from "./llm/CodeGenerator.js";
+import { t } from "./i18n/index.js";
+
+// Textes de la page dans la langue choisie (système par défaut, voir i18n/)
+document.title = t("app.title");
+document.querySelector("#subtitle").textContent = t("app.subtitle");
 
 const preview = new Preview(document.querySelector("#preview"));
 const kernel = new Kernel(preview);
@@ -45,15 +50,17 @@ preview.onReload = () => notebook.rerun();
 // Après une suppression, on propose d'annuler
 const snackbar = new Snackbar();
 notebook.addEventListener("delete", () =>
-  snackbar.show("Cellule supprimée", "Annuler", () => notebook.undoDelete()),
+  snackbar.show(t("snackbar.deleted"), t("snackbar.undo"), () =>
+    notebook.undoDelete(),
+  ),
 );
 // Idem après une réinitialisation complète ou un changement d'exemple
 notebook.addEventListener("restart", ({ detail }) =>
   snackbar.show(
     detail.changed
-      ? `Exemple chargé : ${picker.title}`
-      : "Processus réinitialisé",
-    "Annuler",
+      ? t("snackbar.loaded", { title: picker.title })
+      : t("snackbar.reset"),
+    t("snackbar.undo"),
     () => {
       notebook.undoRestart();
       picker.show(notebook.steps);

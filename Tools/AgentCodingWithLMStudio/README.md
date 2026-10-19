@@ -1,8 +1,8 @@
 # Agent Coding with LM Studio
 
-A pedagogical web app for teaching creative coding through prompting. A **processus** is an ordered list of steps; each step pairs a **natural-language prompt** (in French) with the **JavaScript code** it produces, building up a program cell by cell.
+A pedagogical web app for teaching creative coding through prompting. A **processus** is an ordered list of steps; each step pairs a **natural-language prompt** with the **JavaScript code** it produces, building up a program cell by cell.
 
-Vanilla JavaScript + **Vite** (no framework). UI and comments are in **French**.
+Vanilla JavaScript + **Vite** (no framework). The interface, the example processus and the comments in generated code are in **French or English** — see [Languages](#languages). Source-code comments are in French.
 
 A processus runs in one of four **modes** — each adapts the preview, the prompt rules sent to the model and the HTML export:
 
@@ -30,17 +30,28 @@ The app works fully offline for browsing and running the steps. **A model is onl
 ## How it works
 
 - The left pane is a **processus** (notebook): ordered cells, each showing a prompt and its resulting code in a highlighted editor.
-- The **title is a dropdown** to pick what to load, next to a small **mode** pill (JavaScript · p5.js · three.js · DOM). The title lists only the current mode's processus: **Nouveau processus** (first entry, a single empty cell) then its examples. Changing the mode loads that mode's first example (or its Nouveau processus if it has none). Startup default: **Raster Image** (JavaScript, the 8-step webcam rasterization). Switching resets the preview; the snackbar's **Annuler** restores the previous processus (and its mode).
+- The **title is a dropdown** to pick what to load, next to a small **mode** pill (JavaScript · p5.js · three.js · DOM). The title lists only the current mode's processus: **Nouveau processus** / **New processus** (first entry, a single empty cell) then its examples. Changing the mode loads that mode's first example (or its empty processus if it has none). Startup default: **Raster Image** (JavaScript, the 8-step webcam rasterization). Switching resets the preview; the snackbar's **Annuler** / **Undo** restores the previous processus (and its mode).
 - The right pane is a **preview**: a sandboxed `<iframe>` in which the cells' code runs, each in its own `<script>` tag, replayed in order by the `Kernel`. The mode sets its base CSS and loads its library first (three.js is an ES module, so its cells run once the module is ready).
 - Editing a prompt and regenerating sends the code of the cells above plus the active function signatures (`ProgramSummary`) to the selected model (local **LM Studio** by default), which writes the new code. The rules in the system prompt depend on the mode (e.g. p5: don't call p5 functions at top level; three.js: create objects once and update them in `update()`; DOM: build the whole page, style with `css()`).
-- **Télécharger** exports the rendered cells as a standalone HTML file; p5.js / three.js are loaded there from the jsDelivr CDN (same pinned versions).
+- **Télécharger** / **Download** exports the rendered cells as a standalone HTML file; p5.js / three.js are loaded there from the jsDelivr CDN (same pinned versions).
 
-| Mode       | Example processus                                                              |
-| ---------- | ------------------------------------------------------------------------------ |
-| JavaScript | **Raster Image** — webcam → grid → shapes → luminosity → duotone → mouse       |
-| p5.js      | **Particules** — canvas → particles → motion → mouse attraction → trails       |
-| three.js   | **Vague de cubes** — scene → lit cube → wave grid → OrbitControls → color      |
-| DOM        | **Palette de couleurs** — header → cards → search filter → select → dark theme |
+| Mode       | Example processus (FR / EN)                                                                    |
+| ---------- | ---------------------------------------------------------------------------------------------- |
+| JavaScript | **Raster Image** — webcam → grid → shapes → luminosity → duotone → mouse                       |
+| p5.js      | **Particules / Particles** — canvas → particles → motion → mouse attraction → trails           |
+| three.js   | **Vague de cubes / Cube wave** — scene → lit cube → wave grid → OrbitControls → color          |
+| DOM        | **Palette de couleurs / Color palette** — header → cards → search filter → select → dark theme |
+
+## Languages
+
+- **Automatic:** the system language decides — French if the preferred language starts with `fr` (fr-CH, fr-FR, fr-BE…), English otherwise. In the macOS app this is the macOS language; in a browser, the browser's language (`navigator.languages`).
+- **Override:** ⚙︎ Settings → **Langue / Language**: Automatic, Français or English (stored in `localStorage` as `atelier.lang`; changing it reloads the page).
+- **What follows the language:**
+  - the whole interface: `src/i18n/fr.json` and `en.json`, used through `t("key", { variables })`;
+  - the example processus: titles, prompts **and code**, i.e. code comments and texts shown on the page (the instructions themselves are identical);
+  - code generated from a custom prompt: its comments and on-page texts are written in the interface language, whatever language the prompt is written in;
+  - the HTML export (`<html lang>`).
+- **Model instructions** are written in English, which small local models follow best. Two parts depend on the language: a rule saying which language to use for comments and on-page texts (with a reminder at the end of the instructions), and a short note in that language added to the user's request.
 
 ## LM Studio setup (optional, for code regeneration)
 
@@ -91,6 +102,7 @@ src/
 │   └── dom-palette.json        # DOM: 5 steps
 ├── notebook/                   # Cell, CellActions, CellInserter, CellOutput, CodeEditor,
 │                               #   Highlighter, Notebook, RunButton
+├── i18n/                       # index.js (language detection, t(), pick()), fr.json, en.json
 ├── runtime/                    # Kernel (replays cells in the iframe), RuntimeDocument,
 │                               #   modes.js (per-mode style, libraries, prompt rules),
 │                               #   libs/three-global.js (bundles three.js → window.THREE)
@@ -108,22 +120,28 @@ Drop a JSON file into `src/examples/` — it appears in the dropdown of its mode
 
 ```json
 {
-  "title": "Name shown in the dropdown",
+  "title": { "fr": "Nom dans le menu", "en": "Name shown in the dropdown" },
   "mode": "p5",
   "steps": [
     {
-      "title": "Step title",
-      "prompt": "What the code should do…",
-      "code": ["// one string per line", "const x = 1;"]
+      "title": { "fr": "Titre de l'étape", "en": "Step title" },
+      "prompt": {
+        "fr": "Ce que le code doit faire…",
+        "en": "What the code should do…"
+      },
+      "code": {
+        "fr": ["// une chaîne par ligne", "const x = 1;"],
+        "en": ["// one string per line", "const x = 1;"]
+      }
     }
   ]
 }
 ```
 
-`mode` is `"vanilla"` (default when omitted), `"p5"`, `"three"` or `"dom"`. `code` may also be a single string. To load a different file at startup, change `DEFAULT_FILE` in `src/examples/index.js`.
+`title`, `prompt` and `code` are localized with `{ "fr": …, "en": … }`; translate only the comments and the texts shown on the page — the instructions must stay identical in both versions. A plain value (not localized) is used for every language. `mode` is `"vanilla"` (default when omitted), `"p5"`, `"three"` or `"dom"`. `code` may also be a single string. To load a different file at startup, change `DEFAULT_FILE` in `src/examples/index.js`.
 
 ### Adding a mode
 
-Add an entry to `MODES` in `src/runtime/modes.js`: `label`, base `style`, `libs` (tags for the preview — local files via Vite imports — and for the export — CDN), optional `prelude` code, `deferred: true` if the library is an ES module, and the `context` / `rules` / `output` lines given to the model. It then appears in the mode pill automatically.
+Add an entry to `MODES` in `src/runtime/modes.js`: `label`, base `style`, `libs` (tags for the preview — local files via Vite imports — and for the export — CDN), optional `prelude` code, `deferred: true` if the library is an ES module, and the `context` / `rules` / `output` lines given to the model (in English). It then appears in the mode pill automatically.
 
 See `AGENTS.md` for maintainer notes (in French).

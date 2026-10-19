@@ -1,0 +1,2 @@
+/* Texte de la demande d’accès à la caméra (macOS) */
+"NSCameraUsageDescription" = "L’aperçu utilise la caméra pour les exercices avec webcam.";

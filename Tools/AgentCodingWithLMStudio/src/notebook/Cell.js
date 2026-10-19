@@ -5,6 +5,7 @@ import { CodeEditor } from "./CodeEditor.js";
 import { CellOutput } from "./CellOutput.js";
 import { CellActions } from "./CellActions.js";
 import { CellInserter } from "./CellInserter.js";
+import { t } from "../i18n/index.js";
 
 /** Contenu d'une nouvelle cellule vide. */
 export const EMPTY_STEP = { title: "", prompt: "", code: "" };
@@ -31,9 +32,7 @@ export class Cell {
     this.generated = !step.code;
     this.runButton = new RunButton(() => onRun(this));
     this.editor = new CodeEditor(
-      this.generated
-        ? "Écrivez du code, ou un prompt à gauche"
-        : "Exécutez la cellule pour générer le code",
+      this.generated ? t("cell.codePlaceholder") : t("cell.codePending"),
     );
     this.editor.readOnly = !this.generated;
     this.output = new CellOutput();
@@ -84,7 +83,7 @@ export class Cell {
   /** Met à jour le numéro affiché (« Étape n »), qui suit la position. */
   setIndex(index) {
     const title = this.step.title ? ` · ${this.step.title}` : "";
-    this.label.textContent = `Étape ${index + 1}${title}`;
+    this.label.textContent = `${t("cell.step", { n: index + 1 })}${title}`;
   }
 
   select(state) {
@@ -142,7 +141,7 @@ export class Cell {
     this.label = prompt.querySelector("span");
     this.promptText = el("p", "prompt__text", "");
     this.promptText.textContent = this.step.prompt;
-    this.promptText.dataset.placeholder = "Décrivez ce que le code doit faire…";
+    this.promptText.dataset.placeholder = t("cell.promptPlaceholder");
     this.promptText.contentEditable = "plaintext-only";
     this.promptText.spellcheck = false;
     this.promptText.addEventListener("input", () => this.updateModified());

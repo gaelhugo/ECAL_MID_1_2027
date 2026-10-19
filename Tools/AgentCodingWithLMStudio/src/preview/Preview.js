@@ -1,5 +1,6 @@
 import { el } from "../ui/dom.js";
 import { icons } from "../ui/icons.js";
+import { t, tn } from "../i18n/index.js";
 
 /**
  * Panneau de droite : affiche le résultat en direct dans une iframe.
@@ -10,23 +11,19 @@ export class Preview {
   onReload = () => {};
 
   constructor(root) {
-    this.info = el("p", "preview__info", "Aucune cellule exécutée");
+    this.info = el("p", "preview__info", t("preview.none"));
     const reload = el("button", "icon-button", icons.restart);
-    reload.title = "Relancer l’aperçu avec le code actuel";
+    reload.title = t("preview.reload");
     reload.addEventListener("click", () => this.onReload());
 
     const header = el("header", "preview__header");
-    const title = el("div", "preview__title", "<h2>Aperçu</h2>");
+    const title = el("div", "preview__title", `<h2>${t("preview.title")}</h2>`);
     title.append(this.info);
     header.append(title, reload);
 
     this.iframe = el("iframe", "preview__frame");
     this.iframe.allow = "camera";
-    this.empty = el(
-      "div",
-      "preview__empty",
-      "Exécutez une cellule pour voir le résultat",
-    );
+    this.empty = el("div", "preview__empty", t("preview.empty"));
 
     const stage = el("div", "preview__stage");
     stage.append(this.iframe, this.empty);
@@ -42,13 +39,13 @@ export class Preview {
   load(html, count) {
     this.iframe.srcdoc = html;
     this.empty.hidden = true;
-    this.info.textContent = `${count} cellule${count > 1 ? "s" : ""} chargée${count > 1 ? "s" : ""}`;
+    this.info.textContent = tn("preview.loaded", count);
   }
 
   /** Vide l'aperçu. */
   clear() {
     this.iframe.srcdoc = "";
     this.empty.hidden = false;
-    this.info.textContent = "Aucune cellule exécutée";
+    this.info.textContent = t("preview.none");
   }
 }
