@@ -1,6 +1,6 @@
-/* Bouton ⚙︎ dans la barre d'outils : un peu détaché des autres actions */
+/* Bouton ⚙︎ : poussé à droite de la barre d'outils, séparé des autres actions */
 .settings__button {
-  margin-left: 8px;
+  margin-left: auto;
 }
 
 /* Panneau des réglages, qui glisse depuis la droite */

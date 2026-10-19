@@ -22,14 +22,12 @@
   min-height: 0;
 }
 
-/* En-tête du notebook */
+/* En-tête du notebook : le titre (+ mode), puis la barre d'outils en dessous */
 .topbar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  flex-direction: column;
+  gap: 10px;
   padding: 12px 16px 12px 24px;
-  flex-wrap: wrap;
 }
 
 .topbar h1 {
@@ -84,12 +82,14 @@
   color: var(--grey-700);
 }
 
+/* Barre d'outils alignée à gauche sous le titre ; ⚙︎ seul à droite (settings.css) */
 .toolbar {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 4px;
-  /* reste à droite même quand l'en-tête passe à la ligne */
-  margin-left: auto;
+  /* la 1re icône s'aligne sur le texte du titre (marge intérieure des boutons) */
+  margin-left: -10px;
 }
 
 .toolbar__status {
