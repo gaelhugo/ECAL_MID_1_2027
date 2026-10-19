@@ -12,6 +12,7 @@ import {
 } from "electron";
 import path from "node:path";
 import { startServer } from "./server.js";
+import { checkForUpdates } from "./updater.js";
 
 // Une seule instance : relancer l'app remet simplement la fenêtre au premier plan
 if (!app.requestSingleInstanceLock()) app.quit();
@@ -42,6 +43,8 @@ app.whenReady().then(async () => {
     event.preventDefault();
     window.setTitle("proce55us");
   });
+  // Capsule « Nouvelle version » si une release plus récente existe
+  checkForUpdates(window);
   window.loadURL(url);
   window.on("closed", () => (window = null));
 });

@@ -45,6 +45,15 @@ npm start                   # run the desktop app without packaging (after --web
 
 `release.sh 1.2.0` sets the version in `package.json` (and its lockfile) and commits it, builds the app, pushes `main` and the `v1.2.0` tag, creates the GitHub release **proce55us v1.2.0** with the CHANGELOG section as notes, and uploads both `dist/` assets. Without an argument it releases the version already in `package.json`; re-running for an existing tag updates its notes and replaces its assets. The artifact names have no version in them (`proce55us-universal.dmg`), so the homepage's `releases/latest/download/…` link — and its version badge — always track the newest release automatically. It uses the GitHub token stored in the macOS keychain (created by `gh auth login` or GitHub Desktop); if your token lives elsewhere, export it: `GITHUB_TOKEN=… ./release.sh` — adapt the `TOKEN=` line accordingly.
 
+## Update checker
+
+At launch (then every 6 hours), the app compares its version with the latest GitHub release (`api.github.com/repos/gaelhugo/ECAL_MID_1_2027/releases/latest`). If a newer one exists, a small capsule appears **at the top right** of the window: **Nouvelle version X.Y.Z** (opens the release notes) · **Télécharger** (opens the `.dmg` in the default browser) · **×** (hides it until the next version; remembered in `~/Library/Application Support/proce55us/updater.json`).
+
+- Installing stays manual: open the downloaded `.dmg`, drag **proce55us** into Applications (replace), then **Open Anyway** once more (see below).
+- Fully automatic updates (download + replace + restart) are not possible: on macOS they require a paid Apple **Developer ID** signature.
+- Offline or GitHub unreachable → nothing is shown. The capsule is injected by Electron (Shadow DOM, `electron/updater.js`): the web app is not modified and the browser version never shows it.
+- To test it: set `"version": "1.0.0"` in `package.json`, run `./build-mac.sh --web-only && env -u ELECTRON_RUN_AS_NODE npm start`, then restore the version.
+
 ## Model used for code generation
 
 - **LM Studio (default)**: the app uses whatever model is **currently loaded in LM Studio on that Mac** (the `.env` model is intentionally not forced, since other Macs have other models). To force one: `VITE_LMSTUDIO_MODEL=model-name ./build-mac.sh`.
@@ -72,6 +81,7 @@ To remove the warning entirely, the app must be signed with an Apple **Developer
 ```
 electron/main.js     # Window, camera permission (macOS prompt), external links → default browser
 electron/server.js   # Local server on 127.0.0.1: serves app/ + same relay routes as vite.config.js
+electron/updater.js  # Checks the latest GitHub release, shows the "Nouvelle version" capsule
 build-mac.sh         # vite build → app/, then electron-builder → dist/
 release.sh           # [version] → bump + build + push main/tag + GitHub release + upload artifacts
 CHANGELOG.md         # one section per version, used as release notes

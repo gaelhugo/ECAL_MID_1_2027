@@ -2,6 +2,11 @@
 
 `release.sh` publishes the section of the released version as the GitHub release notes — write it before releasing.
 
+## 1.2.0
+
+- **Update checker**: at launch (then every 6 hours) the app checks GitHub for a newer release. If there is one, a small capsule appears at the top right of the window — **Télécharger** opens the new `.dmg`, **×** hides it until the next version. Works silently offline.
+- From this version on, you'll be told automatically when a new proce55us is available.
+
 ## 1.1.0
 
 - **Four modes** for each processus: **JavaScript** canvas (default), **p5.js** (1.11.13, global mode), **three.js** (r186, with OrbitControls) and **DOM** (a whole web page: HTML + CSS + JS). The preview, the instructions given to the model and the HTML export adapt to the mode.
