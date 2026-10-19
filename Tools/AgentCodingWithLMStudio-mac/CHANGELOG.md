@@ -2,6 +2,13 @@
 
 `release.sh` publishes the section of the released version as the GitHub release notes — write it before releasing.
 
+## 1.3.0
+
+- **French and English**: the app follows the macOS language — French if it is French (any region), English otherwise. It can be forced in ⚙︎ Settings → Langue / Language.
+- The whole interface, the four example processus (titles, prompts **and code comments**), the update capsule and the camera permission prompt are translated.
+- Code generated from a custom prompt gets its comments (and on-page texts) in the app's language, whatever language the prompt is written in.
+- Model instructions rewritten in English, which small local models follow best.
+
 ## 1.2.0
 
 - **Update checker**: at launch (then every 6 hours) the app checks GitHub for a newer release. If there is one, a small capsule appears at the top right of the window — **Télécharger** opens the new `.dmg`, **×** hides it until the next version. Works silently offline.
