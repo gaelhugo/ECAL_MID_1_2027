@@ -2,7 +2,8 @@
 # Publie une nouvelle release GitHub de proce55us.
 #
 #   ./release.sh 1.2.0  →  version 1.2.0 dans package.json (commit), build,
-#                          push de main + tag v1.2.0, release GitHub + upload dmg/zip
+#                          push de main + tag v1.2.0, release GitHub + upload dmg/zip,
+#                          puis la version web (../AgentCodingWithLMStudio/deploy-web.sh)
 #   ./release.sh        →  idem avec la version actuelle de package.json
 #
 # Notes de la release : la section « ## X.Y.Z » de CHANGELOG.md (à écrire avant).
@@ -82,3 +83,6 @@ for f in dist/proce55us-universal.dmg dist/proce55us-universal-mac.zip; do
 done
 
 echo "✓ Publié : https://github.com/$REPO/releases/tag/$TAG"
+
+# Version web : même commit, même version → toujours synchronisée avec l'app macOS
+"$HERE/../AgentCodingWithLMStudio/deploy-web.sh"

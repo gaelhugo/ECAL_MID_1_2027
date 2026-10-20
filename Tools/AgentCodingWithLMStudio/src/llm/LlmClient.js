@@ -1,6 +1,6 @@
 /**
- * Clients minimaux pour les modèles, tous appelés via le proxy Vite
- * (vite.config.js), ce qui évite les problèmes de CORS.
+ * Clients minimaux pour les modèles, appelés via le proxy Vite (vite.config.js),
+ * ou directement dans la version web publiée (voir endpoints.js).
  * - LlmClient : API compatible OpenAI (LM Studio, Groq, OpenRouter, Mistral).
  *   Par défaut : LM Studio, avec le modèle VITE_LMSTUDIO_MODEL (.env) ou,
  *   à défaut, le modèle actuellement chargé dans LM Studio.
@@ -8,6 +8,7 @@
  * Chacun renvoie le texte de la réponse morceau par morceau : stream(messages).
  */
 import { t } from "../i18n/index.js";
+import { DIRECT_API, endpoint } from "./endpoints.js";
 
 // Messages plus clairs pour les erreurs les plus fréquentes des services en ligne
 const HINTED = [400, 401, 403, 429];
@@ -18,7 +19,7 @@ export class LlmClient {
       this,
       {
         name: "LM Studio",
-        baseUrl: "/lmstudio",
+        baseUrl: endpoint("lmstudio"),
         model: import.meta.env?.VITE_LMSTUDIO_MODEL,
         apiKey: "",
         requiresKey: false,
@@ -28,7 +29,7 @@ export class LlmClient {
   }
 
   get isLocal() {
-    return this.baseUrl === "/lmstudio";
+    return this.baseUrl === endpoint("lmstudio");
   }
 
   /** Envoie les messages et renvoie le texte de la réponse morceau par morceau. */
@@ -96,7 +97,7 @@ export class LlmClient {
     if (!response || (this.isLocal && response.status >= 500))
       throw new Error(
         this.isLocal
-          ? t("llm.unreachable")
+          ? t(DIRECT_API ? "llm.unreachableWeb" : "llm.unreachable")
           : t("llm.unreachableService", { name: this.name }),
       );
     if (!response.ok) {

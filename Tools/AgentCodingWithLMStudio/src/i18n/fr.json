@@ -61,6 +61,7 @@
   "provider.openrouter.note": "OpenRouter · gratuit, 50 requêtes/jour",
 
   "llm.unreachable": "Impossible de joindre LM Studio. Lancez le serveur local (port 1234) et chargez un modèle.",
+  "llm.unreachableWeb": "Impossible de joindre LM Studio. Lancez son serveur (port 1234), chargez un modèle et activez « Enable CORS » dans les réglages du serveur. Si le navigateur le demande, autorisez l'accès au réseau local.",
   "llm.unreachableService": "Impossible de joindre {name}.",
   "llm.noProxy": "Le proxy {baseUrl} n'est pas actif : relancez « npm run dev » pour charger vite.config.js.",
   "llm.noKey": "{name} : ajoutez votre clé API dans les Réglages (icône ⚙︎).",

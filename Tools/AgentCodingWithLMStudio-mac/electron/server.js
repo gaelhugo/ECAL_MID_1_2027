@@ -10,7 +10,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";
 
-// À garder identique aux routes de ../AgentCodingWithLMStudio/vite.config.js
+// À garder identique à TARGETS dans ../AgentCodingWithLMStudio/src/llm/endpoints.js
 const ROUTES = {
   "/lmstudio": process.env.LMSTUDIO_URL || "http://localhost:1234",
   "/gemini": "https://generativelanguage.googleapis.com",
@@ -36,17 +36,33 @@ const TYPES = {
 };
 
 // En-têtes recalculés par fetch ou devenus faux après décompression
-const SKIPPED_REQUEST_HEADERS = ["host", "connection", "content-length", "origin", "referer"];
-const SKIPPED_RESPONSE_HEADERS = ["content-encoding", "content-length", "transfer-encoding", "connection"];
+const SKIPPED_REQUEST_HEADERS = [
+  "host",
+  "connection",
+  "content-length",
+  "origin",
+  "referer",
+];
+const SKIPPED_RESPONSE_HEADERS = [
+  "content-encoding",
+  "content-length",
+  "transfer-encoding",
+  "connection",
+];
 
 /** Démarre le serveur et renvoie son adresse (http://127.0.0.1:port). */
 export async function startServer(root) {
   const server = http.createServer((request, response) => {
     const route = Object.keys(ROUTES).find(
-      (prefix) => request.url === prefix || request.url.startsWith(`${prefix}/`),
+      (prefix) =>
+        request.url === prefix || request.url.startsWith(`${prefix}/`),
     );
     const handle = route
-      ? relay(request, response, ROUTES[route] + request.url.slice(route.length))
+      ? relay(
+          request,
+          response,
+          ROUTES[route] + request.url.slice(route.length),
+        )
       : serveFile(root, request, response);
     handle.catch((error) => {
       console.error(error);
@@ -55,7 +71,9 @@ export async function startServer(root) {
       response.end();
     });
   });
-  const port = await listen(server, PREFERRED_PORT).catch(() => listen(server, 0));
+  const port = await listen(server, PREFERRED_PORT).catch(() =>
+    listen(server, 0),
+  );
   return `http://127.0.0.1:${port}`;
 }
 

@@ -1,10 +1,11 @@
 /**
  * Services proposés dans les Réglages pour générer le code.
- * Chaque baseUrl correspond à un proxy déclaré dans vite.config.js.
+ * Chaque baseUrl vient de endpoints.js (route du proxy, ou adresse directe en version web).
  * Les offres « gratuit » ne demandent pas de carte bancaire (limites d'usage).
  */
 import { LlmClient, GeminiClient } from "./LlmClient.js";
 import { t } from "../i18n/index.js";
+import { endpoint } from "./endpoints.js";
 
 export const providers = [
   {
@@ -22,7 +23,7 @@ export const providers = [
     note: t("provider.gemini.note"),
     name: "Google AI Studio",
     client: GeminiClient,
-    baseUrl: "/gemini",
+    baseUrl: endpoint("gemini"),
     path: "/v1beta/models",
     model: "gemini-3.8-flash",
     keyUrl: "https://aistudio.google.com/apikey",
@@ -34,7 +35,7 @@ export const providers = [
     note: t("provider.groq.note"),
     name: "Groq",
     client: LlmClient,
-    baseUrl: "/groq",
+    baseUrl: endpoint("groq"),
     model: "openai/gpt-oss-120b",
     keyUrl: "https://console.groq.com/keys",
   },
@@ -45,7 +46,7 @@ export const providers = [
     note: t("provider.mistral.note"),
     name: "Mistral",
     client: LlmClient,
-    baseUrl: "/mistral",
+    baseUrl: endpoint("mistral"),
     model: "mistral-small-latest",
     keyUrl: "https://console.mistral.ai/api-keys",
   },
@@ -56,7 +57,7 @@ export const providers = [
     note: t("provider.openrouter.note"),
     name: "OpenRouter",
     client: LlmClient,
-    baseUrl: "/openrouter",
+    baseUrl: endpoint("openrouter"),
     model: "openrouter/free",
     keyUrl: "https://openrouter.ai/keys",
   },

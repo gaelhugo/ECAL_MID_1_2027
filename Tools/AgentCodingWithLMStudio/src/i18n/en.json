@@ -61,6 +61,7 @@
   "provider.openrouter.note": "OpenRouter · free, 50 requests/day",
 
   "llm.unreachable": "Can't reach LM Studio. Start its local server (port 1234) and load a model.",
+  "llm.unreachableWeb": "Can't reach LM Studio. Start its server (port 1234), load a model and turn on “Enable CORS” in the server settings. If the browser asks, allow local network access.",
   "llm.unreachableService": "Can't reach {name}.",
   "llm.noProxy": "The {baseUrl} proxy isn't running: restart “npm run dev” to load vite.config.js.",
   "llm.noKey": "{name}: add your API key in Settings (⚙︎ icon).",
