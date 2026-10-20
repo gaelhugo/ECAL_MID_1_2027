@@ -29,8 +29,15 @@ Vanilla JS + Vite. Commentaires du code source en français.
   (cible `LMSTUDIO_URL`, défaut `http://localhost:1234` ; modèle `VITE_LMSTUDIO_MODEL` dans `.env`,
   actuellement `qwen2.5-coder-14b-instruct`, sinon le modèle chargé).
 - Réglages (⚙︎, `src/ui/SettingsPanel.js`, localStorage `atelier.settings`) : choix du service, LM Studio par défaut.
-  Services dans `src/llm/providers.js` ; chacun passe par un proxy Vite (`/gemini`, `/groq`, `/mistral`,
-  `/openrouter`). `LlmClient` = API OpenAI, `GeminiClient` = API Gemini (clé dans `x-goog-api-key`).
+  Services dans `src/llm/providers.js` ; adresses dans `src/llm/endpoints.js` (`TARGETS`, partagées avec
+  le proxy Vite et `../AgentCodingWithLMStudio-mac/electron/server.js`). Par défaut chacun passe par
+  un proxy Vite (`/gemini`, `/groq`, `/mistral`, `/openrouter`) ; en build `VITE_DIRECT_API=1`
+  (version web GitHub Pages), le navigateur appelle les services directement et `LlmClient` ajoute
+  `targetAddressSpace: "local"` pour LM Studio (prompt Chrome « accès au réseau local »).
+  `LlmClient` = API OpenAI, `GeminiClient` = API Gemini (clé dans `x-goog-api-key`).
+- Version web publiée : https://gaelhugo.github.io/editor.proce55us/ (dépôt `gaelhugo/editor.proce55us`,
+  build seul). `deploy-web.sh` construit (`VITE_DIRECT_API=1`, `--base /editor.proce55us/`) et pousse ;
+  lancée automatiquement à la fin de `../AgentCodingWithLMStudio-mac/release.sh` (même version que l'app macOS).
 - Contexte envoyé au modèle : code complet des cellules rendues au-dessus + fonctions actives (`ProgramSummary`).
 - Cellules : `id` unique et stable (≠ position) ; le noyau rejoue dans l'ordre du notebook (`kernel.run(cells, order)`).
 - Le code utilise des guillemets doubles (formatage Prettier de l'utilisateur).

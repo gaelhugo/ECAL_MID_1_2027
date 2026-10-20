@@ -90,9 +90,14 @@ export class LlmClient {
   async request(path, options) {
     if (this.requiresKey && !this.apiKey)
       throw new Error(t("llm.noKey", { name: this.name }));
-    const response = await fetch(this.baseUrl + path, options).catch(
-      () => null,
-    );
+    // Version web : targetAddressSpace déclare l'intention « réseau local » à Chrome
+    // (Local Network Access), ce qui déclenche le prompt d'autorisation
+    const extra =
+      DIRECT_API && this.isLocal ? { targetAddressSpace: "local" } : {};
+    const response = await fetch(this.baseUrl + path, {
+      ...options,
+      ...extra,
+    }).catch(() => null);
     // Le proxy Vite répond 5xx quand LM Studio n'est pas lancé
     if (!response || (this.isLocal && response.status >= 500))
       throw new Error(

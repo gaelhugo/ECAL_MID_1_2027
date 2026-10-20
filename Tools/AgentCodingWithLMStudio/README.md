@@ -27,6 +27,8 @@ npm run dev
 
 The app works fully offline for browsing and running the steps. **A model is only needed to regenerate code from a modified prompt**: LM Studio by default, or an online service chosen in the settings (see below).
 
+A hosted version runs at **https://gaelhugo.github.io/editor.proce55us/** — see [Web version](#web-version).
+
 ## How it works
 
 - The left pane is a **processus** (notebook): ordered cells, each showing a prompt and its resulting code in a highlighted editor.
@@ -64,6 +66,14 @@ The app works fully offline for browsing and running the steps. **A model is onl
    ```
 
 3. The browser calls `/lmstudio/…`, which Vite proxies to the LM Studio server (avoids CORS). Configured in `vite.config.js`.
+
+## Web version
+
+The same app is published as a static site on GitHub Pages: **https://gaelhugo.github.io/editor.proce55us/** (repo `gaelhugo/editor.proce55us`, built output only — don't edit it by hand).
+
+- `./deploy-web.sh` builds it and pushes it. `../AgentCodingWithLMStudio-mac/release.sh` runs it automatically after each release, **with the same version number as the macOS app** — the web editor and the desktop app always ship from the same commit. To publish a web update by hand between releases, run `deploy-web.sh` directly.
+- GitHub Pages has no proxy, so the build sets `VITE_DIRECT_API=1` (`vite build --base /editor.proce55us/`): the service URLs then come straight from `src/llm/endpoints.js` instead of the `/lmstudio`, `/groq`… proxy routes. `vite.config.js` (dev proxy) and `../AgentCodingWithLMStudio-mac/electron/server.js` (app relay) read the same table — keep them in sync.
+- All services accept cross-origin calls from the page. For **LM Studio**, two things are needed on the visitor's machine: **Enable CORS** in LM Studio's server settings, and — in Chrome/Edge — allowing the **Local network access** permission the first time (the page declares `targetAddressSpace: "local"`, which triggers Chrome's prompt; other browsers don't gate localhost). If it fails, the cell shows a message explaining both steps.
 
 ## Settings: other models (⚙︎ in the header)
 
