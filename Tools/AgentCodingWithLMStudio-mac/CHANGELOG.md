@@ -2,6 +2,10 @@
 
 `release.sh` publishes the section of the released version as the GitHub release notes — write it before releasing.
 
+## 1.3.1
+
+- **Toolbar layout**: the toolbar moves to its own row under the title, aligned left; the ⚙︎ settings icon sits alone on the right. The header now stays identical whatever the language or label lengths.
+
 ## 1.3.0
 
 - **French and English**: the app follows the macOS language — French if it is French (any region), English otherwise. It can be forced in ⚙︎ Settings → Langue / Language.
