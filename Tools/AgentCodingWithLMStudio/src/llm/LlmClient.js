@@ -102,7 +102,7 @@ export class LlmClient {
     if (!response || (this.isLocal && response.status >= 500))
       throw new Error(
         this.isLocal
-          ? t(DIRECT_API ? "llm.unreachableWeb" : "llm.unreachable")
+          ? await this.localError()
           : t("llm.unreachableService", { name: this.name }),
       );
     if (!response.ok) {
@@ -120,6 +120,21 @@ export class LlmClient {
     if (response.headers.get("content-type")?.includes("text/html"))
       throw new Error(t("llm.noProxy", { baseUrl: this.baseUrl }));
     return response;
+  }
+
+  /** Message d'erreur LM Studio : en version web, on distingue « navigateur qui bloque » de « serveur injoignable ». */
+  async localError() {
+    if (!DIRECT_API) return t("llm.unreachable");
+    // Chrome : l'accès refusé au réseau local peut être autorisé dans les réglages du site
+    for (const name of ["local-network-access", "loopback-network"]) {
+      try {
+        const { state } = await navigator.permissions.query({ name });
+        if (state === "denied") return t("llm.localDenied");
+      } catch {
+        /* API de permissions absente : autre navigateur */
+      }
+    }
+    return t("llm.unreachableWeb");
   }
 
   /** Message lisible extrait d'une réponse d'erreur (JSON des différents services, sinon texte brut). */
