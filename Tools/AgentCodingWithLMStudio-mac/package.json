@@ -1,7 +1,7 @@
 {
   "name": "proce55us-mac",
   "productName": "proce55us",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "Application macOS autonome (Electron) de proce55us, l'Atelier prompts webcam",
   "private": true,
   "type": "module",
