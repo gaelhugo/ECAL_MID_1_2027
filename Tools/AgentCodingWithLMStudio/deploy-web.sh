@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Publie la version web de proce55us : https://gaelhugo.github.io/editor.proce55us/
+# Publie la version web de proce55us : https://editor.proce55us.com/
 #
 #   ./deploy-web.sh
 #
@@ -14,7 +14,8 @@ set -euo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
 REPO_URL="https://github.com/gaelhugo/editor.proce55us.git"
-BASE="/editor.proce55us/"
+DOMAIN="editor.proce55us.com"
+BASE="./"
 VERSION="$(node -p "require('$HERE/../AgentCodingWithLMStudio-mac/package.json').version")"
 
 WORK="$(mktemp -d)"
@@ -27,6 +28,7 @@ cd "$HERE"
 VITE_DIRECT_API=1 VITE_LMSTUDIO_MODEL="" \
   npx vite build --base "$BASE" --outDir "$WORK/build" --emptyOutDir --logLevel warn
 touch "$WORK/build/.nojekyll"
+echo "$DOMAIN" > "$WORK/build/CNAME"
 
 echo "→ Publication sur $REPO_URL"
 git clone -q --depth 1 "$REPO_URL" "$WORK/site" 2>/dev/null \
@@ -42,4 +44,4 @@ else
   git commit -q -m "proce55us v$VERSION"
   git push -q "$REPO_URL" HEAD:main
 fi
-echo "✓ https://gaelhugo.github.io/editor.proce55us/ (v$VERSION, mise en ligne d'ici ~1 min)"
+echo "✓ https://$DOMAIN/ (v$VERSION, mise en ligne d'ici ~1 min)"

@@ -30,10 +30,13 @@ import { pick, t } from "../i18n/index.js";
 
 // Fichier chargé au démarrage
 const DEFAULT_FILE = "./raster-image.json";
+const REMOTE_EXAMPLES_URL =
+  "https://api.github.com/repos/gaelhugo/ECAL_MID_1_2027/contents/Tools/AgentCodingWithLMStudio/src/examples";
 
 const files = import.meta.glob("./*.json", { eager: true, import: "default" });
 
-const load = ({ title, mode, steps }) => ({
+export const load = ({ title, mode, steps }, path) => ({
+  path,
   title: pick(title),
   mode: modeOf(mode),
   steps: steps.map((step) => ({
@@ -46,12 +49,77 @@ const load = ({ title, mode, steps }) => ({
 const loaded = Object.fromEntries(
   Object.entries(files)
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([path, data]) => [path, load(data)]),
+    .map(([path, data]) => [path, load(data, path)]),
 );
 
+const buildExamples = () =>
+  Object.values(MODES).flatMap((mode) => [
+    { title: t("picker.newProcess"), mode, steps: [EMPTY_STEP] },
+    ...Object.entries(loaded)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([, example]) => example)
+      .filter((example) => example.mode === mode),
+  ]);
+
 // Pour chaque mode : « Nouveau processus » (une cellule vide), puis ses exemples
-export const examples = Object.values(MODES).flatMap((mode) => [
-  { title: t("picker.newProcess"), mode, steps: [EMPTY_STEP] },
-  ...Object.values(loaded).filter((example) => example.mode === mode),
-]);
+export const examples = buildExamples();
 export const defaultExample = loaded[DEFAULT_FILE] ?? examples[0];
+
+/** Ajoute ou met à jour un exemple en mémoire et reconstruit la liste. */
+export function registerExample(path, data) {
+  const entry = load(data, path);
+  loaded[path] = entry;
+  examples.splice(0, examples.length, ...buildExamples());
+  return entry;
+}
+
+/** Ajoute un processus importé localement (glisser-déposer HTML/JSON) pour la session. */
+export function registerImported({ title, mode, steps }) {
+  const entry = load({ title, mode: mode.id ?? mode, steps });
+  loaded[`imported:${entry.title}`] = entry;
+  examples.splice(0, examples.length, ...buildExamples());
+  return entry;
+}
+
+/** Retire un exemple en mémoire et reconstruit la liste. */
+export function unregisterExample(path) {
+  delete loaded[path];
+  examples.splice(0, examples.length, ...buildExamples());
+}
+
+/**
+ * Synchronise en arrière-plan les exemples depuis GitHub : un processus ajouté
+ * ou supprimé sur GitHub est immédiatement pris en compte sans recompiler.
+ */
+export async function syncRemoteExamples(onUpdate) {
+  try {
+    const res = await fetch(REMOTE_EXAMPLES_URL, {
+      headers: { Accept: "application/vnd.github+json" },
+    });
+    if (!res.ok) return;
+    const items = await res.json();
+    const remoteKeys = new Set();
+    let changed = false;
+    for (const item of items) {
+      if (!item.name?.endsWith(".json") || !item.download_url) continue;
+      const key = `./${item.name}`;
+      remoteKeys.add(key);
+      if (loaded[key]) continue;
+      const data = await (await fetch(item.download_url)).json();
+      loaded[key] = load(data, key);
+      changed = true;
+    }
+    for (const key of Object.keys(loaded)) {
+      if (key.startsWith("./") && !remoteKeys.has(key)) {
+        delete loaded[key];
+        changed = true;
+      }
+    }
+    if (changed) {
+      examples.splice(0, examples.length, ...buildExamples());
+      onUpdate?.();
+    }
+  } catch {
+    // Hors ligne ou GitHub indisponible : les exemples intégrés suffisent
+  }
+}

@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # Publie une nouvelle release GitHub de proce55us.
 #
-#   ./release.sh 1.2.0  →  version 1.2.0 dans package.json (commit), build,
-#                          push de main + tag v1.2.0, release GitHub + upload dmg/zip,
-#                          puis la version web (../AgentCodingWithLMStudio/deploy-web.sh)
-#   ./release.sh        →  idem avec la version actuelle de package.json
+#   ./release.sh         → incrémente le patch (ex. 1.3.1 → 1.3.2), commit,
+#                          build, push de main + tag, release GitHub + upload
+#                          dmg/zip, puis la version web (deploy-web.sh)
+#   ./release.sh minor   → idem en incrémentant la mineure (ou major / 1.4.0)
+#   ./release.sh same    → republie la version actuelle de package.json
 #
-# Notes de la release : la section « ## X.Y.Z » de CHANGELOG.md (à écrire avant).
+# Notes de la release : la section « ## X.Y.Z » de CHANGELOG.md, ou à défaut
+# les commits depuis le tag précédent.
 # Les artifacts ont des noms sans version (proce55us-universal.dmg) : le lien
 # « releases/latest/download/… » de la page d'accueil reste donc toujours bon,
 # et son badge de version (dernière release) se met à jour tout seul.
@@ -18,17 +20,26 @@ cd "$HERE"
 REPO="gaelhugo/ECAL_MID_1_2027"
 API="https://api.github.com/repos/$REPO"
 
-# 1. Version : argument facultatif → package.json (+ lockfile), puis commit
-if [[ -n "${1:-}" ]]; then
-  npm version "$1" --no-git-tag-version --allow-same-version >/dev/null
+# Synchronise les exemples publiés à distance avant de construire et pousser
+git pull -q --rebase --autostash origin main
+
+PREV_TAG="v$(node -p "require('./package.json').version")"
+
+# 1. Version : "patch" par défaut ("minor", "major", "1.4.0", ou "same" pour garder l'actuelle)
+BUMP="${1:-patch}"
+if [[ "$BUMP" != "same" ]]; then
+  npm version "$BUMP" --no-git-tag-version --allow-same-version >/dev/null
   git add package.json package-lock.json
-  git diff --cached --quiet || git commit -q -m "chore: proce55us v$1"
+  git diff --cached --quiet || git commit -q -m "chore: proce55us v$(node -p "require('./package.json').version")"
 fi
 VERSION="$(node -p "require('./package.json').version")"
 TAG="v$VERSION"
 
-# Notes : section de CHANGELOG.md pour cette version (texte par défaut sinon)
+# Notes : section de CHANGELOG.md pour cette version, sinon commits depuis le tag précédent
 NOTES="$(awk -v v="## $VERSION" '$0 == v { on = 1; next } /^## / { on = 0 } on' CHANGELOG.md 2>/dev/null)"
+if [[ -z "${NOTES//[[:space:]]/}" ]] && git rev-parse "$PREV_TAG" >/dev/null 2>&1 && [[ "$PREV_TAG" != "$TAG" ]]; then
+  NOTES="$(git log "$PREV_TAG..HEAD" --invert-grep --grep="^chore: proce55us v" --pretty=format:"- %s" 2>/dev/null || true)"
+fi
 [[ -n "${NOTES//[[:space:]]/}" ]] || NOTES="Build macOS universel de proce55us $TAG."
 NOTES="$NOTES
 

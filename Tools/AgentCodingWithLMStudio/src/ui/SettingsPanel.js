@@ -18,13 +18,20 @@ const STORAGE_KEY = "atelier.settings";
  * Événement émis : 'change' (le service ou la clé a changé).
  */
 export class SettingsPanel extends EventTarget {
-  settings = { provider: "lmstudio", keys: {} };
+  settings = { provider: "lmstudio", keys: {}, githubToken: "" };
 
   constructor(buttonRoot) {
     super();
     this.load();
     this.button = el("button", "icon-button settings__button", icons.settings);
-    this.button.addEventListener("click", () => this.toggle());
+    this.button.addEventListener("click", (event) => {
+      if (event.altKey || event.shiftKey) {
+        this.unlockAdmin();
+        this.toggle(true);
+      } else {
+        this.toggle();
+      }
+    });
     buttonRoot.append(this.button);
 
     this.element = this.build();
@@ -110,9 +117,82 @@ export class SettingsPanel extends EventTarget {
       this.keyField,
       el("p", "settings__note", t("settings.keysNote")),
       ...this.buildLanguage(),
+      ...this.buildAdmin(),
     );
     panel.inert = true;
     return panel;
+  }
+
+  /** Section discrète d'administration : jeton GitHub + bouton de publication. */
+  buildAdmin() {
+    const details = el(
+      "details",
+      "settings__admin",
+      `<summary class="settings__group">${t("settings.admin")}</summary>`,
+    );
+    const field = el(
+      "label",
+      "settings__key",
+      `<span>${t("settings.githubToken")}</span>
+      <input type="password" autocomplete="off" spellcheck="false" placeholder="ghp_…" />
+      <a href="https://github.com/settings/tokens/new?scopes=repo&description=proce55us" target="_blank" rel="noopener">${t("settings.getGithubToken")}</a>`,
+    );
+    this.githubInput = field.querySelector("input");
+    this.githubInput.value = this.settings.githubToken ?? "";
+    this.githubInput.addEventListener("input", () => {
+      this.settings.githubToken = this.githubInput.value.trim();
+      this.save();
+    });
+
+    this.publishButton = el(
+      "button",
+      "settings__action",
+      `${icons.sparkle}<span>${t("publish.button")}</span>`,
+    );
+    this.publishButton.type = "button";
+    this.publishButton.addEventListener("click", () =>
+      this.dispatchEvent(new Event("publish")),
+    );
+
+    this.deleteButton = el(
+      "button",
+      "settings__action settings__action--secondary",
+      `${icons.delete}<span>${t("publish.deleteButton")}</span>`,
+    );
+    this.deleteButton.type = "button";
+    this.deleteButton.addEventListener("click", () =>
+      this.dispatchEvent(new Event("unpublish")),
+    );
+
+    details.append(
+      field,
+      el("p", "settings__note", t("settings.adminNote")),
+      this.publishButton,
+      this.deleteButton,
+    );
+    const hasToken = Boolean(this.settings.githubToken);
+    details.hidden = !hasToken;
+    details.open = hasToken;
+    this.adminSection = details;
+    return [details];
+  }
+
+  /** Déverrouille et ouvre la section d'administration. */
+  unlockAdmin() {
+    if (!this.adminSection) return;
+    this.adminSection.hidden = false;
+    this.adminSection.open = true;
+  }
+
+  get githubToken() {
+    return this.settings.githubToken?.trim() ?? "";
+  }
+
+  set githubToken(value) {
+    this.settings.githubToken = value.trim();
+    if (this.githubInput) this.githubInput.value = this.settings.githubToken;
+    if (this.settings.githubToken) this.unlockAdmin();
+    this.save();
   }
 
   /** Choix de la langue : automatique (système), français ou anglais. */

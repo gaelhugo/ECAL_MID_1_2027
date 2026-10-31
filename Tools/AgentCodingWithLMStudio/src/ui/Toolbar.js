@@ -8,7 +8,13 @@ import { t } from "../i18n/index.js";
  * « Télécharger » et un indicateur d'état (Prêt / Exécution…).
  */
 export class Toolbar {
-  constructor(root, notebook, getTitle = () => "processus", getMode) {
+  constructor(
+    root,
+    notebook,
+    getTitle = () => "processus",
+    getMode,
+    onPublish,
+  ) {
     const add = Toolbar.button(
       icons.add,
       t("toolbar.add"),
@@ -36,24 +42,29 @@ export class Toolbar {
     ["idle", "delete", "restart"].forEach((type) =>
       notebook.addEventListener(type, updateDownload),
     );
-    const status = el("span", "toolbar__status", t("toolbar.ready"));
+    this.status = el("span", "toolbar__status", t("toolbar.ready"));
 
     add.addEventListener("click", () => notebook.insert());
-    download.addEventListener("click", () =>
-      CodeExporter.download(notebook.contents, getTitle(), getMode?.()),
-    );
+    download.addEventListener("click", (event) => {
+      if ((event.shiftKey || event.altKey) && onPublish) return onPublish();
+      CodeExporter.download(notebook.contents, getTitle(), getMode?.());
+    });
     runAll.addEventListener("click", () => notebook.runAll());
     restart.addEventListener("click", () => notebook.restart());
     notebook.addEventListener(
       "busy",
-      () => (status.textContent = t("toolbar.busy")),
+      () => (this.status.textContent = t("toolbar.busy")),
     );
     notebook.addEventListener(
       "idle",
-      () => (status.textContent = t("toolbar.ready")),
+      () => (this.status.textContent = t("toolbar.ready")),
     );
 
-    root.append(add, runAll, restart, download, status);
+    root.append(add, runAll, restart, download, this.status);
+  }
+
+  setStatus(text) {
+    this.status.textContent = text || t("toolbar.ready");
   }
 
   static button(icon, label, shortcut) {

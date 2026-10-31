@@ -83,8 +83,8 @@ function openLinksInBrowser(window, appUrl) {
     return { action: "deny" };
   });
   window.webContents.on("will-navigate", (event, url) => {
-    if (!external(url)) return;
+    if (url.startsWith(appUrl)) return;
     event.preventDefault();
-    shell.openExternal(url);
+    if (external(url)) shell.openExternal(url);
   });
 }

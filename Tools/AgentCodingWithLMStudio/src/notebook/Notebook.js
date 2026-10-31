@@ -53,6 +53,7 @@ export class Notebook extends EventTarget {
     return this.cells
       .filter((cell) => this.kernel.codeOf(cell.id) !== undefined)
       .map((cell) => ({
+        title: cell.step.title || "",
         label: cell.label.textContent,
         prompt: cell.prompt,
         code: this.kernel.codeOf(cell.id),

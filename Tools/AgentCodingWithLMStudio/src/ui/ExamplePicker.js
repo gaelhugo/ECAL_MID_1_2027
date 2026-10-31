@@ -68,6 +68,14 @@ export class ExamplePicker {
     this.select.selectedIndex = this.visible.indexOf(example);
   }
 
+  /** Rafraîchit la liste du mode actuel en conservant la sélection en cours. */
+  refresh() {
+    const current = this.current;
+    this.fill(this.mode);
+    const index = this.visible.indexOf(current);
+    if (index >= 0) this.select.selectedIndex = index;
+  }
+
   static option(value, text) {
     const option = el("option");
     option.value = value;

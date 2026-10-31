@@ -16,8 +16,10 @@
 export class Shortcuts {
   chord = false; // vrai juste après Ctrl + M
 
-  constructor(notebook) {
+  constructor(notebook, onPublish, onUnpublish) {
     this.notebook = notebook;
+    this.onPublish = onPublish;
+    this.onUnpublish = onUnpublish;
     document.addEventListener("keydown", (event) => this.onKeyDown(event));
   }
 
@@ -39,6 +41,8 @@ export class Shortcuts {
       k: () => nb.move(nb.selected, -1),
       j: () => nb.move(nb.selected, 1),
       z: () => nb.undoDelete(),
+      s: () => this.onPublish?.(),
+      x: () => this.onUnpublish?.(),
     };
 
     const action = (() => {

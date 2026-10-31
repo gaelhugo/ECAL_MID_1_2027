@@ -38,12 +38,12 @@ npm start                   # run the desktop app without packaging (after --web
 ## Publishing a release
 
 ```bash
-# 1. add a "## 1.2.0" section to CHANGELOG.md (it becomes the release notes), commit
-# 2. then:
-./release.sh 1.2.0
+npm run release       # bumps patch (e.g. 1.3.1 → 1.3.2), builds & publishes everything
+./release.sh minor    # bumps minor (or: major / 1.4.0)
+./release.sh same     # re-publishes the current version in package.json
 ```
 
-`release.sh 1.2.0` sets the version in `package.json` (and its lockfile) and commits it, builds the app, pushes `main` and the `v1.2.0` tag, creates the GitHub release **proce55us v1.2.0** with the CHANGELOG section as notes, uploads both `dist/` assets, **and deploys the web version** (`../AgentCodingWithLMStudio/deploy-web.sh`) — so https://gaelhugo.github.io/editor.proce55us/ always matches the released app, same commit and same version number. Without an argument it releases the version already in `package.json`; re-running for an existing tag updates its notes and replaces its assets. The artifact names have no version in them (`proce55us-universal.dmg`), so the homepage's `releases/latest/download/…` link — and its version badge — always track the newest release automatically. It uses the GitHub token stored in the macOS keychain (created by `gh auth login` or GitHub Desktop); if your token lives elsewhere, export it: `GITHUB_TOKEN=… ./release.sh` — adapt the `TOKEN=` line accordingly.
+`release.sh` bumps the version in `package.json` (and its lockfile) and commits it, builds the app, pushes `main` and the `vX.Y.Z` tag, creates the GitHub release **proce55us vX.Y.Z** (using the matching `## X.Y.Z` section of `CHANGELOG.md` if present, or the commit messages since the previous tag otherwise), uploads both `dist/` assets, **and deploys the web version** (`../AgentCodingWithLMStudio/deploy-web.sh`) — so https://editor.proce55us.com/ always matches the released app, same commit and same version number. Re-running with `same` for an existing tag updates its notes and replaces its assets. The artifact names have no version in them (`proce55us-universal.dmg`), so the homepage's `releases/latest/download/…` link — and its version badge — always track the newest release automatically. It uses the GitHub token stored in the macOS keychain (created by `gh auth login` or GitHub Desktop); if your token lives elsewhere, export it: `GITHUB_TOKEN=… ./release.sh` — adapt the `TOKEN=` line accordingly.
 
 ## Update checker
 
@@ -65,20 +65,31 @@ The app follows the **macOS language**: French if the preferred language is Fren
 
 ## Installing on another Mac
 
-The app is **ad-hoc signed** (no paid Apple Developer ID), so macOS blocks the first launch:
+The app is **ad-hoc signed** (no paid Apple Developer ID), so macOS Gatekeeper only blocks files that carry a browser's `com.apple.quarantine` flag. You have four ways to install/authorize it:
 
-1. Open the `.dmg` and drag **proce55us** into **Applications**.
-2. Double-click it once — macOS shows « cannot be opened ». Click **Done**.
-3. Go to **System Settings → Privacy & Security** and click **Open Anyway** (the blocked app is listed there), then confirm. From then on it opens normally.
-   On macOS 14 or earlier, **right-click → Open** also works.
-
-Alternative without any dialog: remove the quarantine flag —
-`xattr -dr com.apple.quarantine /Applications/proce55us.app`
-(the flag is only set on files downloaded through a browser; `curl` or `brew` installs don't trigger Gatekeeper).
+1. **One-line Terminal installer (no Gatekeeper warning):**
+   ```bash
+   curl -fsSL https://proce55us.com/install | sh
+   ```
+   Downloads the latest universal `.zip`, installs `/Applications/proce55us.app`, clears quarantine, and launches the app immediately.
+2. **Homebrew Tap (no Gatekeeper warning):**
+   ```bash
+   brew install --cask gaelhugo/proce55us/proce55us
+   ```
+   Installs from [`gaelhugo/homebrew-proce55us`](https://github.com/gaelhugo/homebrew-proce55us) and runs `xattr -cr` automatically in its `postflight` hook.
+3. **Authorize a browser-downloaded `.dmg` in one command:**
+   Drag **proce55us** into **Applications**, then run:
+   ```bash
+   xattr -cr /Applications/proce55us.app
+   ```
+4. **Via macOS System Settings (no Terminal):**
+   1. Open the `.dmg` and drag **proce55us** into **Applications**.
+   2. Double-click it once — macOS shows « cannot be opened ». Click **Done**.
+   3. Go to **System Settings → Privacy & Security** and click **Open Anyway** (the blocked app is listed there), then confirm. From then on it opens normally.
 
 When a webcam step runs, macOS asks for camera access → **Allow**.
 
-To remove the warning entirely, the app must be signed with an Apple **Developer ID Application** certificate and notarized (Apple Developer Program). electron-builder does this automatically if such a certificate is in the keychain (remove `"identity": "-"` from `package.json`) and notarization credentials are provided.
+To remove the warning even on browser-downloaded `.dmg` files without Terminal, the app must be signed with an Apple **Developer ID Application** certificate and notarized (Apple Developer Program). electron-builder does this automatically if such a certificate is in the keychain (remove `"identity": "-"` from `package.json`) and notarization credentials are provided.
 
 ## How it works
 

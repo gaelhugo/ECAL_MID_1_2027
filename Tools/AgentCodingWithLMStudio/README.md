@@ -24,10 +24,11 @@ npm run dev
 
 - `npm run build` — production build
 - `npm run preview` — preview the production build
+- `npm run release` — bumps the patch version, builds & publishes the macOS release on GitHub, and deploys the web version (see [`../AgentCodingWithLMStudio-mac/README.md`](../AgentCodingWithLMStudio-mac/README.md#publishing-a-release))
 
 The app works fully offline for browsing and running the steps. **A model is only needed to regenerate code from a modified prompt**: LM Studio by default, or an online service chosen in the settings (see below).
 
-A hosted version runs at **https://gaelhugo.github.io/editor.proce55us/** — see [Web version](#web-version).
+A hosted version runs at **https://editor.proce55us.com/** (project homepage: **https://proce55us.com/**) — see [Web version](#web-version).
 
 ## How it works
 
@@ -35,7 +36,8 @@ A hosted version runs at **https://gaelhugo.github.io/editor.proce55us/** — se
 - The **title is a dropdown** to pick what to load, next to a small **mode** pill (JavaScript · p5.js · three.js · DOM). The title lists only the current mode's processus: **Nouveau processus** / **New processus** (first entry, a single empty cell) then its examples. Changing the mode loads that mode's first example (or its empty processus if it has none). Startup default: **Raster Image** (JavaScript, the 8-step webcam rasterization). Switching resets the preview; the snackbar's **Annuler** / **Undo** restores the previous processus (and its mode).
 - The right pane is a **preview**: a sandboxed `<iframe>` in which the cells' code runs, each in its own `<script>` tag, replayed in order by the `Kernel`. The mode sets its base CSS and loads its library first (three.js is an ES module, so its cells run once the module is ready).
 - Editing a prompt and regenerating sends the code of the cells above plus the active function signatures (`ProgramSummary`) to the selected model (local **LM Studio** by default), which writes the new code. The rules in the system prompt depend on the mode (e.g. p5: don't call p5 functions at top level; three.js: create objects once and update them in `update()`; DOM: build the whole page, style with `css()`).
-- **Télécharger** / **Download** exports the rendered cells as a standalone HTML file; p5.js / three.js are loaded there from the jsDelivr CDN (same pinned versions).
+- **Télécharger** / **Download** exports the rendered cells as a standalone HTML file (embedding `<script id="proce55us" type="application/json">` alongside the `<script>` cells); p5.js / three.js are loaded there from the jsDelivr CDN (same pinned versions).
+- **Drag & drop to reopen:** Dragging and dropping any downloaded `.html` file (or `.json` processus file) anywhere onto the app or web page reconstructs all its cells (titles, prompts, code, and mode) and immediately runs them so you can continue editing where you left off (also backward-compatible with older exported HTML files).
 
 | Mode       | Example processus (FR / EN)                                                                    |
 | ---------- | ---------------------------------------------------------------------------------------------- |
@@ -43,6 +45,17 @@ A hosted version runs at **https://gaelhugo.github.io/editor.proce55us/** — se
 | p5.js      | **Particules / Particles** — canvas → particles → motion → mouse attraction → trails           |
 | three.js   | **Vague de cubes / Cube wave** — scene → lit cube → wave grid → OrbitControls → color          |
 | DOM        | **Palette de couleurs / Color palette** — header → cards → search filter → select → dark theme |
+
+## Saving & reopening a processus (Download / Drag & Drop)
+
+1. **Download (`.html`):** Clicking **Télécharger / Download** in the toolbar exports all rendered cells as a single standalone `.html` file (`<slug>.html`):
+   - It runs on its own in any browser (loading `p5.js` or `three.js` from jsDelivr CDN when needed).
+   - It embeds a `<script id="proce55us" type="application/json">` block in `<head>` containing the processus `{ title, mode, steps: [{ title, prompt, code }] }`, in addition to the executable `<script>` tags in `<body>`.
+2. **Drag & drop to reopen and continue editing:**
+   - Drag and drop any downloaded `.html` file (or `.json` processus file) anywhere onto the macOS app window or the web version (`CodeExporter.fromHtml()`).
+   - The app switches to the file's mode (`JavaScript`, `p5.js`, `three.js`, or `DOM`), adds the processus title to the header dropdown for the current session (`registerImported()`), recreates all cells with their original prompts and code, and **immediately runs the code** (`generate: false`) so the preview renders right away without calling the LLM.
+   - **Backward-compatible:** Older `.html` files downloaded before `<script id="proce55us">` was introduced are also supported — `CodeExporter.fromHtml()` detects the mode from the included library/helper tags and extracts each cell's title, prompt, and code from the `<script>` blocks and their `//` header comments.
+   - Clicking **Annuler / Undo** in the snackbar restores the previous processus.
 
 ## Languages
 
@@ -69,10 +82,10 @@ A hosted version runs at **https://gaelhugo.github.io/editor.proce55us/** — se
 
 ## Web version
 
-The same app is published as a static site on GitHub Pages: **https://gaelhugo.github.io/editor.proce55us/** (repo `gaelhugo/editor.proce55us`, built output only — don't edit it by hand).
+The same app is published as a static site on GitHub Pages: **https://editor.proce55us.com/** (repo `gaelhugo/editor.proce55us`, built output only — don't edit it by hand).
 
 - `./deploy-web.sh` builds it and pushes it. `../AgentCodingWithLMStudio-mac/release.sh` runs it automatically after each release, **with the same version number as the macOS app** — the web editor and the desktop app always ship from the same commit. To publish a web update by hand between releases, run `deploy-web.sh` directly.
-- GitHub Pages has no proxy, so the build sets `VITE_DIRECT_API=1` (`vite build --base /editor.proce55us/`): the service URLs then come straight from `src/llm/endpoints.js` instead of the `/lmstudio`, `/groq`… proxy routes. `vite.config.js` (dev proxy) and `../AgentCodingWithLMStudio-mac/electron/server.js` (app relay) read the same table — keep them in sync.
+- GitHub Pages has no proxy, so the build sets `VITE_DIRECT_API=1` (`vite build --base ./` + `CNAME` `editor.proce55us.com`): the service URLs then come straight from `src/llm/endpoints.js` instead of the `/lmstudio`, `/groq`… proxy routes. `vite.config.js` (dev proxy) and `../AgentCodingWithLMStudio-mac/electron/server.js` (app relay) read the same table — keep them in sync.
 - All services accept cross-origin calls from the page. For **LM Studio**, two things are needed on the visitor's machine: **Enable CORS** in LM Studio's server settings, and — in Chrome/Edge — allowing the **Local network access** permission the first time (the page declares `targetAddressSpace: "local"`, which triggers Chrome's prompt; other browsers don't gate localhost). If it fails, the cell shows a message explaining both steps.
 
 ## Settings: other models (⚙︎ in the header)
@@ -105,7 +118,7 @@ Each cell executes in its own `<script>` tag inside the preview iframe, replayed
 src/
 ├── main.js                     # Assembles processus, preview, kernel, toolbar, dropdown, settings, shortcuts
 ├── examples/
-│   ├── index.js                # Auto-loads every *.json here, grouped by mode; sets the default (DEFAULT_FILE)
+│   ├── index.js                # Auto-loads every *.json here + syncs added/deleted examples from GitHub (syncRemoteExamples)
 │   ├── raster-image.json       # JavaScript: 8 steps (prompt + code), canvas … mouse
 │   ├── p5-particules.json      # p5.js: 5 steps
 │   ├── three-vague-de-cubes.json # three.js: 5 steps
@@ -119,14 +132,36 @@ src/
 ├── preview/                    # Preview (sandboxed iframe)
 ├── llm/                        # LlmClient + GeminiClient, providers, PromptBuilder, CodeGenerator,
 │                               #   CodeCleaner, ProgramSummary
-├── export/                     # CodeExporter
+├── export/                     # CodeExporter (HTML export), ProcessusPublisher (GitHub publish/delete + auto-translate)
 ├── ui/                         # Toolbar, ExamplePicker, SettingsPanel, Splitter, Shortcuts, Snackbar, dom, icons
 └── styles/                     # Modular CSS (base, layout, cell, editor, preview, structure, settings)
 ```
 
-### Adding a demo processus
+### Adding or removing a demo processus
 
-Drop a JSON file into `src/examples/` — it appears in the dropdown of its mode automatically (after "Nouveau processus", sorted by file name):
+#### 1. Directly from the app or web version (Admin)
+
+As admin of `gaelhugo/ECAL_MID_1_2027`, you can publish a new processus or remove an existing one directly from the macOS app or the online version — without downloading or moving files locally:
+
+- **Unlock the hidden Administration section:**
+  The `Administration` section at the bottom of `⚙︎ Settings` is **hidden by default** for regular users. Unlock it by:
+  - **`Alt + Click` (or `Shift + Click`) on the `⚙︎` Settings button**, or
+  - using the publish/delete shortcuts below. Once your GitHub token is saved in `localStorage`, the section remains visible on your machine.
+- **GitHub Token (one-time setup):**
+  Create a [Fine-Grained Personal Access Token](https://github.com/settings/personal-access-tokens/new) scoped strictly to `gaelhugo/ECAL_MID_1_2027` with **Repository permissions → Contents: Read and write**, and paste it into the Administration section (or when prompted). It is stored only in your browser's `localStorage` (`atelier.settings`).
+- **Publish a processus:**
+  - Click **"Publier ce processus sur GitHub" / "Publish this processus to GitHub"** in `⚙︎ Settings → Administration`, or
+  - Press **`Ctrl + M` then `S`**, or
+  - **`Alt + Click` (or `Shift + Click`) on the Download button**.
+  - Enter the processus title. `ProcessusPublisher` automatically translates the title, step titles, prompts, and only code comments / displayed strings (`fr ↔ en`) using the currently selected LLM, then commits `Tools/AgentCodingWithLMStudio/src/examples/<slug>.json` directly to GitHub via the GitHub Contents API.
+- **Remove an example:**
+  - Select the example in the title dropdown, then click **"Supprimer cet exemple de GitHub" / "Remove this example from GitHub"** in `⚙︎ Settings → Administration`, or press **`Ctrl + M` then `X`**, and confirm.
+- **Instant live sync (`syncRemoteExamples`):**
+  On startup, the app queries the GitHub Contents API for `src/examples/*.json`. Any newly published example appears — and any deleted example disappears — immediately in both the web version and installed macOS apps without needing a rebuild.
+
+#### 2. Manually via a JSON file
+
+You can also drop a JSON file into `src/examples/` — it appears in the dropdown of its mode automatically (after "Nouveau processus", sorted by file name):
 
 ```json
 {

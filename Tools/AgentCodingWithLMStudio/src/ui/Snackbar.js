@@ -18,11 +18,14 @@ export class Snackbar {
 
   show(message, actionLabel, onAction) {
     this.text.textContent = message;
-    this.action.textContent = actionLabel;
-    this.action.onclick = () => {
-      this.hide();
-      onAction();
-    };
+    this.action.textContent = actionLabel ?? "";
+    this.action.hidden = !actionLabel;
+    this.action.onclick = onAction
+      ? () => {
+          this.hide();
+          onAction();
+        }
+      : null;
     this.element.classList.add("is-visible");
     clearTimeout(this.timer);
     this.timer = setTimeout(() => this.hide(), this.duration);

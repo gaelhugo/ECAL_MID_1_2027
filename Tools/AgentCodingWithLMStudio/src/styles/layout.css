@@ -11,7 +11,25 @@
   user-select: none;
 }
 
-.layout.is-resizing iframe {
+.layout.is-resizing iframe,
+body.is-dropping iframe {
+  pointer-events: none;
+}
+
+/* Voile affiché quand on glisse un fichier .html sur la fenêtre */
+body.is-dropping::after {
+  content: attr(data-drop-hint);
+  position: fixed;
+  inset: 10px;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  border: 2px dashed var(--accent);
+  border-radius: 10px;
+  background: rgba(26, 115, 232, 0.08);
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 500;
   pointer-events: none;
 }
 

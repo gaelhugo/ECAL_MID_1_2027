@@ -11,12 +11,22 @@ Vanilla JS + Vite. Commentaires du code source en français.
   Consignes au modèle (`PromptBuilder.js`, `modes.js`) en anglais ; `LANGUAGE_RULES` (règle + rappel final) et
   `LANGUAGE_REMINDERS` (ajouté à la demande, dans la langue voulue) imposent la langue des commentaires.
 
-- Dev : `npm run dev` · Build (vérification) : `npm run build`
+- Dev : `npm run dev` · Build (vérification) : `npm run build` · Release complète (app macOS + web) : `npm run release`
 - Processus de démo : un fichier JSON par processus dans `src/examples/*.json`, chargé automatiquement
-  (`import.meta.glob`, triés par nom) ; format décrit en tête de `src/examples/index.js`
-  (`{ title, mode, steps: [{ title, prompt, code: [lignes] }] }`, champs localisables `{ fr, en }`).
+  (`import.meta.glob`, triés par nom) + synchronisé au démarrage depuis GitHub (`syncRemoteExamples()`) pour
+  afficher les exemples ajoutés et retirer les exemples supprimés sans recompiler ; format décrit en tête de
+  `src/examples/index.js` (`{ title, mode, steps: [{ title, prompt, code: [lignes] }] }`, champs localisables `{ fr, en }`).
   `DEFAULT_FILE` = chargé au démarrage (`raster-image.json`).
   « Nouveau processus » (1er du menu) = une seule cellule vide. Côté interface, on dit « processus » (pas « notebook »).
+- Export / réouverture HTML (`src/export/CodeExporter.js`) : « Télécharger » exporte les cellules rendues en un `.html`
+  autonome contenant `<script id="proce55us" type="application/json">` (titre, mode, étapes). Glisser-déposer un fichier
+  `.html` (y compris un ancien export sans `#proce55us`) ou `.json` sur la fenêtre reconstruit toutes les cellules
+  (`CodeExporter.fromHtml()`), sélectionne le mode et exécute immédiatement le code (`generate: false`).
+- Publication / suppression admin sur GitHub (`src/export/ProcessusPublisher.js`) :
+  Section `Administration` dans `SettingsPanel.js` masquée par défaut (`hidden = true`) jusqu'au déverrouillage
+  (`Alt/Shift + Clic` sur `⚙︎`, `Ctrl + M` puis `S` / `X`, `Alt/Shift + Clic` sur Télécharger, ou jeton déjà enregistré).
+  Publier traduit automatiquement titre, étapes, prompts et commentaires/textes du code (`fr ↔ en`) via le LLM actif,
+  puis envoie `src/examples/<slug>.json` sur `gaelhugo/ECAL_MID_1_2027` via l'API GitHub Contents (`PUT` / `DELETE`).
 - Modes (`src/runtime/modes.js`) : `vanilla` (JavaScript canvas, défaut), `p5` (p5.js 1.11.13, mode global),
   `three` (three.js r186 → `window.THREE` + `THREE.OrbitControls`, via `runtime/libs/three-global.js?worker&url`,
   module ES donc cellules « deferred »), `dom` (page entière, helper `css()`). Champ `"mode"` du JSON ;
@@ -35,8 +45,8 @@ Vanilla JS + Vite. Commentaires du code source en français.
   (version web GitHub Pages), le navigateur appelle les services directement et `LlmClient` ajoute
   `targetAddressSpace: "local"` pour LM Studio (prompt Chrome « accès au réseau local »).
   `LlmClient` = API OpenAI, `GeminiClient` = API Gemini (clé dans `x-goog-api-key`).
-- Version web publiée : https://gaelhugo.github.io/editor.proce55us/ (dépôt `gaelhugo/editor.proce55us`,
-  build seul). `deploy-web.sh` construit (`VITE_DIRECT_API=1`, `--base /editor.proce55us/`) et pousse ;
+- Version web publiée : https://editor.proce55us.com/ (dépôt `gaelhugo/editor.proce55us`,
+  build seul ; page d'accueil sur https://proce55us.com/, dépôt `gaelhugo/proce55us`). `deploy-web.sh` construit (`VITE_DIRECT_API=1`, `--base ./`, `CNAME` `editor.proce55us.com`) et pousse ;
   lancée automatiquement à la fin de `../AgentCodingWithLMStudio-mac/release.sh` (même version que l'app macOS).
 - Contexte envoyé au modèle : code complet des cellules rendues au-dessus + fonctions actives (`ProgramSummary`).
 - Cellules : `id` unique et stable (≠ position) ; le noyau rejoue dans l'ordre du notebook (`kernel.run(cells, order)`).
