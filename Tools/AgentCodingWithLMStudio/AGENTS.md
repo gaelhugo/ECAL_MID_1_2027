@@ -37,6 +37,12 @@ Vanilla JS + Vite. Commentaires du code source en français.
 - Prompt modifié → génération (`src/llm/`), par défaut via LM Studio, relayé par le proxy Vite `/lmstudio`
   (cible `LMSTUDIO_URL`, défaut `http://localhost:1234` ; modèle `VITE_LMSTUDIO_MODEL` dans `.env`,
   actuellement `qwen2.5-coder-14b-instruct`, sinon le modèle chargé).
+  - Si le prompt d'une cellule vide est trop complexe, le modèle renvoie un commentaire explicatif + des lignes
+    `// @step Titre | Prompt` (`CodeCleaner.parse`) : la cellule initiale garde le commentaire et `Notebook`
+    insère et génère séquentiellement les sous-cellules.
+  - Si l'utilisateur saisit ou modifie d'abord le code puis exécute la cellule (`Cell.needsPromptFromCode`),
+    le code est exécuté puis `CodeGenerator.generatePrompt` génère le prompt correspondant et signale
+    pédagogiquement toute erreur éventuelle (`@error` → `CellOutput` type `advice`).
 - Réglages (⚙︎, `src/ui/SettingsPanel.js`, localStorage `atelier.settings`) : choix du service, LM Studio par défaut.
   Services dans `src/llm/providers.js` ; adresses dans `src/llm/endpoints.js` (`TARGETS`, partagées avec
   le proxy Vite et `../AgentCodingWithLMStudio-mac/electron/server.js`). Par défaut chacun passe par
