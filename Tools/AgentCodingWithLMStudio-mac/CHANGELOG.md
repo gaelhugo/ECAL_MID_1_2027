@@ -2,6 +2,13 @@
 
 `release.sh` publishes the section of the released version as the GitHub release notes — write it before releasing.
 
+## 1.4.0
+
+- **Smart step subdivision**: when a cell prompt requests code that would be too sophisticated for a single simple cell, the model automatically splits the process into logical sub-steps (`// @step`), keeps a short explanatory comment in the initial cell, and generates and runs each sub-cell sequentially.
+- **Code-first prompt generation & pedagogical error feedback**: writing or editing code directly in a cell and pressing Run executes the code immediately, generates (or updates) the matching prompt on the left, and pedagogically explains any errors or bugs below the cell.
+- **Faster LLM responses**: streamlined system instructions and cached model resolution in LM Studio.
+- **Default startup state**: starts on an empty “New processus” cell by default.
+
 ## 1.3.1
 
 - **Toolbar layout**: the toolbar moves to its own row under the title, aligned left; the ⚙︎ settings icon sits alone on the right. The header now stays identical whatever the language or label lengths.
