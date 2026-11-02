@@ -92,6 +92,7 @@
   "llm.noKey": "{name} : ajoutez votre clé API dans les Réglages (icône ⚙︎).",
   "llm.noModel": "Aucun modèle disponible dans LM Studio.",
   "llm.noCode": "Le modèle n’a renvoyé aucun code.",
+  "llm.splitHeader": "// Ce processus est découpé en {count} étapes :",
   "llm.hint.400": "requête refusée (clé API ou modèle invalide ?)",
   "llm.hint.401": "clé API invalide ou manquante (voir Réglages)",
   "llm.hint.403": "clé API refusée (voir Réglages)",

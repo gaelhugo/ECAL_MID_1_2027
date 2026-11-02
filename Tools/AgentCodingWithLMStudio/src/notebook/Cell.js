@@ -27,12 +27,16 @@ export class Cell {
   constructor(step, id, { onRun, onSelect, onInsert, onMove, onDelete }) {
     this.step = step;
     this.id = id;
-    this.sourcePrompt = step.prompt;
+    // Si la cellule a un prompt mais pas encore de code (ex. sous-étape créée par découpage),
+    // sourcePrompt reste vide pour déclencher la génération à l'exécution
+    this.sourcePrompt = step.code ? step.prompt : "";
     // Une cellule sans code prédéfini est directement modifiable
     this.generated = !step.code;
     this.runButton = new RunButton(() => onRun(this));
     this.editor = new CodeEditor(
-      this.generated ? t("cell.codePlaceholder") : t("cell.codePending"),
+      this.generated && !step.prompt
+        ? t("cell.codePlaceholder")
+        : t("cell.codePending"),
     );
     this.editor.readOnly = !this.generated;
     this.output = new CellOutput();
@@ -43,6 +47,7 @@ export class Cell {
     this.inserter = new CellInserter(() => onInsert(this));
     this.element = this.build();
     this.element.addEventListener("mousedown", () => onSelect(this));
+    this.updateModified();
   }
 
   /** Code actuel (le code prédéfini tant que la cellule n'a pas été générée). */
@@ -65,15 +70,18 @@ export class Cell {
 
   /**
    * Prépare le code avant exécution :
-   * - prompt modifié (et non vide) → le modèle génère un nouveau code ;
+   * - prompt modifié (et non vide) → le modèle génère un nouveau code
+   *   (et renvoie d'éventuelles sous-étapes si la demande est trop complexe) ;
    * - première exécution → le code prédéfini « s'écrit » ;
    * - sinon → le code actuel (éventuellement modifié à la main) est conservé.
    * @param {import('../llm/CodeGenerator.js').CodeGenerator} generator
-   * @param {{ before: string[], after: string[] }} context code des autres cellules
+   * @param {{ before: object[], after: string[], upcoming?: string[] }} context code des autres cellules
+   * @param {{ allowSplit?: boolean }} [options]
+   * @returns {Promise<{ title: string, prompt: string }[] | undefined>}
    */
-  async generate(generator, context) {
+  async generate(generator, context, { allowSplit = true } = {}) {
     if (this.isPromptModified && this.prompt)
-      return this.generateFromPrompt(generator, context);
+      return this.generateFromPrompt(generator, context, { allowSplit });
     if (this.generated) return;
     this.generated = true;
     await this.editor.type(this.step.code);
@@ -97,7 +105,7 @@ export class Cell {
     this.promptText.focus();
   }
 
-  async generateFromPrompt(generator, context) {
+  async generateFromPrompt(generator, context, { allowSplit = true } = {}) {
     const prompt = this.prompt;
     const previous = this.editor.value;
     this.editor.readOnly = true;
@@ -108,14 +116,17 @@ export class Cell {
         prompt,
         originalPrompt: this.sourcePrompt,
         code: this.code,
+        allowSplit,
       };
-      this.editor.value = await generator.generate(
+      const { code, steps } = await generator.generate(
         request,
-        (code) => (this.editor.value = code),
+        (chunk) => (this.editor.value = chunk),
       );
+      this.editor.value = code;
       this.sourcePrompt = prompt;
       this.generated = true;
       this.updateModified();
+      return steps;
     } catch (error) {
       this.editor.value = previous; // en cas d'échec, on retrouve le code d'avant
       throw error;

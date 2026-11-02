@@ -153,7 +153,7 @@ export class Notebook extends EventTarget {
   }
 
   runAll() {
-    return this.run(this.cells);
+    return this.run([...this.cells]);
   }
 
   /** Réexécute les cellules déjà lancées avec leur code actuel (modifications manuelles). */
@@ -223,9 +223,38 @@ export class Notebook extends EventTarget {
   async execute(cells, generate) {
     // Une cellule supprimée pendant l'attente n'est plus exécutée
     cells = cells.filter((cell) => this.cells.includes(cell));
-    for (const cell of generate ? cells : []) {
+    // Sous-cellules issues d'un découpage : elles ne doivent pas être re-découpées
+    const noSplit = new Set();
+    let ranIncrementally = false;
+
+    for (let i = 0; i < (generate ? cells.length : 0); i++) {
+      const cell = cells[i];
+      if (!this.cells.includes(cell)) continue;
+      if (ranIncrementally) this.select(this.cells.indexOf(cell));
       try {
-        await cell.generate(this.generator, this.contextFor(cell, cells));
+        const subSteps = await cell.generate(
+          this.generator,
+          this.contextFor(cell, cells),
+          { allowSplit: !noSplit.has(cell) },
+        );
+        if (subSteps?.length && this.cells.includes(cell)) {
+          const subCells = this.replaceSubCells(cell, subSteps);
+          subCells.forEach((sub) => {
+            sub.runButton.setRunning(true);
+            noSplit.add(sub);
+          });
+          cells.splice(i + 1, 0, ...subCells);
+          if (!ranIncrementally) {
+            ranIncrementally = true;
+            await this.runStepCells(cells.slice(0, i + 1));
+          } else {
+            await this.runStepCells([cell]);
+          }
+          continue;
+        }
+        if (ranIncrementally && this.cells.includes(cell)) {
+          await this.runStepCells([cell]);
+        }
       } catch (error) {
         // Génération impossible : on l'affiche et on annule cette exécution
         cell.output.clear();
@@ -234,20 +263,58 @@ export class Notebook extends EventTarget {
         return;
       }
     }
+    if (ranIncrementally) return;
     // Le notebook a pu être réinitialisé pendant la génération
     cells = cells.filter((cell) => this.cells.includes(cell));
     if (!cells.length) return;
-    cells.forEach((cell) => {
+    await this.runStepCells(cells);
+  }
+
+  /** Exécute dans le noyau un sous-ensemble de cellules prêtes et met à jour leur état. */
+  async runStepCells(readyCells) {
+    readyCells = readyCells.filter((cell) => this.cells.includes(cell));
+    if (!readyCells.length) return;
+    readyCells.forEach((cell) => {
       cell.runButton.setCount(++this.count);
+      cell.runButton.setRunning(false);
       this.executed.add(cell.id);
     });
     // Toutes les cellules sont rejouées : leurs sorties seront régénérées
     this.cells.forEach((cell) => cell.output.clear());
     await this.kernel.run(
-      cells.map((cell) => ({ id: cell.id, code: cell.code })),
+      readyCells.map((cell) => ({ id: cell.id, code: cell.code })),
       this.cells.map((cell) => cell.id),
     );
-    cells.forEach((cell) => cell.runButton.setRunning(false));
+  }
+
+  /**
+   * Insère les sous-cellules générées par le découpage d'un prompt complexe juste après
+   * la cellule parente (en remplaçant celles d'un éventuel découpage précédent).
+   */
+  replaceSubCells(parentCell, subSteps) {
+    if (parentCell.subCells?.length) {
+      for (const old of parentCell.subCells) {
+        const idx = this.cells.indexOf(old);
+        if (idx !== -1) {
+          this.cells.splice(idx, 1);
+          old.runButton.setRunning(false);
+          this.kernel.forget(old.id);
+          this.executed.delete(old.id);
+        }
+      }
+    }
+    const parentIndex = this.cells.indexOf(parentCell);
+    const subCells = subSteps.map((step) =>
+      this.createCell({
+        title: step.title || "",
+        prompt: step.prompt,
+        code: "",
+      }),
+    );
+    parentCell.subCells = subCells;
+    this.cells.splice(parentIndex + 1, 0, ...subCells);
+    this.render();
+    return subCells;
   }
 
   /**
@@ -255,9 +322,11 @@ export class Notebook extends EventTarget {
    * - before : uniquement ce qui sera réellement disponible au-dessus d'elle,
    *   c'est-à-dire les cellules déjà rendues (code tel qu'exécuté) et celles
    *   du même lot d'exécution, qui passent juste avant elle ;
-   * - after : code des cellules suivantes, pour éviter les conflits de noms.
+   * - after : code des cellules suivantes, pour éviter les conflits de noms ;
+   * - upcoming : prompts des sous-étapes suivantes du même lot pas encore générées,
+   *   pour que chaque sous-étape s'arrête à son périmètre sans anticiper la suite.
    * @param {Cell} cell cellule à générer
-   * @param {Cell[]} batch cellules exécutées ensemble (ex. « Tout exécuter »)
+   * @param {Cell[]} batch cellules exécutées ensemble (ex. « Tout exécuter » ou découpage)
    */
   contextFor(cell, batch) {
     const index = this.cells.indexOf(cell);
@@ -269,7 +338,19 @@ export class Notebook extends EventTarget {
         code: batch.includes(c) ? c.code : this.kernel.codeOf(c.id),
       }))
       .filter((c) => c.code !== undefined);
-    const after = this.cells.slice(index + 1).map((c) => c.code);
-    return { before, after };
+    const following = this.cells.slice(index + 1);
+    const after = following.map((c) => c.code);
+    const batchPos = batch.indexOf(cell);
+    const upcoming =
+      batchPos !== -1
+        ? batch
+            .slice(batchPos + 1)
+            .filter((c) => this.cells.includes(c) && !c.code.trim() && c.prompt)
+            .map(
+              (c) =>
+                `${c.step.title ? `${c.step.title}: ` : ""}${c.prompt.replace(/\s+/g, " ")}`,
+            )
+        : [];
+    return { before, after, upcoming };
   }
 }

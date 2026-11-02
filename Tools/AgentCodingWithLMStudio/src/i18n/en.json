@@ -92,6 +92,7 @@
   "llm.noKey": "{name}: add your API key in Settings (⚙︎ icon).",
   "llm.noModel": "No model available in LM Studio.",
   "llm.noCode": "The model returned no code.",
+  "llm.splitHeader": "// This process is split into {count} steps:",
   "llm.hint.400": "request rejected (invalid API key or model?)",
   "llm.hint.401": "invalid or missing API key (see Settings)",
   "llm.hint.403": "API key rejected (see Settings)",

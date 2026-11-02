@@ -17,7 +17,9 @@ export class CodeGenerator {
   /**
    * @param {object} request voir PromptBuilder.messages
    * @param {(code: string) => void} onCode appelé à chaque morceau reçu
-   * @returns {Promise<string>} le code final
+   * @returns {Promise<{ code: string, steps: { title: string, prompt: string }[] }>}
+   *   le code final de la cellule et les éventuelles sous-étapes si la demande
+   *   a été subdivisée par le modèle
    */
   async generate(request, onCode) {
     const messages = PromptBuilder.messages({ mode: this.mode, ...request });
@@ -28,8 +30,19 @@ export class CodeGenerator {
       text += chunk;
       onCode(CodeCleaner.clean(text));
     }
-    const code = CodeCleaner.clean(text);
+    const { code, steps } = CodeCleaner.parse(text, (count) =>
+      t("llm.splitHeader", { count }),
+    );
+    // Si le modèle a tenté un découpage à 1 seule étape sans code, on relance sans découpage
+    if (
+      request.allowSplit !== false &&
+      !steps.length &&
+      !CodeCleaner.hasExecutableCode(code) &&
+      /@step\b/i.test(text)
+    ) {
+      return this.generate({ ...request, allowSplit: false }, onCode);
+    }
     if (!code.trim()) throw new Error(t("llm.noCode"));
-    return code;
+    return { code, steps: request.allowSplit === false ? [] : steps };
   }
 }
