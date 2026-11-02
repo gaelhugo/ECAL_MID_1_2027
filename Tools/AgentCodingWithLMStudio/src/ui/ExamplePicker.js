@@ -20,14 +20,16 @@ export class ExamplePicker {
     );
 
     this.select.addEventListener("change", () => {
-      onChange(this.current);
+      this.selected = this.current;
+      onChange(this.selected);
       this.select.blur();
     });
     this.modeSelect.addEventListener("change", () => {
       this.fill(MODES[this.modeSelect.value]);
       // On charge le premier exemple du mode (sinon son « Nouveau processus »)
       this.select.selectedIndex = Math.min(1, this.visible.length - 1);
-      onChange(this.current);
+      this.selected = this.current;
+      onChange(this.selected);
       this.modeSelect.blur();
     });
     root.append(this.select, this.modeSelect);
@@ -64,16 +66,18 @@ export class ExamplePicker {
   show(steps) {
     const example = this.examples.find((example) => example.steps === steps);
     if (!example) return;
+    this.selected = example;
     this.fill(example.mode);
     this.select.selectedIndex = this.visible.indexOf(example);
   }
 
   /** Rafraîchit la liste du mode actuel en conservant la sélection en cours. */
   refresh() {
-    const current = this.current;
+    const current = this.selected ?? this.current;
     this.fill(this.mode);
     const index = this.visible.indexOf(current);
     if (index >= 0) this.select.selectedIndex = index;
+    this.selected = this.current;
   }
 
   static option(value, text) {

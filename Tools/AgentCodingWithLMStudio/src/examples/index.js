@@ -28,8 +28,6 @@ import { EMPTY_STEP } from "../notebook/Cell.js";
 import { MODES, modeOf } from "../runtime/modes.js";
 import { pick, t } from "../i18n/index.js";
 
-// Fichier chargé au démarrage
-const DEFAULT_FILE = "./raster-image.json";
 const REMOTE_EXAMPLES_URL =
   "https://api.github.com/repos/gaelhugo/ECAL_MID_1_2027/contents/Tools/AgentCodingWithLMStudio/src/examples";
 
@@ -52,9 +50,16 @@ const loaded = Object.fromEntries(
     .map(([path, data]) => [path, load(data, path)]),
 );
 
+const newProcesses = Object.fromEntries(
+  Object.values(MODES).map((mode) => [
+    mode.id,
+    { title: t("picker.newProcess"), mode, steps: [EMPTY_STEP] },
+  ]),
+);
+
 const buildExamples = () =>
   Object.values(MODES).flatMap((mode) => [
-    { title: t("picker.newProcess"), mode, steps: [EMPTY_STEP] },
+    newProcesses[mode.id],
     ...Object.entries(loaded)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([, example]) => example)
@@ -63,7 +68,7 @@ const buildExamples = () =>
 
 // Pour chaque mode : « Nouveau processus » (une cellule vide), puis ses exemples
 export const examples = buildExamples();
-export const defaultExample = loaded[DEFAULT_FILE] ?? examples[0];
+export const defaultExample = examples[0];
 
 /** Ajoute ou met à jour un exemple en mémoire et reconstruit la liste. */
 export function registerExample(path, data) {

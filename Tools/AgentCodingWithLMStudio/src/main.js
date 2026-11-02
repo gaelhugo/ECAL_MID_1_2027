@@ -168,8 +168,7 @@ const unpublishProcessus = async () => {
       (status) => toolbar.setStatus(status),
     );
     unregisterExample(current.path);
-    picker.fill(picker.mode);
-    picker.select.selectedIndex = Math.min(1, picker.visible.length - 1);
+    picker.show(picker.visible[0].steps);
     notebook.restart(picker.current.steps);
     snackbar.show(t("publish.deleted", { title: current.title }));
   } catch (error) {

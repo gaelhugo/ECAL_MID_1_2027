@@ -16,8 +16,7 @@ Vanilla JS + Vite. Commentaires du code source en français.
   (`import.meta.glob`, triés par nom) + synchronisé au démarrage depuis GitHub (`syncRemoteExamples()`) pour
   afficher les exemples ajoutés et retirer les exemples supprimés sans recompiler ; format décrit en tête de
   `src/examples/index.js` (`{ title, mode, steps: [{ title, prompt, code: [lignes] }] }`, champs localisables `{ fr, en }`).
-  `DEFAULT_FILE` = chargé au démarrage (`raster-image.json`).
-  « Nouveau processus » (1er du menu) = une seule cellule vide. Côté interface, on dit « processus » (pas « notebook »).
+  « Nouveau processus » (1er du menu) = une seule cellule vide, chargée par défaut au démarrage (`defaultExample = examples[0]`). Côté interface, on dit « processus » (pas « notebook »).
 - Export / réouverture HTML (`src/export/CodeExporter.js`) : « Télécharger » exporte les cellules rendues en un `.html`
   autonome contenant `<script id="proce55us" type="application/json">` (titre, mode, étapes). Glisser-déposer un fichier
   `.html` (y compris un ancien export sans `#proce55us`) ou `.json` sur la fenêtre reconstruit toutes les cellules
