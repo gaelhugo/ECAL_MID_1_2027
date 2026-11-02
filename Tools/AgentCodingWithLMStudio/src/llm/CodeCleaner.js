@@ -12,6 +12,12 @@ const STEP_LINE_RE = /^[ \t]*\/\/[ \t]*@step\b[ \t]*[:\-–—]?[ \t]*(.+)$/gim;
 // Ligne `@step` complète ou en cours d'écriture pendant le streaming
 const STREAM_STEP_LINE_RE = /^[ \t]*\/\/[ \t]*@s(?:t(?:e(?:p\b.*)?)?)?$/gim;
 
+// Début de bloc `@error` (complet ou en cours de streaming) lors de la génération d'un prompt à partir du code
+const STREAM_ERROR_BLOCK_RE =
+  /^[ \t]*(?:\/\/[ \t]*)?@e(?:r(?:r(?:o(?:r\b[\s\S]*)?)?)?)?(?:\r?\n[\s\S]*|$)/im;
+const ERROR_MARKER_RE = /^[ \t]*(?:\/\/[ \t]*)?@error\b[ \t]*[:\-–—]?[ \t]*/gim;
+const EMOJI_RE = /\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*/gu;
+
 export class CodeCleaner {
   /** Retire `<think>…</think>` et les balises markdown ```. */
   static raw(text) {
@@ -88,5 +94,40 @@ export class CodeCleaner {
       }
     }
     return { code, steps: steps.length >= 2 ? steps : [] };
+  }
+
+  /**
+   * Nettoie le prompt généré à partir du code utilisateur (y compris pendant le streaming) :
+   * retire les éventuelles lignes `@error …`, préfixes `Prompt:` et guillemets englobants.
+   */
+  static cleanPrompt(text) {
+    return CodeCleaner.raw(text)
+      .replace(STREAM_ERROR_BLOCK_RE, "")
+      .replace(EMOJI_RE, "")
+      .replace(/^(?:prompt|consigne)\s*:\s*/i, "")
+      .trim()
+      .replace(/^(?:["«“]([\s\S]*?)["»”])$/, "$1")
+      .trim();
+  }
+
+  /**
+   * Analyse la réponse finale lors de la génération d'un prompt à partir du code :
+   * - `prompt` : la consigne correspondant au code de l'utilisateur ;
+   * - `advice` : explication pédagogique si le code contient une ou plusieurs erreurs.
+   */
+  static parsePrompt(text) {
+    const raw = CodeCleaner.raw(text);
+    const match = raw.match(/^[ \t]*(?:\/\/[ \t]*)?@error\b/im);
+    const prompt = CodeCleaner.cleanPrompt(
+      match ? raw.slice(0, match.index) : raw,
+    );
+    const advice = match
+      ? raw
+          .slice(match.index)
+          .replace(ERROR_MARKER_RE, "")
+          .replace(EMOJI_RE, "")
+          .trim()
+      : "";
+    return { prompt, advice };
   }
 }

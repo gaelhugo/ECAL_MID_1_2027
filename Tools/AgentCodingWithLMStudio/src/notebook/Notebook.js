@@ -188,6 +188,7 @@ export class Notebook extends EventTarget {
     this.cells.forEach((cell) => {
       cell.runButton.setCount(0);
       cell.runButton.setRunning(false);
+      cell.lastAdvice = "";
       cell.output.clear();
     });
     this.render();
@@ -232,6 +233,36 @@ export class Notebook extends EventTarget {
       if (!this.cells.includes(cell)) continue;
       if (ranIncrementally) this.select(this.cells.indexOf(cell));
       try {
+        // Cas où l'utilisateur a écrit ou modifié le code en premier :
+        // on exécute d'abord le code pour capter d'éventuelles erreurs d'exécution,
+        // puis on génère le prompt correspondant et un retour pédagogique en cas d'erreur
+        if (cell.needsPromptFromCode && !cell.isPromptModified) {
+          cell.lastAdvice = "";
+          if (!ranIncrementally) {
+            ranIncrementally = true;
+            await this.runStepCells(cells.slice(0, i + 1));
+          } else {
+            await this.runStepCells([cell]);
+          }
+          // Laisse le temps aux erreurs asynchrones immédiates (ex. setup/draw p5) de remonter
+          await new Promise((resolve) => setTimeout(resolve, 80));
+          if (!this.cells.includes(cell)) continue;
+          cell.runButton.setRunning(true);
+          try {
+            const advice = await cell.generatePromptFromCode(
+              this.generator,
+              this.contextFor(cell, cells),
+              [...cell.output.errors],
+            );
+            if (advice && this.cells.includes(cell)) {
+              cell.output.append("advice", advice);
+            }
+          } finally {
+            cell.runButton.setRunning(false);
+          }
+          continue;
+        }
+
         const subSteps = await cell.generate(
           this.generator,
           this.contextFor(cell, cells),
@@ -257,7 +288,6 @@ export class Notebook extends EventTarget {
         }
       } catch (error) {
         // Génération impossible : on l'affiche et on annule cette exécution
-        cell.output.clear();
         cell.output.append("error", error.message);
         cells.forEach((c) => c.runButton.setRunning(false));
         return;
@@ -275,6 +305,7 @@ export class Notebook extends EventTarget {
     readyCells = readyCells.filter((cell) => this.cells.includes(cell));
     if (!readyCells.length) return;
     readyCells.forEach((cell) => {
+      if (cell.isCodeModified) cell.lastAdvice = "";
       cell.runButton.setCount(++this.count);
       cell.runButton.setRunning(false);
       this.executed.add(cell.id);
@@ -285,6 +316,9 @@ export class Notebook extends EventTarget {
       readyCells.map((cell) => ({ id: cell.id, code: cell.code })),
       this.cells.map((cell) => cell.id),
     );
+    this.cells.forEach((cell) => {
+      if (cell.lastAdvice) cell.output.append("advice", cell.lastAdvice);
+    });
   }
 
   /**

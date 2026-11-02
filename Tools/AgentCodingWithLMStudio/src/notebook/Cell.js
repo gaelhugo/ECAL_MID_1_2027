@@ -18,6 +18,8 @@ export const EMPTY_STEP = { title: "", prompt: "", code: "" };
 export class Cell {
   generated;
   sourcePrompt; // prompt qui a produit le code actuel
+  sourceCode; // code correspondant au dernier prompt synchronisé
+  lastAdvice = ""; // conseil pédagogique affiché si le code comporte une erreur
 
   /**
    * @param {{ title: string, prompt: string, code: string }} step
@@ -30,6 +32,7 @@ export class Cell {
     // Si la cellule a un prompt mais pas encore de code (ex. sous-étape créée par découpage),
     // sourcePrompt reste vide pour déclencher la génération à l'exécution
     this.sourcePrompt = step.code ? step.prompt : "";
+    this.sourceCode = step.code || "";
     // Une cellule sans code prédéfini est directement modifiable
     this.generated = !step.code;
     this.runButton = new RunButton(() => onRun(this));
@@ -37,6 +40,7 @@ export class Cell {
       this.generated && !step.prompt
         ? t("cell.codePlaceholder")
         : t("cell.codePending"),
+      () => this.updateModified(),
     );
     this.editor.readOnly = !this.generated;
     this.output = new CellOutput();
@@ -68,6 +72,18 @@ export class Cell {
     return this.prompt !== this.sourcePrompt;
   }
 
+  /** Vrai si le code a été saisi ou modifié manuellement par l'utilisateur. */
+  get isCodeModified() {
+    return this.generated && this.code.trim() !== this.sourceCode.trim();
+  }
+
+  /** Vrai si le prompt doit être créé ou mis à jour à partir du code de l'utilisateur. */
+  get needsPromptFromCode() {
+    if (!this.generated || !this.code.trim()) return false;
+    if (!this.prompt) return true;
+    return !this.isPromptModified && this.isCodeModified;
+  }
+
   /**
    * Prépare le code avant exécution :
    * - prompt modifié (et non vide) → le modèle génère un nouveau code
@@ -80,12 +96,16 @@ export class Cell {
    * @returns {Promise<{ title: string, prompt: string }[] | undefined>}
    */
   async generate(generator, context, { allowSplit = true } = {}) {
-    if (this.isPromptModified && this.prompt)
+    if (this.isPromptModified && this.prompt) {
+      this.lastAdvice = "";
       return this.generateFromPrompt(generator, context, { allowSplit });
+    }
     if (this.generated) return;
     this.generated = true;
     await this.editor.type(this.step.code);
+    this.sourceCode = this.code;
     this.editor.readOnly = false;
+    this.updateModified();
   }
 
   /** Met à jour le numéro affiché (« Étape n »), qui suit la position. */
@@ -124,6 +144,7 @@ export class Cell {
       );
       this.editor.value = code;
       this.sourcePrompt = prompt;
+      this.sourceCode = code;
       this.generated = true;
       this.updateModified();
       return steps;
@@ -136,10 +157,50 @@ export class Cell {
     }
   }
 
+  /**
+   * Génère (ou met à jour) le prompt correspondant au code saisi par l'utilisateur
+   * et renvoie une éventuelle explication pédagogique si le code comporte des erreurs.
+   * @param {import('../llm/CodeGenerator.js').CodeGenerator} generator
+   * @param {{ before: object[], after: string[] }} context
+   * @param {string[]} [errors] erreurs d'exécution rapportées par le navigateur
+   * @returns {Promise<string>} explication pédagogique éventuelle
+   */
+  async generatePromptFromCode(generator, context, errors = []) {
+    const previousPrompt = this.prompt;
+    this.promptText.contentEditable = "false";
+    this.element.classList.add("is-generating");
+    try {
+      const { prompt, advice } = await generator.generatePrompt(
+        {
+          ...context,
+          code: this.code,
+          currentPrompt: previousPrompt,
+          errors,
+        },
+        (chunk) => {
+          if (chunk) this.promptText.textContent = chunk;
+        },
+      );
+      if (prompt) this.promptText.textContent = prompt;
+      this.sourcePrompt = this.prompt;
+      this.sourceCode = this.code;
+      this.lastAdvice = advice || "";
+      this.updateModified();
+      return this.lastAdvice;
+    } catch (error) {
+      this.promptText.textContent = previousPrompt;
+      throw error;
+    } finally {
+      this.promptText.contentEditable = "plaintext-only";
+      this.element.classList.remove("is-generating");
+    }
+  }
+
   updateModified() {
     this.element.classList.toggle(
       "is-modified",
-      this.isPromptModified && this.prompt !== "",
+      (this.isPromptModified && this.prompt !== "") ||
+        (!this.isPromptModified && this.isCodeModified && this.prompt !== ""),
     );
   }
 

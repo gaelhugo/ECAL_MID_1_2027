@@ -34,6 +34,7 @@
   "cell.delete": "Delete (Ctrl + M then D)",
   "cell.insert": "Insert a cell here",
   "cell.error": "Error: {text}",
+  "cell.advice": "Tip: {text}",
 
   "preview.title": "Preview",
   "preview.reload": "Reload the preview with the current code",
@@ -92,6 +93,7 @@
   "llm.noKey": "{name}: add your API key in Settings (⚙︎ icon).",
   "llm.noModel": "No model available in LM Studio.",
   "llm.noCode": "The model returned no code.",
+  "llm.noPrompt": "The model returned no prompt.",
   "llm.splitHeader": "// This process is split into {count} steps:",
   "llm.hint.400": "request rejected (invalid API key or model?)",
   "llm.hint.401": "invalid or missing API key (see Settings)",

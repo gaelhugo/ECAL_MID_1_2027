@@ -45,4 +45,27 @@ export class CodeGenerator {
     if (!code.trim()) throw new Error(t("llm.noCode"));
     return { code, steps: request.allowSplit === false ? [] : steps };
   }
+
+  /**
+   * Génère (ou met à jour) le prompt correspondant au code saisi par l'utilisateur
+   * et détecte pédagogiquement les éventuelles erreurs dans ce code.
+   * @param {object} request voir PromptBuilder.promptFromCodeMessages
+   * @param {(prompt: string) => void} onPrompt appelé à chaque morceau reçu
+   * @returns {Promise<{ prompt: string, advice: string }>}
+   */
+  async generatePrompt(request, onPrompt) {
+    const messages = PromptBuilder.promptFromCodeMessages({
+      mode: this.mode,
+      ...request,
+    });
+    console.debug(`[${this.client.name}] messages (code → prompt)`, messages);
+    let text = "";
+    for await (const chunk of this.client.stream(messages)) {
+      text += chunk;
+      onPrompt(CodeCleaner.cleanPrompt(text));
+    }
+    const { prompt, advice } = CodeCleaner.parsePrompt(text);
+    if (!prompt && !advice) throw new Error(t("llm.noPrompt"));
+    return { prompt, advice };
+  }
 }

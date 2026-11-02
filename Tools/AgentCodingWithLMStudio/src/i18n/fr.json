@@ -34,6 +34,7 @@
   "cell.delete": "Supprimer (Ctrl + M puis D)",
   "cell.insert": "Insérer une cellule ici",
   "cell.error": "Erreur : {text}",
+  "cell.advice": "Conseil : {text}",
 
   "preview.title": "Aperçu",
   "preview.reload": "Relancer l’aperçu avec le code actuel",
@@ -92,6 +93,7 @@
   "llm.noKey": "{name} : ajoutez votre clé API dans les Réglages (icône ⚙︎).",
   "llm.noModel": "Aucun modèle disponible dans LM Studio.",
   "llm.noCode": "Le modèle n’a renvoyé aucun code.",
+  "llm.noPrompt": "Le modèle n’a renvoyé aucun prompt.",
   "llm.splitHeader": "// Ce processus est découpé en {count} étapes :",
   "llm.hint.400": "requête refusée (clé API ou modèle invalide ?)",
   "llm.hint.401": "clé API invalide ou manquante (voir Réglages)",

@@ -187,6 +187,20 @@
   font-weight: 500;
 }
 
-.cell-output:has(.cell-output__line--error) {
+.cell-output__line--advice {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--grey-900);
+}
+
+.cell-output__line--error + .cell-output__line--advice {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--grey-200);
+}
+
+.cell-output:has(.cell-output__line--error),
+.cell-output:has(.cell-output__line--advice) {
   background: var(--grey-100);
 }

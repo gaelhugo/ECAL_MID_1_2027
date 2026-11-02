@@ -6,7 +6,8 @@ import { Highlighter } from './Highlighter.js';
  * coloré. Le <pre> donne sa taille à l'ensemble, le textarea gère la saisie.
  */
 export class CodeEditor {
-  constructor(placeholder) {
+  constructor(placeholder, onInput) {
+    this.onInput = onInput;
     this.element = el('div', 'code-editor');
     this.pre = el('pre', 'code-editor__highlight');
     this.textarea = el('textarea', 'code-editor__input');
@@ -16,7 +17,10 @@ export class CodeEditor {
     layer.append(this.pre, this.textarea);
     this.element.append(layer);
 
-    this.textarea.addEventListener('input', () => this.render());
+    this.textarea.addEventListener('input', () => {
+      this.render();
+      this.onInput?.();
+    });
     this.textarea.addEventListener('keydown', (event) => this.onKeyDown(event));
     this.render();
   }
@@ -64,5 +68,6 @@ export class CodeEditor {
     event.preventDefault();
     this.textarea.setRangeText('  ', this.textarea.selectionStart, this.textarea.selectionEnd, 'end');
     this.render();
+    this.onInput?.();
   }
 }

@@ -41,8 +41,18 @@ const LANGUAGE_RULES = {
 };
 
 const STEP_LANGUAGE_RULES = {
-  fr: "Write the subdivision comment AND every `@step` title and prompt in natural French.",
-  en: "Write the subdivision comment AND every `@step` title and prompt in English.",
+  fr: "Write the subdivision comment AND every `@step` title and prompt in natural French. Never use any emoji.",
+  en: "Write the subdivision comment AND every `@step` title and prompt in English. Never use any emoji.",
+};
+
+const CODE_TO_PROMPT_LANGUAGE_RULES = {
+  fr: "Write the prompt AND any `@error` pedagogical explanation in natural, correct French with all its accents (é, è, à, ç…). Never use any emoji in the prompt or in the error explanation.",
+  en: "Write the prompt AND any `@error` pedagogical explanation in English. Never use any emoji in the prompt or in the error explanation.",
+};
+
+const CODE_TO_PROMPT_REMINDERS = {
+  fr: "(Écris sur la première ligne le prompt court en français correspondant à ce code, sans aucun emoji. Si le code comporte une erreur ou un bug, ajoute en dessous `@error ` suivi d'une explication pédagogique bienveillante en français, sans aucun emoji.)",
+  en: "(Write on the first line the short prompt in English matching this code, with no emoji. If the code contains an error or bug, add below `@error ` followed by a friendly pedagogical explanation in English, with no emoji.)",
 };
 
 /** Règles de découpage automatique lorsqu'un prompt demande un code trop complexe. */
@@ -163,6 +173,74 @@ export class PromptBuilder {
       {
         role: "user",
         content: `${prompt}\n\n${reminder}`,
+      },
+    ];
+  }
+
+  /**
+   * Construit les messages pour générer ou mettre à jour le prompt correspondant
+   * au code saisi par l'utilisateur, et signaler pédagogiquement d'éventuelles erreurs.
+   * @param {object} request
+   * @param {string} request.code code saisi par l'utilisateur dans la cellule
+   * @param {string} [request.currentPrompt] prompt actuel de la cellule (s'il existe)
+   * @param {{ label: string, prompt: string, code: string }[]} request.before cellules précédentes
+   * @param {string[]} [request.errors] erreurs d'exécution rapportées par le navigateur
+   * @param {object} [request.mode] mode du processus (voir runtime/modes.js)
+   * @param {string} [request.lang] langue ("fr" ou "en")
+   */
+  static promptFromCodeMessages({
+    code,
+    currentPrompt = "",
+    before = [],
+    errors = [],
+    mode = DEFAULT_MODE,
+    lang = uiLang,
+  }) {
+    const previous = before.filter((cell) => cell.code.trim());
+    const langRule =
+      CODE_TO_PROMPT_LANGUAGE_RULES[lang] ?? CODE_TO_PROMPT_LANGUAGE_RULES.en;
+    const system = [
+      `You are a pedagogical JavaScript assistant in an educational notebook (${mode.context}).
+The user wrote or edited the JavaScript code of a cell and pressed Run.
+
+Your task has two parts:
+1. Write the corresponding prompt for this cell:
+${bullets([
+  "On the first line, write a short, clear prompt (1 to 2 sentences) that accurately describes what this cell's code does (or intends to do if it contains an error).",
+  "Phrase it like a natural user instruction for this step (e.g. “Create a full-screen canvas and draw a red circle in the center.”), matching the exact shapes, colors, values, and behavior in the user's code.",
+  "Describe ONLY what this cell's code does, not what was already created in previous cells.",
+  "Do NOT wrap the prompt in quotes, do NOT use markdown fences, do NOT prefix it with “Prompt:”, and NEVER use emojis.",
+])}
+
+2. Check the user's code for errors and notice them pedagogically:
+${bullets([
+  "Each cell runs in a classic <script> tag right after the previous cells. Only variables and functions defined in the previous cells (plus standard browser and mode globals) exist.",
+  "Check for: syntax errors, runtime errors reported below, undeclared variables or functions, redeclaring with const/let a variable already declared in a previous cell, non-existent or misspelled API methods/properties (Canvas 2D, DOM, p5.js, three.js), wrong arguments, or missing calls that prevent the code from working (e.g. forgetting ctx.fill() or ctx.stroke() after ctx.arc()).",
+  "If the code works properly and has no errors, output ONLY the prompt line(s) and nothing else.",
+  "If the code contains one or more errors, add a new line starting with `@error ` right after the prompt: `@error <Pedagogical explanation>`.",
+  "In `@error`, be encouraging, clear, and pedagogical: explain what is wrong (naming the exact identifier or call), why it fails, and how to fix it (with a short corrected snippet in backticks). NEVER use emojis.",
+  langRule,
+])}`,
+      previous.length
+        ? `Previous cells already run, in order:\n${PromptBuilder.fence(
+            previous.map(PromptBuilder.cellBlock).join("\n\n"),
+          )}`
+        : "Previous cells: none. Nothing exists before this cell.",
+      currentPrompt.trim() &&
+        `Previous prompt of this cell (update it so it accurately matches the user's code): “${currentPrompt.trim()}”`,
+      errors.length &&
+        `Runtime error(s) thrown by the browser when running this cell (you MUST include an \`@error ...\` line explaining this pedagogically and how to fix it):\n${bullets(
+          errors,
+        )}`,
+      `Reminder: ${langRule}`,
+    ];
+    return [
+      { role: "system", content: system.filter(Boolean).join("\n\n") },
+      {
+        role: "user",
+        content: `User code of the cell:\n${PromptBuilder.fence(code)}\n\n${
+          CODE_TO_PROMPT_REMINDERS[lang] ?? CODE_TO_PROMPT_REMINDERS.en
+        }`,
       },
     ];
   }
