@@ -240,14 +240,15 @@ export class Notebook extends EventTarget {
           cell.lastAdvice = "";
           if (!ranIncrementally) {
             ranIncrementally = true;
-            await this.runStepCells(cells.slice(0, i + 1));
+            await this.runStepCells(cells.slice(0, i + 1), {
+              keepRunning: cell,
+            });
           } else {
-            await this.runStepCells([cell]);
+            await this.runStepCells([cell], { keepRunning: cell });
           }
           // Laisse passer un frame d'animation pour capter d'éventuelles erreurs de premier rendu
           await new Promise((resolve) => requestAnimationFrame(resolve));
           if (!this.cells.includes(cell)) continue;
-          cell.runButton.setRunning(true);
           try {
             const advice = await cell.generatePromptFromCode(
               this.generator,
@@ -301,13 +302,13 @@ export class Notebook extends EventTarget {
   }
 
   /** Exécute dans le noyau un sous-ensemble de cellules prêtes et met à jour leur état. */
-  async runStepCells(readyCells) {
+  async runStepCells(readyCells, { keepRunning = null } = {}) {
     readyCells = readyCells.filter((cell) => this.cells.includes(cell));
     if (!readyCells.length) return;
     readyCells.forEach((cell) => {
       if (cell.isCodeModified) cell.lastAdvice = "";
       cell.runButton.setCount(++this.count);
-      cell.runButton.setRunning(false);
+      if (cell !== keepRunning) cell.runButton.setRunning(false);
       this.executed.add(cell.id);
     });
     // Toutes les cellules sont rejouées : leurs sorties seront régénérées

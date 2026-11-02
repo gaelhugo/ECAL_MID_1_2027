@@ -2,6 +2,10 @@
 
 `release.sh` publishes the section of the released version as the GitHub release notes — write it before releasing.
 
+## 1.4.1
+
+- **Fix code-to-prompt generation with local models (`qwen2.5-coder`)**: prevent markdown code fences (` ``` `) in `@error` explanations from overwriting the generated prompt, format fenced snippets as inline code in pedagogical advice, and keep the cell run indicator continuous until prompt generation finishes.
+
 ## 1.4.0
 
 - **Smart step subdivision**: when a cell prompt requests code that would be too sophisticated for a single simple cell, the model automatically splits the process into logical sub-steps (`// @step`), keeps a short explanatory comment in the initial cell, and generates and runs each sub-cell sequentially.

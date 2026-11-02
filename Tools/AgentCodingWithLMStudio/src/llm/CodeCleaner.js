@@ -19,9 +19,14 @@ const ERROR_MARKER_RE = /^[ \t]*(?:\/\/[ \t]*)?@error\b[ \t]*[:\-–—]?[ \t]*/
 const EMOJI_RE = /\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*/gu;
 
 export class CodeCleaner {
-  /** Retire `<think>…</think>` et les balises markdown ```. */
+  /** Retire uniquement le bloc de raisonnement `<think>…</think>`. */
+  static stripThink(text) {
+    return text.replace(/<think>[\s\S]*?(<\/think>|$)/g, "");
+  }
+
+  /** Retire `<think>…</think>` et extrait le bloc de code markdown ``` s'il y en a un. */
   static raw(text) {
-    let code = text.replace(/<think>[\s\S]*?(<\/think>|$)/g, "");
+    let code = CodeCleaner.stripThink(text);
     const fenced = code.match(/```[\w-]*\n?([\s\S]*?)(```|$)/);
     if (fenced) code = fenced[1];
     return code;
@@ -98,15 +103,22 @@ export class CodeCleaner {
 
   /**
    * Nettoie le prompt généré à partir du code utilisateur (y compris pendant le streaming) :
-   * retire les éventuelles lignes `@error …`, préfixes `Prompt:` et guillemets englobants.
+   * ne conserve que la première ligne de texte (avant tout bloc `@error` ou ```),
+   * sans `CodeCleaner.raw()` qui extrairait par erreur un bloc ``` de fin de réponse.
    */
   static cleanPrompt(text) {
-    return CodeCleaner.raw(text)
-      .replace(STREAM_ERROR_BLOCK_RE, "")
+    const firstLine =
+      CodeCleaner.stripThink(text)
+        .replace(STREAM_ERROR_BLOCK_RE, "")
+        .replace(/```[\s\S]*$/g, "")
+        .trim()
+        .split(/\r?\n/)[0] || "";
+    return firstLine
       .replace(EMOJI_RE, "")
       .replace(/^(?:prompt|consigne)\s*:\s*/i, "")
       .trim()
       .replace(/^(?:["«“]([\s\S]*?)["»”])$/, "$1")
+      .replace(/`([^`]*)`/g, "$1")
       .trim();
   }
 
@@ -116,16 +128,21 @@ export class CodeCleaner {
    * - `advice` : explication pédagogique si le code contient une ou plusieurs erreurs.
    */
   static parsePrompt(text) {
-    const raw = CodeCleaner.raw(text);
-    const match = raw.match(/^[ \t]*(?:\/\/[ \t]*)?@error\b/im);
+    const cleaned = CodeCleaner.stripThink(text);
+    const match = cleaned.match(/^[ \t]*(?:\/\/[ \t]*)?@error\b/im);
     const prompt = CodeCleaner.cleanPrompt(
-      match ? raw.slice(0, match.index) : raw,
+      match ? cleaned.slice(0, match.index) : cleaned,
     );
     const advice = match
-      ? raw
+      ? cleaned
           .slice(match.index)
           .replace(ERROR_MARKER_RE, "")
           .replace(EMOJI_RE, "")
+          .replace(/```[\w-]*\s*([\s\S]*?)(?:```|$)/g, (_, snippet) => {
+            const inline = snippet.trim().replace(/\s+/g, " ");
+            return inline ? `\`${inline}\`` : "";
+          })
+          .replace(/\s*\r?\n\s*/g, " ")
           .trim()
       : "";
     return { prompt, advice };

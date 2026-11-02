@@ -51,8 +51,8 @@ const CODE_TO_PROMPT_LANGUAGE_RULES = {
 };
 
 const CODE_TO_PROMPT_REMINDERS = {
-  fr: "(Ligne 1 : prompt court en français décrivant ce code, sans emoji. Si erreur dans le code : ligne 2 `@error ` + explication pédagogique courte en français, sans emoji.)",
-  en: "(Line 1: short prompt in English describing this code, no emoji. If error in code: line 2 `@error ` + short pedagogical explanation in English, no emoji.)",
+  fr: "(Ligne 1 : prompt court en français décrivant ce code, sans emoji ni bloc de code. Si erreur dans le code : ligne 2 `@error ` + explication pédagogique courte sur une ligne avec `code` en ligne, sans bloc ```, sans emoji.)",
+  en: "(Line 1: short prompt in English describing this code, no emoji, no code block. If error in code: line 2 `@error ` + short 1-line pedagogical explanation with inline `code`, no ``` block, no emoji.)",
 };
 
 /** Règles concises de découpage automatique lorsqu'un prompt demande un code trop complexe. */
@@ -198,7 +198,7 @@ export class PromptBuilder {
       `You are a concise JavaScript assistant in an educational notebook (${mode.context}).
 Given the user's cell code:
 1. Line 1: write a 1-sentence prompt describing what this cell's code does (or intends to do), phrased as a direct instruction (no quotes, no markdown, no "Prompt:" prefix, no emoji).
-2. Line 2 (ONLY if the code has an error/bug or a runtime error is given): write \`@error \` followed by 1–2 short pedagogical sentences explaining the cause and how to fix it with a \`code\` snippet (no emoji). If the code is valid, write ONLY Line 1.
+2. Line 2 (ONLY if the code has an error/bug or a runtime error is given): write \`@error \` followed by 1–2 short pedagogical sentences on a single line explaining the cause and how to fix it using inline \`code\` (never use \`\`\` fenced code blocks, no emoji). If the code is valid, write ONLY Line 1.
 ${langRule}`,
       declaredInPrevious.length
         ? `Identifiers already defined in previous cells: ${[...new Set(declaredInPrevious)].join(", ")}`
