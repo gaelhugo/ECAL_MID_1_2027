@@ -244,8 +244,8 @@ export class Notebook extends EventTarget {
           } else {
             await this.runStepCells([cell]);
           }
-          // Laisse le temps aux erreurs asynchrones immédiates (ex. setup/draw p5) de remonter
-          await new Promise((resolve) => setTimeout(resolve, 80));
+          // Laisse passer un frame d'animation pour capter d'éventuelles erreurs de premier rendu
+          await new Promise((resolve) => requestAnimationFrame(resolve));
           if (!this.cells.includes(cell)) continue;
           cell.runButton.setRunning(true);
           try {

@@ -25,13 +25,13 @@ const LANGUAGE_REMINDERS = {
 };
 
 const SPLIT_REMINDERS = {
-  fr: "(Si cette demande est trop complexe ou combine plusieurs étapes distinctes pour une seule cellule simple, ne génère pas le code : réponds uniquement par un court commentaire `// ...` en français expliquant le découpage suivi des lignes `// @step Titre court | Prompt détaillé` en français. Si elle est simple, écris directement le code JavaScript avec commentaires et textes affichés en français.)",
-  en: "(If this request is too sophisticated or combines multiple distinct stages for a single simple cell, do not write implementation code: reply only with a short `// ...` comment in English explaining the subdivision followed by `// @step Short title | Clear prompt` lines in English. If it is simple, write the JavaScript code directly with comments and displayed text in English.)",
+  fr: "(Écris les commentaires et textes en français. Si la demande combine plusieurs mécanismes complexes, réponds uniquement par un court commentaire `// ...` et 2 à 4 lignes `// @step Titre | Prompt`.)",
+  en: "(Write comments and text in English. If the request combines multiple complex mechanisms, reply only with a short `// ...` comment and 2 to 4 `// @step Title | Prompt` lines.)",
 };
 
 const STEP_REMINDERS = {
-  fr: "(Implémente uniquement cette étape, sans anticiper les étapes suivantes prévues. Écris tous les commentaires du code et les textes affichés en français.)",
-  en: "(Implement only this step without anticipating the upcoming steps. Write all code comments and displayed text in English.)",
+  fr: "(Implémente uniquement cette étape, sans anticiper les suivantes. Commentaires et textes en français.)",
+  en: "(Implement only this step without anticipating the next ones. Comments and text in English.)",
 };
 
 // Langue des commentaires et des textes visibles du code généré
@@ -41,34 +41,26 @@ const LANGUAGE_RULES = {
 };
 
 const STEP_LANGUAGE_RULES = {
-  fr: "Write the subdivision comment AND every `@step` title and prompt in natural French. Never use any emoji.",
-  en: "Write the subdivision comment AND every `@step` title and prompt in English. Never use any emoji.",
+  fr: "Write the comment and every `@step` title and prompt in French, with no emoji.",
+  en: "Write the comment and every `@step` title and prompt in English, with no emoji.",
 };
 
 const CODE_TO_PROMPT_LANGUAGE_RULES = {
-  fr: "Write the prompt AND any `@error` pedagogical explanation in natural, correct French with all its accents (é, è, à, ç…). Never use any emoji in the prompt or in the error explanation.",
-  en: "Write the prompt AND any `@error` pedagogical explanation in English. Never use any emoji in the prompt or in the error explanation.",
+  fr: "Write in natural French with accents (é, è, à, ç…). Never use emojis.",
+  en: "Write in English. Never use emojis.",
 };
 
 const CODE_TO_PROMPT_REMINDERS = {
-  fr: "(Écris sur la première ligne le prompt court en français correspondant à ce code, sans aucun emoji. Si le code comporte une erreur ou un bug, ajoute en dessous `@error ` suivi d'une explication pédagogique bienveillante en français, sans aucun emoji.)",
-  en: "(Write on the first line the short prompt in English matching this code, with no emoji. If the code contains an error or bug, add below `@error ` followed by a friendly pedagogical explanation in English, with no emoji.)",
+  fr: "(Ligne 1 : prompt court en français décrivant ce code, sans emoji. Si erreur dans le code : ligne 2 `@error ` + explication pédagogique courte en français, sans emoji.)",
+  en: "(Line 1: short prompt in English describing this code, no emoji. If error in code: line 2 `@error ` + short pedagogical explanation in English, no emoji.)",
 };
 
-/** Règles de découpage automatique lorsqu'un prompt demande un code trop complexe. */
-const splitRules = (
-  lang,
-) => `Automatic step subdivision (when a request is too sophisticated for a single cell):
+/** Règles concises de découpage automatique lorsqu'un prompt demande un code trop complexe. */
+const splitRules = (lang) => `Step subdivision (only if the request is too complex for one cell):
 ${bullets([
-  "Each cell in this educational notebook must stay short, simple, and easy to read (a single clear idea, ~10–35 lines).",
-  "FIRST, evaluate the complexity of the user's request relative to what already exists in the previous cells:",
-  "KEEP AS A SINGLE CELL (write the JavaScript code directly) if the request is a single logical step or a targeted modification (e.g. setting up a canvas or webcam, drawing a shape or a grid, changing colors/sizes, adding a simple motion or a single event handler).",
-  "SPLIT INTO SUB-STEPS if the request asks for a complete multi-part program at once or combines 2 or more distinct mechanisms that would make a single cell long (> ~40 lines) or mix several concepts (e.g. setup/capture + grid/particles/objects + animation/physics + mouse/keyboard/audio/hand interaction + UI/scoring).",
-  "When you decide to SPLIT, DO NOT write any executable JavaScript code in this cell. Reply ONLY with:",
-  "1. A short JavaScript comment (2 to 6 lines starting with `//`) briefly explaining how the process is divided into simple steps.",
-  "2. Immediately after, 2 to 5 lines using this exact syntax (one sub-step per line): `// @step <Short step title (2-5 words)> | <Clear, self-contained prompt describing what that cell should build>`",
-  "Order the sub-steps logically so each step produces a visible, working intermediate result that the next step refines by calling or redefining functions (e.g. Step 1 creates the base scene/elements and render loop with a simple `drawItem(item)` function; Step 2 refines `drawItem(item)` or `updateItem(item)`; Step 3 adds interaction).",
-  "Never mix executable JavaScript statements with `// @step` lines.",
+  "If the request is a single step or simple change (~10–35 lines), write the JavaScript code directly.",
+  "If it combines several distinct stages (e.g. setup/capture + grid/objects + physics/animation + interaction, > ~40 lines), DO NOT write code: reply ONLY with a 2–4 line `//` comment explaining the split, followed by 2 to 4 lines formatted as `// @step Short title | Self-contained prompt for that step`.",
+  "Each sub-step must produce a visible intermediate result that the next step refines by redefining a `function`.",
   STEP_LANGUAGE_RULES[lang] ?? STEP_LANGUAGE_RULES.en,
 ])}`;
 
@@ -133,9 +125,14 @@ export class PromptBuilder {
       ? ProgramSummary.activeFunctions(previous.map((cell) => cell.code))
       : "";
     const reserved = PromptBuilder.declaredNames(after.join("\n"));
+    // Le découpage ne s'applique qu'aux cellules sans code existant et dont le prompt est assez riche
+    const canSplit =
+      allowSplit &&
+      !CodeCleaner.hasExecutableCode(code) &&
+      prompt.trim().split(/\s+/).length >= 8;
     const system = [
       rules(mode, lang),
-      allowSplit && splitRules(lang),
+      canSplit && splitRules(lang),
       previous.length
         ? `Previous cells already run, in order (full code):\n${PromptBuilder.fence(
             previous.map(PromptBuilder.cellBlock).join("\n\n"),
@@ -163,7 +160,7 @@ export class PromptBuilder {
       // Rappel final (les modèles suivent mieux une consigne placée en dernier)
       `Reminder: ${LANGUAGE_RULES[lang] ?? LANGUAGE_RULES.en}`,
     ];
-    const reminder = allowSplit
+    const reminder = canSplit
       ? (SPLIT_REMINDERS[lang] ?? SPLIT_REMINDERS.en)
       : upcoming.length
         ? (STEP_REMINDERS[lang] ?? STEP_REMINDERS.en)
@@ -178,15 +175,8 @@ export class PromptBuilder {
   }
 
   /**
-   * Construit les messages pour générer ou mettre à jour le prompt correspondant
+   * Construit des messages légers et rapides pour générer le prompt correspondant
    * au code saisi par l'utilisateur, et signaler pédagogiquement d'éventuelles erreurs.
-   * @param {object} request
-   * @param {string} request.code code saisi par l'utilisateur dans la cellule
-   * @param {string} [request.currentPrompt] prompt actuel de la cellule (s'il existe)
-   * @param {{ label: string, prompt: string, code: string }[]} request.before cellules précédentes
-   * @param {string[]} [request.errors] erreurs d'exécution rapportées par le navigateur
-   * @param {object} [request.mode] mode du processus (voir runtime/modes.js)
-   * @param {string} [request.lang] langue ("fr" ou "en")
    */
   static promptFromCodeMessages({
     code,
@@ -197,48 +187,31 @@ export class PromptBuilder {
     lang = uiLang,
   }) {
     const previous = before.filter((cell) => cell.code.trim());
+    const previousCode = previous.map((cell) => cell.code).join("\n");
+    const declaredInPrevious = [
+      ...PromptBuilder.declaredNames(previousCode),
+      ...[...previousCode.matchAll(/^function\s+(\w+)/gm)].map((m) => m[1]),
+    ];
     const langRule =
       CODE_TO_PROMPT_LANGUAGE_RULES[lang] ?? CODE_TO_PROMPT_LANGUAGE_RULES.en;
     const system = [
-      `You are a pedagogical JavaScript assistant in an educational notebook (${mode.context}).
-The user wrote or edited the JavaScript code of a cell and pressed Run.
-
-Your task has two parts:
-1. Write the corresponding prompt for this cell:
-${bullets([
-  "On the first line, write a short, clear prompt (1 to 2 sentences) that accurately describes what this cell's code does (or intends to do if it contains an error).",
-  "Phrase it like a natural user instruction for this step (e.g. “Create a full-screen canvas and draw a red circle in the center.”), matching the exact shapes, colors, values, and behavior in the user's code.",
-  "Describe ONLY what this cell's code does, not what was already created in previous cells.",
-  "Do NOT wrap the prompt in quotes, do NOT use markdown fences, do NOT prefix it with “Prompt:”, and NEVER use emojis.",
-])}
-
-2. Check the user's code for errors and notice them pedagogically:
-${bullets([
-  "Each cell runs in a classic <script> tag right after the previous cells. Only variables and functions defined in the previous cells (plus standard browser and mode globals) exist.",
-  "Check for: syntax errors, runtime errors reported below, undeclared variables or functions, redeclaring with const/let a variable already declared in a previous cell, non-existent or misspelled API methods/properties (Canvas 2D, DOM, p5.js, three.js), wrong arguments, or missing calls that prevent the code from working (e.g. forgetting ctx.fill() or ctx.stroke() after ctx.arc()).",
-  "If the code works properly and has no errors, output ONLY the prompt line(s) and nothing else.",
-  "If the code contains one or more errors, add a new line starting with `@error ` right after the prompt: `@error <Pedagogical explanation>`.",
-  "In `@error`, be encouraging, clear, and pedagogical: explain what is wrong (naming the exact identifier or call), why it fails, and how to fix it (with a short corrected snippet in backticks). NEVER use emojis.",
-  langRule,
-])}`,
-      previous.length
-        ? `Previous cells already run, in order:\n${PromptBuilder.fence(
-            previous.map(PromptBuilder.cellBlock).join("\n\n"),
-          )}`
-        : "Previous cells: none. Nothing exists before this cell.",
-      currentPrompt.trim() &&
-        `Previous prompt of this cell (update it so it accurately matches the user's code): “${currentPrompt.trim()}”`,
+      `You are a concise JavaScript assistant in an educational notebook (${mode.context}).
+Given the user's cell code:
+1. Line 1: write a 1-sentence prompt describing what this cell's code does (or intends to do), phrased as a direct instruction (no quotes, no markdown, no "Prompt:" prefix, no emoji).
+2. Line 2 (ONLY if the code has an error/bug or a runtime error is given): write \`@error \` followed by 1–2 short pedagogical sentences explaining the cause and how to fix it with a \`code\` snippet (no emoji). If the code is valid, write ONLY Line 1.
+${langRule}`,
+      declaredInPrevious.length
+        ? `Identifiers already defined in previous cells: ${[...new Set(declaredInPrevious)].join(", ")}`
+        : "Previous cells: none (nothing defined before this cell).",
+      currentPrompt.trim() && `Previous prompt to update: “${currentPrompt.trim()}”`,
       errors.length &&
-        `Runtime error(s) thrown by the browser when running this cell (you MUST include an \`@error ...\` line explaining this pedagogically and how to fix it):\n${bullets(
-          errors,
-        )}`,
-      `Reminder: ${langRule}`,
+        `Runtime error to explain on Line 2 with \`@error \`: ${errors.join(" | ")}`,
     ];
     return [
       { role: "system", content: system.filter(Boolean).join("\n\n") },
       {
         role: "user",
-        content: `User code of the cell:\n${PromptBuilder.fence(code)}\n\n${
+        content: `${PromptBuilder.fence(code)}\n\n${
           CODE_TO_PROMPT_REMINDERS[lang] ?? CODE_TO_PROMPT_REMINDERS.en
         }`,
       },

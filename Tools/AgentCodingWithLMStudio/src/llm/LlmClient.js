@@ -80,10 +80,12 @@ export class LlmClient {
   /** Modèle imposé (réglages ou .env), sinon le premier modèle chargé dans LM Studio. */
   async getModel() {
     if (this.model) return this.model;
+    if (this.resolvedModel) return this.resolvedModel;
     const { data = [] } = await (await this.request("/api/v0/models")).json();
     const chat = data.filter((model) => model.type !== "embeddings");
     const model = chat.find((m) => m.state === "loaded") ?? chat[0];
     if (!model) throw new Error(t("llm.noModel"));
+    this.resolvedModel = model.id;
     return model.id;
   }
 
