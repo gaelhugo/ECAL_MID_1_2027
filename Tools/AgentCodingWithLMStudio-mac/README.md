@@ -23,7 +23,7 @@ Output in `dist/`:
 
 - **Universal binary**: runs natively on Apple Silicon and Intel Macs.
 - **Requires macOS 12 (Monterey) or later** (Electron 43; Electron 44+ would require macOS 13).
-- Rebuild after any change to the web app: `./build-mac.sh` always rebuilds from the current sources.
+- Rebuild after any change to the web app: `./build-mac.sh` always rebuilds from the current sources (and if `/Applications/proce55us.app` is already installed on this Mac, it automatically updates it in place and clears quarantine).
 - All four modes (JavaScript, p5.js, three.js, DOM) work **offline**: p5.js and three.js are bundled into `app/assets/` by the web build (no CDN in the preview). Only the HTML export loads them from a CDN.
 
 Other commands:
@@ -113,13 +113,13 @@ electron/main.js     # Window, camera permission (macOS prompt), external links 
 electron/server.js   # Local server on 127.0.0.1: serves app/ + same relay routes as vite.config.js
 electron/updater.js  # Checks the latest GitHub release, shows the "New version" capsule (FR/EN)
 resources/*.lproj/   # Localized camera permission text (InfoPlist.strings)
-build-mac.sh         # vite build → app/, then electron-builder → dist/
+build-mac.sh         # vite build → app/, then electron-builder → dist/ (+ updates /Applications/proce55us.app if installed)
 release.sh           # [version] → bump + build + push main/tag + GitHub release + upload artifacts
 CHANGELOG.md         # one section per version, used as release notes
 make-icon.js         # generates build/icon.icns (pixel-mosaic "55"), run by build-mac.sh when missing
 package.json         # Electron 43.7.9, electron-builder 26.17.0, packaging config
 ```
 
-The web app expects the Vite dev server's relay routes (`/lmstudio`, `/gemini`, `/groq`, `/cerebras`, `/openrouter`) to avoid CORS. Inside the app, `electron/server.js` provides the same routes, so the web code runs unchanged. It listens only on `127.0.0.1` (not reachable from the network), on a fixed port (41730) so settings stored in `localStorage` survive restarts.
+The web app expects the Vite dev server's relay routes (`/lmstudio`, `/gemini`, `/groq`, `/cohere`, `/openrouter`) to avoid CORS. Inside the app, `electron/server.js` provides the same routes, so the web code runs unchanged. It listens only on `127.0.0.1` (not reachable from the network), on a fixed port (41730) so settings stored in `localStorage` survive restarts.
 
 **If a route is added to `../AgentCodingWithLMStudio/vite.config.js`, add it to `ROUTES` in `electron/server.js` too.**
