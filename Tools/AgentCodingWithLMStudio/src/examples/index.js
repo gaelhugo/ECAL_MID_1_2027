@@ -57,18 +57,23 @@ const newProcesses = Object.fromEntries(
   ]),
 );
 
+const DEFAULT_PATH = "./simple-canvas.json";
+
 const buildExamples = () =>
   Object.values(MODES).flatMap((mode) => [
     newProcesses[mode.id],
     ...Object.entries(loaded)
-      .sort(([a], [b]) => a.localeCompare(b))
+      .sort(([a], [b]) =>
+        a === DEFAULT_PATH ? -1 : b === DEFAULT_PATH ? 1 : a.localeCompare(b),
+      )
       .map(([, example]) => example)
       .filter((example) => example.mode === mode),
   ]);
 
 // Pour chaque mode : « Nouveau processus » (une cellule vide), puis ses exemples
 export const examples = buildExamples();
-export const defaultExample = examples[0];
+export const defaultExample =
+  examples.find((example) => example.path === DEFAULT_PATH) ?? examples[0];
 
 /** Ajoute ou met à jour un exemple en mémoire et reconstruit la liste. */
 export function registerExample(path, data) {
