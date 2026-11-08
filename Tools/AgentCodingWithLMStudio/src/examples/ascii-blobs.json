@@ -7,7 +7,7 @@
   "steps": [
     {
       "title": {
-        "fr": "ASCII Grid Setup",
+        "fr": "Grille ASCII plein écran",
         "en": "ASCII Grid Setup"
       },
       "prompt": {
@@ -149,7 +149,7 @@
     },
     {
       "title": {
-        "fr": "Pastel Radial Gradient",
+        "fr": "Dégradé radial pastel",
         "en": "Pastel Radial Gradient"
       },
       "prompt": {

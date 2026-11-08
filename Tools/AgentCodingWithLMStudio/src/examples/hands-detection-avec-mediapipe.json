@@ -7,7 +7,7 @@
   "steps": [
     {
       "title": {
-        "fr": "Fullscreen Canvas Setup",
+        "fr": "Créer un canvas plein écran",
         "en": "Fullscreen Canvas Setup"
       },
       "prompt": {
@@ -95,7 +95,7 @@
     },
     {
       "title": {
-        "fr": "Camera Stream Capture",
+        "fr": "Capturer le flux caméra",
         "en": "Camera Stream Capture"
       },
       "prompt": {
@@ -137,7 +137,7 @@
     },
     {
       "title": {
-        "fr": "Load MediaPipe Hands",
+        "fr": "Charger MediaPipe Hands",
         "en": "Load MediaPipe Hands"
       },
       "prompt": {
@@ -201,7 +201,7 @@
     },
     {
       "title": {
-        "fr": "Mirrored Hand Skeleton",
+        "fr": "Squelette des mains en miroir",
         "en": "Mirrored Hand Skeleton"
       },
       "prompt": {
@@ -377,7 +377,7 @@
     },
     {
       "title": {
-        "fr": "Interactive Grid",
+        "fr": "Grille interactive",
         "en": "Interactive Grid"
       },
       "prompt": {

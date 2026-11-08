@@ -7,7 +7,7 @@
   "steps": [
     {
       "title": {
-        "fr": "Fullscreen Canvas Setup",
+        "fr": "Créer un canvas plein écran",
         "en": "Fullscreen Canvas Setup"
       },
       "prompt": {

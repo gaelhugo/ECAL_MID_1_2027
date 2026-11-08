@@ -76,9 +76,9 @@ export class ProcessusPublisher {
 Translate the given JSON from ${LANG_NAMES[from]} to ${LANG_NAMES[to]}.
 
 Strict rules:
-- Return ONLY valid JSON with the exact same structure: { "title": "...", "steps": [{ "title": "...", "prompt": "...", "code": "..." }] }.
-- Translate "title" and each step's "title" and "prompt" naturally and accurately into ${LANG_NAMES[to]}.
-- If a step's "title" is just a generic step number (like "Étape 1" or "Step 1"), write a short, descriptive title (2–4 words) summarizing what the step does in ${LANG_NAMES[to]}.
+- Return ONLY valid JSON with the exact structure: { "title": "...", "steps": [{ "title_fr": "...", "title_en": "...", "prompt": "...", "code": "..." }] }.
+- Translate "title" and each step's "prompt" naturally and accurately into ${LANG_NAMES[to]}.
+- For each step, provide BOTH "title_fr" (a short 2–4 word descriptive title in natural French with accents) and "title_en" (the matching 2–4 word descriptive title in English), summarizing what the step does.
 - Inside each step's "code", translate ONLY the comments (// ... or /* ... */) and human-readable strings displayed on the page. Keep every single JavaScript instruction, identifier, number, and line break IDENTICAL.`;
 
     let raw = "";
@@ -105,9 +105,18 @@ Strict rules:
       mode: mode.id,
       steps: steps.map((step, i) => {
         const tr = translated.steps?.[i] ?? {};
-        const stepTitle = step.title || tr.title || "";
+        const fallbackTitle = step.title || tr.title || "";
         return {
-          title: pair(stepTitle, tr.title || stepTitle),
+          title: {
+            fr:
+              tr.title_fr ||
+              (from === "fr" && step.title ? step.title : tr.title) ||
+              fallbackTitle,
+            en:
+              tr.title_en ||
+              (from === "en" && step.title ? step.title : tr.title) ||
+              fallbackTitle,
+          },
           prompt: pair(step.prompt, tr.prompt || step.prompt),
           code: pair(
             step.code.trimEnd().split("\n"),
