@@ -34,5 +34,13 @@ echo "→ 2/3 Application web → app/"
 echo "→ 3/3 Application macOS → dist/"
 (cd "$HERE" && npx electron-builder --mac --publish never)
 
+# Si l'application est déjà installée dans /Applications, on la met à jour sur place
+if [[ -d "/Applications/proce55us.app" && -d "$HERE/dist/mac-universal/proce55us.app" ]]; then
+  echo "→ Mise à jour de /Applications/proce55us.app"
+  rm -rf "/Applications/proce55us.app"
+  ditto "$HERE/dist/mac-universal/proce55us.app" "/Applications/proce55us.app"
+  xattr -cr "/Applications/proce55us.app" 2>/dev/null || true
+fi
+
 echo "✓ Terminé :"
 ls -1 "$HERE"/dist/*.dmg "$HERE"/dist/*.zip
