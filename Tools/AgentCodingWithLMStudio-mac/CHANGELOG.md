@@ -2,6 +2,12 @@
 
 `release.sh` publishes the section of the released version as the GitHub release notes — write it before releasing.
 
+## 1.4.2
+
+- **Default example**: starts on the **Simple canvas** example in JavaScript mode by default.
+- **Bilingual step titles**: translated all step titles across example processus (French & English) and updated the publisher to automatically generate both French and English step titles.
+- **Web editor local access banner**: added a dismissible info banner for the browser permission (“Apps on device” / « Applis sur l'appareil ») with automatic re-appearance and a shortcut to free cloud tiers if local access is refused.
+
 ## 1.4.1
 
 - **Fix code-to-prompt generation with local models (`qwen2.5-coder`)**: prevent markdown code fences (` ``` `) in `@error` explanations from overwriting the generated prompt, format fenced snippets as inline code in pedagogical advice, and keep the cell run indicator continuous until prompt generation finishes.
