@@ -61,20 +61,20 @@ The app follows the **macOS language**: French if the preferred language is Fren
 ## Model used for code generation
 
 - **LM Studio (default)**: the app uses whatever model is **currently loaded in LM Studio on that Mac** (the `.env` model is intentionally not forced, since other Macs have other models). To force one: `VITE_LMSTUDIO_MODEL=model-name ./build-mac.sh`.
-- **Free online models**: in the app, open ⚙︎ and paste a free API key (Google AI Studio, Groq, Mistral, OpenRouter) — same as the web version. Settings and keys are stored locally per Mac.
+- **Free online models**: in the app, open ⚙︎ and paste a free API key (Google AI Studio, Groq, Cerebras, OpenRouter) — same as the web version. Settings and keys are stored locally per Mac.
 
 ### Cloud Free Tiers Verification & Alternatives
 
 | Provider | Current Model | Really Free ($0, No Card)? | Quotas & Coding Quality | Friction / Setup Notes |
 | :--- | :--- | :--- | :--- | :--- |
-| **Groq** (`groq`) | `openai/gpt-oss-120b` | **Yes — 100% free** (no card, no phone) | **Very good & ultra-fast.** ~30 req/min, **1,000 req/day** (~200k tokens/day). | **Lowest friction (#1 recommended):** sign in at <https://console.groq.com/keys> and copy the key immediately. |
 | **Google AI Studio** (`gemini`) | `gemini-3.8-flash` | **Yes** (no card for personal testing keys) | **Excellent for coding.** ~15 req/min, 250–1,500 req/day. | In **Switzerland / EEA / UK**, Google displays "Pay-as-you-go" banners, but personal keys created at <https://aistudio.google.com/apikey> without linking a Cloud Billing account still get free quotas. |
+| **Groq** (`groq`) | `openai/gpt-oss-120b` | **Yes — 100% free** (no card, no phone) | **Very good & ultra-fast.** ~30 req/min, **1,000 req/day** (~200k tokens/day). | **Lowest friction:** sign in at <https://console.groq.com/keys> and copy the key immediately. |
+| **Cerebras** (`cerebras`) | `qwen-3.8-27b` | **Yes — 100% free** (no card) | **Very good & fastest inference (>1,850 tokens/s).** ~30 req/min, **1,000,000 tokens/day** (~14,400 req/day). | Sign in at <https://cloud.cerebras.ai/> → **API Keys** → **Generate API Key**. (Replaced Mistral after Mistral removed its free API tier). |
 | **OpenRouter** (`openrouter`) | `openrouter/free` | **Yes** (no card) | **Inconsistent** (random free model). **20 req/min, 50 req/day** (1,000 req/day after a $10 lifetime top-up). | `openrouter/free` routes randomly to any `:free` model; quality varies and shared upstream providers can return `429` at peak hours. Key: <https://openrouter.ai/keys>. |
-| **Mistral** (`mistral`) | `mistral-small-latest` | **No longer free for API** (paid credits or Pro plan required) | **Good**, paid per token or included in Pro ($15/mo API credits). | Mistral **discontinued** its old free "Experiment" API tier. On the current platform (<https://mistral.ai/fr/pricing/>), the **Gratuit / Free** plan only covers Vibe chat/CLI and includes **$0 in API credits** (`HTTP 402`). Using API keys (<https://console.mistral.ai/api-keys>) requires adding prepaid credits (<https://admin.mistral.ai/billing>) or a **Pro / Education** plan (<https://admin.mistral.ai/subscription>). |
 
-**Other genuinely free cloud alternatives for coding:**
-- **Cerebras Cloud (`https://api.cerebras.ai/v1`):** $0, **no credit card**, instant signup (<https://cloud.cerebras.ai/>), **30 req/min & 1,000,000 free tokens/day**, >2,000 tokens/sec (`gpt-oss-120b`, `qwen-3-32b` / `qwen-3.8-27b`, `llama-3.3-70b`). OpenAI-compatible and supports browser CORS (`access-control-allow-origin: *`) for `editor.proce55us.com`.
+**Other cloud alternatives & notes:**
 - **Hugging Face Inference Providers (`https://router.huggingface.co/v1`):** Free HF account (<https://huggingface.co/settings/tokens>), no credit card, hosts `Qwen/Qwen2.5-Coder-32B-Instruct`, OpenAI-compatible + CORS-enabled (small monthly free credit cap).
+- **Mistral (`https://api.mistral.ai` — removed):** Discontinued its free "Experiment" API tier; *Mode gratuit / Free mode* no longer includes API access (<https://docs.mistral.ai/fr/admin/billing-usage/usage-limits>).
 - **GitHub Models (`https://models.github.ai/inference`) & SambaNova Cloud (`https://api.sambanova.ai/v1`):** Free with no credit card, and work through `electron/server.js` in the macOS app, but do **not** return `Access-Control-Allow-Origin` headers on preflight requests (so they cannot be called directly from the browser on `editor.proce55us.com`).
 
 ## Installing on another Mac
@@ -119,6 +119,6 @@ make-icon.js         # generates build/icon.icns (pixel-mosaic "55"), run by bui
 package.json         # Electron 43.7.9, electron-builder 26.17.0, packaging config
 ```
 
-The web app expects the Vite dev server's relay routes (`/lmstudio`, `/gemini`, `/groq`, `/mistral`, `/openrouter`) to avoid CORS. Inside the app, `electron/server.js` provides the same routes, so the web code runs unchanged. It listens only on `127.0.0.1` (not reachable from the network), on a fixed port (41730) so settings stored in `localStorage` survive restarts.
+The web app expects the Vite dev server's relay routes (`/lmstudio`, `/gemini`, `/groq`, `/cerebras`, `/openrouter`) to avoid CORS. Inside the app, `electron/server.js` provides the same routes, so the web code runs unchanged. It listens only on `127.0.0.1` (not reachable from the network), on a fixed port (41730) so settings stored in `localStorage` survive restarts.
 
 **If a route is added to `../AgentCodingWithLMStudio/vite.config.js`, add it to `ROUTES` in `electron/server.js` too.**

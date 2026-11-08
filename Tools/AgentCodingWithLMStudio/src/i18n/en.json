@@ -81,7 +81,7 @@
   "provider.lmstudio.note": "Local, on this computer · no key",
   "provider.gemini.note": "Google AI Studio · free",
   "provider.groq.note": "Groq · free, 1,000 requests/day",
-  "provider.mistral.note": "Mistral · free (Free mode)",
+  "provider.cerebras.note": "Cerebras · free, 1M tokens/day",
   "provider.openrouter.label": "Free models",
   "provider.openrouter.note": "OpenRouter · free, 50 requests/day",
 

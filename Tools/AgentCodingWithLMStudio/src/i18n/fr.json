@@ -81,7 +81,7 @@
   "provider.lmstudio.note": "Local, sur cet ordinateur · aucune clé",
   "provider.gemini.note": "Google AI Studio · gratuit",
   "provider.groq.note": "Groq · gratuit, 1 000 requêtes/jour",
-  "provider.mistral.note": "Mistral · gratuit (mode Free)",
+  "provider.cerebras.note": "Cerebras · gratuit, 1M tokens/jour",
   "provider.openrouter.label": "Modèles gratuits",
   "provider.openrouter.note": "OpenRouter · gratuit, 50 requêtes/jour",
 
