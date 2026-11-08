@@ -85,6 +85,10 @@
   "provider.openrouter.label": "Free models",
   "provider.openrouter.note": "OpenRouter · free, 50 requests/day",
 
+  "localBanner.info": "To use LM Studio from the browser, allow local network access when prompted (and turn on “Enable CORS” in LM Studio).",
+  "localBanner.denied": "Local access refused or blocked: this permission is required so the web app can reach LM Studio on your computer (site settings icon left of the address bar → “Local network” → “Allow”). Otherwise, use a free cloud tier.",
+  "localBanner.cloudButton": "Use a free cloud tier",
+
   "llm.unreachable": "Can't reach LM Studio. Start its local server (port 1234) and load a model.",
   "llm.unreachableWeb": "Can't reach LM Studio. Start its server (port 1234), load a model and turn on “Enable CORS” in the server settings. If the browser blocks local network access: site settings icon (left of the address bar) → “Local network” → “Allow”, then reload the page.",
   "llm.localDenied": "The browser is blocking local network access. Site settings icon (left of the address bar) → “Local network” → “Allow”, then reload the page.",

@@ -116,6 +116,8 @@ export class LlmClient {
     // Une page HTML signifie que le proxy n'est pas actif
     if (response.headers.get("content-type")?.includes("text/html"))
       throw new Error(t("llm.noProxy", { baseUrl: this.baseUrl }));
+    if (DIRECT_API && this.isLocal)
+      window.dispatchEvent(new Event("lmstudio-local-ok"));
     return response;
   }
 
@@ -126,11 +128,23 @@ export class LlmClient {
     for (const name of ["local-network-access", "loopback-network"]) {
       try {
         const { state } = await navigator.permissions.query({ name });
-        if (state === "denied") return t("llm.localDenied");
+        if (state === "denied") {
+          window.dispatchEvent(
+            new CustomEvent("lmstudio-local-blocked", {
+              detail: { denied: true },
+            }),
+          );
+          return t("llm.localDenied");
+        }
       } catch {
         /* API de permissions absente : autre navigateur */
       }
     }
+    window.dispatchEvent(
+      new CustomEvent("lmstudio-local-blocked", {
+        detail: { denied: false },
+      }),
+    );
     return t("llm.unreachableWeb");
   }
 

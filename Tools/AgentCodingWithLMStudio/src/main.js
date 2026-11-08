@@ -20,6 +20,7 @@ import { Snackbar } from "./ui/Snackbar.js";
 import { Dialog } from "./ui/Dialog.js";
 import { ExamplePicker } from "./ui/ExamplePicker.js";
 import { SettingsPanel } from "./ui/SettingsPanel.js";
+import { LocalAccessBanner } from "./ui/LocalAccessBanner.js";
 import { CodeGenerator } from "./llm/CodeGenerator.js";
 import { CodeExporter } from "./export/CodeExporter.js";
 import { ProcessusPublisher } from "./export/ProcessusPublisher.js";
@@ -194,6 +195,7 @@ useSettings();
 settings.addEventListener("change", useSettings);
 settings.addEventListener("publish", publishProcessus);
 settings.addEventListener("unpublish", unpublishProcessus);
+new LocalAccessBanner(document.querySelector(".panel--notebook"), settings);
 new Splitter(
   document.querySelector("#splitter"),
   document.querySelector("#layout"),

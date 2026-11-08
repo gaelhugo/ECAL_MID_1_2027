@@ -40,6 +40,55 @@ body.is-dropping::after {
   min-height: 0;
 }
 
+/* Bandeau d'information temporaire (version web en ligne : accès local LM Studio) */
+.local-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 16px 0 24px;
+  padding: 8px 8px 8px 14px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--grey-900);
+  background: var(--grey-100);
+}
+
+.local-banner[hidden] {
+  display: none;
+}
+
+.local-banner.is-denied {
+  border: 1px solid var(--grey-300);
+}
+
+.local-banner__text {
+  flex: 1;
+}
+
+.local-banner__action {
+  flex: none;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--white);
+  background: var(--grey-900);
+  transition: opacity 0.15s;
+}
+
+.local-banner__action:hover {
+  opacity: 0.88;
+}
+
+.local-banner__action[hidden] {
+  display: none;
+}
+
+.local-banner__close {
+  flex: none;
+}
+
 /* En-tête du notebook : le titre (+ mode), puis la barre d'outils en dessous */
 .topbar {
   display: flex;
