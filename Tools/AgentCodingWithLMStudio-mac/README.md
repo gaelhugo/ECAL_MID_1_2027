@@ -63,6 +63,20 @@ The app follows the **macOS language**: French if the preferred language is Fren
 - **LM Studio (default)**: the app uses whatever model is **currently loaded in LM Studio on that Mac** (the `.env` model is intentionally not forced, since other Macs have other models). To force one: `VITE_LMSTUDIO_MODEL=model-name ./build-mac.sh`.
 - **Free online models**: in the app, open ⚙︎ and paste a free API key (Google AI Studio, Groq, Mistral, OpenRouter) — same as the web version. Settings and keys are stored locally per Mac.
 
+### Cloud Free Tiers Verification & Alternatives
+
+| Provider | Current Model | Really Free ($0, No Card)? | Quotas & Coding Quality | Friction / Setup Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| **Groq** (`groq`) | `openai/gpt-oss-120b` | **Yes — 100% free** (no card, no phone) | **Very good & ultra-fast.** ~30 req/min, **1,000 req/day** (~200k tokens/day). | **Lowest friction (#1 recommended):** sign in at <https://console.groq.com/keys> and copy the key immediately. |
+| **Google AI Studio** (`gemini`) | `gemini-3.8-flash` | **Yes** (no card for personal testing keys) | **Excellent for coding.** ~15 req/min, 250–1,500 req/day. | In **Switzerland / EEA / UK**, Google displays "Pay-as-you-go" banners, but personal keys created at <https://aistudio.google.com/apikey> without linking a Cloud Billing account still get free quotas. |
+| **OpenRouter** (`openrouter`) | `openrouter/free` | **Yes** (no card) | **Inconsistent** (random free model). **20 req/min, 50 req/day** (1,000 req/day after a $10 lifetime top-up). | `openrouter/free` routes randomly to any `:free` model; quality varies and shared upstream providers can return `429` at peak hours. Key: <https://openrouter.ai/keys>. |
+| **Mistral** (`mistral`) | `mistral-small-latest` | **Yes, BUT hidden behind billing screen + SMS** | **Good** (~1 req/sec, generous monthly token cap once unlocked). | New workspaces on <https://console.mistral.ai/api-keys> push the paid **Scale** plan; you must open *Billing / Plan*, explicitly select the **"Experiment"** (free) plan, and complete **SMS phone verification** before keys work. (`codestral-latest` or `https://codestral.mistral.ai/v1` is also available for stronger coding). |
+
+**Other genuinely free cloud alternatives for coding:**
+- **Cerebras Cloud (`https://api.cerebras.ai/v1`):** $0, **no credit card**, instant signup (<https://cloud.cerebras.ai/>), **30 req/min & 1,000,000 free tokens/day**, >2,000 tokens/sec (`gpt-oss-120b`, `qwen-3-32b` / `qwen-3.8-27b`, `llama-3.3-70b`). OpenAI-compatible and supports browser CORS (`access-control-allow-origin: *`) for `editor.proce55us.com`.
+- **Hugging Face Inference Providers (`https://router.huggingface.co/v1`):** Free HF account (<https://huggingface.co/settings/tokens>), no credit card, hosts `Qwen/Qwen2.5-Coder-32B-Instruct`, OpenAI-compatible + CORS-enabled (small monthly free credit cap).
+- **GitHub Models (`https://models.github.ai/inference`) & SambaNova Cloud (`https://api.sambanova.ai/v1`):** Free with no credit card, and work through `electron/server.js` in the macOS app, but do **not** return `Access-Control-Allow-Origin` headers on preflight requests (so they cannot be called directly from the browser on `editor.proce55us.com`).
+
 ## Installing on another Mac
 
 The app is **ad-hoc signed** (no paid Apple Developer ID), so macOS Gatekeeper only blocks files that carry a browser's `com.apple.quarantine` flag. You have four ways to install/authorize it:
