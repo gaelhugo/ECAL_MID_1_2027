@@ -63,10 +63,10 @@ export class LocalAccessBanner {
     this.update();
   }
 
-  /** Surveille l'état de la permission « Réseau local » du navigateur lorsqu'elle existe. */
+  /** Surveille l'état de la permission « Applis sur l'appareil » du navigateur lorsqu'elle existe. */
   async watchPermissions() {
     if (!navigator.permissions?.query) return;
-    for (const name of ["local-network-access", "loopback-network"]) {
+    for (const name of ["loopback-network", "local-network-access"]) {
       try {
         const status = await navigator.permissions.query({ name });
         const applyState = () => {

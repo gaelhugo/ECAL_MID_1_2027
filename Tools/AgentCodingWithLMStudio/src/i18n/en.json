@@ -85,13 +85,13 @@
   "provider.openrouter.label": "Free models",
   "provider.openrouter.note": "OpenRouter · free, 50 requests/day",
 
-  "localBanner.info": "To use LM Studio from the browser, allow local network access when prompted (and turn on “Enable CORS” in LM Studio).",
-  "localBanner.denied": "Local access refused or blocked: this permission is required so the web app can reach LM Studio on your computer (site settings icon left of the address bar → “Local network” → “Allow”). Otherwise, use a free cloud tier.",
+  "localBanner.info": "To use LM Studio from the browser, allow “Apps on device” access when prompted (and turn on “Enable CORS” in LM Studio).",
+  "localBanner.denied": "“Apps on device” access refused or blocked: this permission is required so the web app can reach LM Studio on your computer (site settings icon left of the address bar → “Apps on device” → “Allow”). Otherwise, use a free cloud tier.",
   "localBanner.cloudButton": "Use a free cloud tier",
 
   "llm.unreachable": "Can't reach LM Studio. Start its local server (port 1234) and load a model.",
-  "llm.unreachableWeb": "Can't reach LM Studio. Start its server (port 1234), load a model and turn on “Enable CORS” in the server settings. If the browser blocks local network access: site settings icon (left of the address bar) → “Local network” → “Allow”, then reload the page.",
-  "llm.localDenied": "The browser is blocking local network access. Site settings icon (left of the address bar) → “Local network” → “Allow”, then reload the page.",
+  "llm.unreachableWeb": "Can't reach LM Studio. Start its server (port 1234), load a model and turn on “Enable CORS” in the server settings. If the browser blocks local access: site settings icon (left of the address bar) → “Apps on device” → “Allow”, then reload the page.",
+  "llm.localDenied": "The browser is blocking local access. Site settings icon (left of the address bar) → “Apps on device” → “Allow”, then reload the page.",
   "llm.unreachableService": "Can't reach {name}.",
   "llm.noProxy": "The {baseUrl} proxy isn't running: restart “npm run dev” to load vite.config.js.",
   "llm.noKey": "{name}: add your API key in Settings (⚙︎ icon).",

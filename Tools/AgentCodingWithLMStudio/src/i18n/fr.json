@@ -85,13 +85,13 @@
   "provider.openrouter.label": "Modèles gratuits",
   "provider.openrouter.note": "OpenRouter · gratuit, 50 requêtes/jour",
 
-  "localBanner.info": "Pour utiliser LM Studio depuis le navigateur, autorisez l'accès au réseau local lorsque le navigateur le demande (et activez « Enable CORS » dans LM Studio).",
-  "localBanner.denied": "Accès local refusé ou bloqué : cette autorisation est nécessaire pour que l'application web communique avec LM Studio sur votre ordinateur (icône à gauche de l'adresse → « Réseau local » → « Autoriser »). Sinon, utilisez un modèle cloud gratuit.",
+  "localBanner.info": "Pour utiliser LM Studio depuis le navigateur, autorisez « Applis sur l'appareil » lorsque le navigateur le demande (et activez « Enable CORS » dans LM Studio).",
+  "localBanner.denied": "Accès « Applis sur l'appareil » refusé ou bloqué : cette autorisation est nécessaire pour communiquer avec LM Studio sur votre ordinateur (icône à gauche de l'adresse → « Applis sur l'appareil » → « Autoriser »). Sinon, utilisez un modèle cloud gratuit.",
   "localBanner.cloudButton": "Utiliser un modèle cloud gratuit",
 
   "llm.unreachable": "Impossible de joindre LM Studio. Lancez le serveur local (port 1234) et chargez un modèle.",
-  "llm.unreachableWeb": "Impossible de joindre LM Studio. Lancez son serveur (port 1234), chargez un modèle et activez « Enable CORS » dans ses réglages. Si le navigateur bloque l'accès au réseau local : icône des réglages du site (à gauche de l'adresse) → « Réseau local » → « Autoriser », puis rechargez la page.",
-  "llm.localDenied": "Le navigateur bloque l'accès au réseau local. Icône des réglages du site (à gauche de l'adresse) → « Réseau local » → « Autoriser », puis rechargez la page.",
+  "llm.unreachableWeb": "Impossible de joindre LM Studio. Lancez son serveur (port 1234), chargez un modèle et activez « Enable CORS » dans ses réglages. Si le navigateur bloque l'accès : icône des réglages du site (à gauche de l'adresse) → « Applis sur l'appareil » → « Autoriser », puis rechargez la page.",
+  "llm.localDenied": "Le navigateur bloque l'accès local. Icône des réglages du site (à gauche de l'adresse) → « Applis sur l'appareil » → « Autoriser », puis rechargez la page.",
   "llm.unreachableService": "Impossible de joindre {name}.",
   "llm.noProxy": "Le proxy {baseUrl} n'est pas actif : relancez « npm run dev » pour charger vite.config.js.",
   "llm.noKey": "{name} : ajoutez votre clé API dans les Réglages (icône ⚙︎).",

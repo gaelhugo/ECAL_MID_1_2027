@@ -124,8 +124,8 @@ export class LlmClient {
   /** Message d'erreur LM Studio : en version web, on distingue « navigateur qui bloque » de « serveur injoignable ». */
   async localError() {
     if (!DIRECT_API) return t("llm.unreachable");
-    // Chrome : l'accès refusé au réseau local peut être autorisé dans les réglages du site
-    for (const name of ["local-network-access", "loopback-network"]) {
+    // Chrome : l'accès refusé (« Applis sur l'appareil ») peut être autorisé dans les réglages du site
+    for (const name of ["loopback-network", "local-network-access"]) {
       try {
         const { state } = await navigator.permissions.query({ name });
         if (state === "denied") {

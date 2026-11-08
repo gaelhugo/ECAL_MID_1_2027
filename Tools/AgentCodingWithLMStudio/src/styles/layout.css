@@ -47,11 +47,12 @@ body.is-dropping::after {
   gap: 10px;
   margin: 10px 16px 0 24px;
   padding: 8px 8px 8px 14px;
+  border: 1px solid #ffe0b2;
   border-radius: var(--radius);
   font-size: 12px;
   line-height: 1.45;
   color: var(--grey-900);
-  background: var(--grey-100);
+  background: #fff3e0;
 }
 
 .local-banner[hidden] {
@@ -59,7 +60,8 @@ body.is-dropping::after {
 }
 
 .local-banner.is-denied {
-  border: 1px solid var(--grey-300);
+  border-color: #ffcc80;
+  background: #ffe8c8;
 }
 
 .local-banner__text {
