@@ -33,18 +33,19 @@ A hosted version runs at **https://editor.proce55us.com/** (project homepage: **
 ## How it works
 
 - The left pane is a **processus** (notebook): ordered cells, each showing a prompt and its resulting code in a highlighted editor.
-- The **title is a dropdown** to pick what to load, next to a small **mode** pill (JavaScript · p5.js · three.js · DOM). The title lists only the current mode's processus: **Nouveau processus** / **New processus** (first entry, a single empty cell) then its examples. Changing the mode loads that mode's first example (or its empty processus if it has none). Startup default: **Raster Image** (JavaScript, the 8-step webcam rasterization). Switching resets the preview; the snackbar's **Annuler** / **Undo** restores the previous processus (and its mode).
+- The **title is a dropdown** to pick what to load, next to a small **mode** pill (JavaScript · p5.js · three.js · DOM). The title lists only the current mode's processus: **Nouveau processus** / **New processus** (first entry, a single empty cell) then its examples. Changing the mode loads that mode's first example (or its empty processus if it has none). Startup default: **Simple canvas** (`simple-canvas.json`, in JavaScript mode). Switching resets the preview; the snackbar's **Annuler** / **Undo** restores the previous processus (and its mode).
 - The right pane is a **preview**: a sandboxed `<iframe>` in which the cells' code runs, each in its own `<script>` tag, replayed in order by the `Kernel`. The mode sets its base CSS and loads its library first (three.js is an ES module, so its cells run once the module is ready).
 - Editing a prompt and regenerating sends the code of the cells above plus the active function signatures (`ProgramSummary`) to the selected model (local **LM Studio** by default), which writes the new code. The rules in the system prompt depend on the mode (e.g. p5: don't call p5 functions at top level; three.js: create objects once and update them in `update()`; DOM: build the whole page, style with `css()`).
+- **Reverse prompting (code → prompt):** If you write or modify the code first and run the cell, the code executes immediately and the model generates the matching natural-language prompt (plus optional `@error` pedagogical advice if it spots a bug, without letting code blocks in the explanation overwrite the prompt).
 - **Télécharger** / **Download** exports the rendered cells as a standalone HTML file (embedding `<script id="proce55us" type="application/json">` alongside the `<script>` cells); p5.js / three.js are loaded there from the jsDelivr CDN (same pinned versions).
 - **Drag & drop to reopen:** Dragging and dropping any downloaded `.html` file (or `.json` processus file) anywhere onto the app or web page reconstructs all its cells (titles, prompts, code, and mode) and immediately runs them so you can continue editing where you left off (also backward-compatible with older exported HTML files).
 
-| Mode       | Example processus (FR / EN)                                                                    |
-| ---------- | ---------------------------------------------------------------------------------------------- |
-| JavaScript | **Raster Image** — webcam → grid → shapes → luminosity → duotone → mouse                       |
-| p5.js      | **Particules / Particles** — canvas → particles → motion → mouse attraction → trails           |
-| three.js   | **Vague de cubes / Cube wave** — scene → lit cube → wave grid → OrbitControls → color          |
-| DOM        | **Palette de couleurs / Color palette** — header → cards → search filter → select → dark theme |
+| Mode       | Example processus (FR / EN)                                                                                    |
+| ---------- | -------------------------------------------------------------------------------------------------------------- |
+| JavaScript | **Simple canvas** (default) · **ASCII Blobs** · **Hands detection (MediaPipe)** · **Raster Image**             |
+| p5.js      | **Particules / Particles** — canvas → particles → motion → mouse attraction → trails                           |
+| three.js   | **Vague de cubes / Cube wave** — scene → lit cube → wave grid → OrbitControls → color                          |
+| DOM        | **Palette de couleurs / Color palette** — header → cards → search filter → select → dark theme                 |
 
 ## Saving & reopening a processus (Download / Drag & Drop)
 
@@ -63,7 +64,7 @@ A hosted version runs at **https://editor.proce55us.com/** (project homepage: **
 - **Override:** ⚙︎ Settings → **Langue / Language**: Automatic, Français or English (stored in `localStorage` as `atelier.lang`; changing it reloads the page).
 - **What follows the language:**
   - the whole interface: `src/i18n/fr.json` and `en.json`, used through `t("key", { variables })`;
-  - the example processus: titles, prompts **and code**, i.e. code comments and texts shown on the page (the instructions themselves are identical);
+  - the example processus: processus titles, **step titles**, prompts **and code**, i.e. code comments and texts shown on the page (the instructions themselves are identical);
   - code generated from a custom prompt: its comments and on-page texts are written in the interface language, whatever language the prompt is written in;
   - the HTML export (`<html lang>`).
 - **Model instructions** are written in English, which small local models follow best. Two parts depend on the language: a rule saying which language to use for comments and on-page texts (with a reminder at the end of the instructions), and a short note in that language added to the user's request.
@@ -86,7 +87,8 @@ The same app is published as a static site on GitHub Pages: **https://editor.pro
 
 - `./deploy-web.sh` builds it and pushes it. `../AgentCodingWithLMStudio-mac/release.sh` runs it automatically after each release, **with the same version number as the macOS app** — the web editor and the desktop app always ship from the same commit. To publish a web update by hand between releases, run `deploy-web.sh` directly.
 - GitHub Pages has no proxy, so the build sets `VITE_DIRECT_API=1` (`vite build --base ./` + `CNAME` `editor.proce55us.com`): the service URLs then come straight from `src/llm/endpoints.js` instead of the `/lmstudio`, `/groq`… proxy routes. `vite.config.js` (dev proxy) and `../AgentCodingWithLMStudio-mac/electron/server.js` (app relay) read the same table — keep them in sync.
-- All services accept cross-origin calls from the page. For **LM Studio**, two things are needed on the visitor's machine: **Enable CORS** in LM Studio's server settings, and — in Chrome/Edge — allowing the **Local network access** permission the first time (the page declares `targetAddressSpace: "local"`, which triggers Chrome's prompt; other browsers don't gate localhost). If it fails, the cell shows a message explaining both steps.
+- All services accept cross-origin calls from the page. For **LM Studio**, two things are needed on the visitor's machine: **Enable CORS** in LM Studio's server settings, and — in Chrome/Edge — allowing the **“Apps on device”** (**« Applis sur l'appareil »** in French) permission the first time (the page declares `targetAddressSpace: "local"`, which triggers Chrome's prompt; other browsers don't gate localhost).
+- On the hosted web version (`VITE_DIRECT_API=1`), a dismissible light-orange info banner (`src/ui/LocalAccessBanner.js`) informs users at startup that authorizing **“Apps on device”** (**« Applis sur l'appareil »**) is required to use LM Studio. If the user dismisses the banner, clicks Play on a cell, and refuses local access (or LM Studio is unreachable), the banner automatically re-appears explaining why the permission is needed and offering a **Use a free cloud tier** button that opens `⚙︎ Settings`.
 
 ## Settings: other models (⚙︎ in the header)
 
@@ -119,6 +121,9 @@ src/
 ├── main.js                     # Assembles processus, preview, kernel, toolbar, dropdown, settings, shortcuts
 ├── examples/
 │   ├── index.js                # Auto-loads every *.json here + syncs added/deleted examples from GitHub (syncRemoteExamples)
+│   ├── simple-canvas.json      # JavaScript (default): 3 steps, green canvas → mouse rectangle → rainbow trail
+│   ├── ascii-blobs.json        # JavaScript: 5 steps, webcam → grid → ASCII density → color/threshold → fluid blobs
+│   ├── hands-detection-avec-mediapipe.json # JavaScript: 4 steps, webcam + MediaPipe Hands → landmarks → thumbs-up
 │   ├── raster-image.json       # JavaScript: 8 steps (prompt + code), canvas … mouse
 │   ├── p5-particules.json      # p5.js: 5 steps
 │   ├── three-vague-de-cubes.json # three.js: 5 steps
@@ -133,7 +138,7 @@ src/
 ├── llm/                        # LlmClient + GeminiClient, providers, PromptBuilder, CodeGenerator,
 │                               #   CodeCleaner, ProgramSummary
 ├── export/                     # CodeExporter (HTML export), ProcessusPublisher (GitHub publish/delete + auto-translate)
-├── ui/                         # Toolbar, ExamplePicker, SettingsPanel, Splitter, Shortcuts, Snackbar, dom, icons
+├── ui/                         # Toolbar, ExamplePicker, SettingsPanel, LocalAccessBanner, Splitter, Shortcuts, Snackbar, dom, icons
 └── styles/                     # Modular CSS (base, layout, cell, editor, preview, structure, settings)
 ```
 

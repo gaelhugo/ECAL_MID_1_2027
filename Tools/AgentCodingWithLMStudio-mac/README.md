@@ -56,7 +56,7 @@ At launch (then every 6 hours), the app compares its version with the latest Git
 
 ## Language
 
-The app follows the **macOS language**: French if the preferred language is French (any region), English otherwise. It can be forced in ⚙︎ Settings → Langue / Language. The interface, the examples (including their code comments), the comments in generated code, the update capsule and the camera permission prompt all follow it. The camera prompt text is localized through `resources/fr.lproj` and `resources/en.lproj` (`InfoPlist.strings`, copied into the app by `extraResources`); macOS always uses the system language for that prompt.
+The app follows the **macOS language**: French if the preferred language is French (any region), English otherwise. It can be forced in ⚙︎ Settings → Langue / Language. The interface, the examples (including processus titles, step titles, prompts, and code comments), the comments in generated code, the update capsule and the camera permission prompt all follow it. The camera prompt text is localized through `resources/fr.lproj` and `resources/en.lproj` (`InfoPlist.strings`, copied into the app by `extraResources`); macOS always uses the system language for that prompt.
 
 ## Model used for code generation
 

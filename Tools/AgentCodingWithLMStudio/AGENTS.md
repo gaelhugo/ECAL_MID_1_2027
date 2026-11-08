@@ -6,7 +6,7 @@ Vanilla JS + Vite. Commentaires du code source en français.
   Langue = Réglages (localStorage `atelier.lang` : `fr`/`en`, absent = automatique), sinon système
   (`navigator.languages[0]` commence par `fr` → français, sinon anglais). Changer de langue recharge la page.
   Textes d'interface : `fr.json`/`en.json` via `t("clé", { variables })` — jamais de texte en dur dans le code.
-  Exemples : `title`, `prompt`, `code` = `{ fr, en }` (lus avec `pick()`) ; dans `code`, ne traduire que
+  Exemples : `title` (du processus et de chaque étape), `prompt`, `code` = `{ fr, en }` (lus avec `pick()`) ; dans `code`, ne traduire que
   commentaires et textes affichés, les instructions restent identiques.
   Consignes au modèle (`PromptBuilder.js`, `modes.js`) en anglais ; `LANGUAGE_RULES` (règle + rappel final) et
   `LANGUAGE_REMINDERS` (ajouté à la demande, dans la langue voulue) imposent la langue des commentaires.
@@ -16,7 +16,7 @@ Vanilla JS + Vite. Commentaires du code source en français.
   (`import.meta.glob`, triés par nom) + synchronisé au démarrage depuis GitHub (`syncRemoteExamples()`) pour
   afficher les exemples ajoutés et retirer les exemples supprimés sans recompiler ; format décrit en tête de
   `src/examples/index.js` (`{ title, mode, steps: [{ title, prompt, code: [lignes] }] }`, champs localisables `{ fr, en }`).
-  « Nouveau processus » (1er du menu) = une seule cellule vide, chargée par défaut au démarrage (`defaultExample = examples[0]`). Côté interface, on dit « processus » (pas « notebook »).
+  « Nouveau processus » (1er du menu) = une seule cellule vide ; au démarrage, l'exemple chargé par défaut dans la section JavaScript (`vanilla`) est « Simple canvas » (`DEFAULT_FILE = "./simple-canvas.json"`, trié en tête des exemples `vanilla`). Côté interface, on dit « processus » (pas « notebook »).
 - Export / réouverture HTML (`src/export/CodeExporter.js`) : « Télécharger » exporte les cellules rendues en un `.html`
   autonome contenant `<script id="proce55us" type="application/json">` (titre, mode, étapes). Glisser-déposer un fichier
   `.html` (y compris un ancien export sans `#proce55us`) ou `.json` sur la fenêtre reconstruit toutes les cellules
@@ -24,7 +24,7 @@ Vanilla JS + Vite. Commentaires du code source en français.
 - Publication / suppression admin sur GitHub (`src/export/ProcessusPublisher.js`) :
   Section `Administration` dans `SettingsPanel.js` masquée par défaut (`hidden = true`) jusqu'au déverrouillage
   (`Alt/Shift + Clic` sur `⚙︎`, `Ctrl + M` puis `S` / `X`, `Alt/Shift + Clic` sur Télécharger, ou jeton déjà enregistré).
-  Publier traduit automatiquement titre, étapes, prompts et commentaires/textes du code (`fr ↔ en`) via le LLM actif,
+  Publier traduit automatiquement le titre du processus, les titres de chaque étape (`title_fr` / `title_en`), les prompts et les commentaires/textes du code (`fr ↔ en`) via le LLM actif,
   puis envoie `src/examples/<slug>.json` sur `gaelhugo/ECAL_MID_1_2027` via l'API GitHub Contents (`PUT` / `DELETE`).
 - Modes (`src/runtime/modes.js`) : `vanilla` (JavaScript canvas, défaut), `p5` (p5.js 1.11.13, mode global),
   `three` (three.js r186 → `window.THREE` + `THREE.OrbitControls`, via `runtime/libs/three-global.js?worker&url`,
@@ -42,13 +42,16 @@ Vanilla JS + Vite. Commentaires du code source en français.
     insère et génère séquentiellement les sous-cellules.
   - Si l'utilisateur saisit ou modifie d'abord le code puis exécute la cellule (`Cell.needsPromptFromCode`),
     le code est exécuté puis `CodeGenerator.generatePrompt` génère le prompt correspondant et signale
-    pédagogiquement toute erreur éventuelle (`@error` → `CellOutput` type `advice`).
+    pédagogiquement toute erreur éventuelle (`@error` → `CellOutput` type `advice`, en retirant d'abord les blocs de code markdown dans `@error` pour que `CodeCleaner.raw` n'écrase jamais le prompt généré).
 - Réglages (⚙︎, `src/ui/SettingsPanel.js`, localStorage `atelier.settings`) : choix du service, LM Studio par défaut.
   Services dans `src/llm/providers.js` ; adresses dans `src/llm/endpoints.js` (`TARGETS`, partagées avec
   le proxy Vite et `../AgentCodingWithLMStudio-mac/electron/server.js`). Par défaut chacun passe par
   un proxy Vite (`/gemini`, `/groq`, `/mistral`, `/openrouter`) ; en build `VITE_DIRECT_API=1`
   (version web GitHub Pages), le navigateur appelle les services directement et `LlmClient` ajoute
-  `targetAddressSpace: "local"` pour LM Studio (prompt Chrome « accès au réseau local »).
+  `targetAddressSpace: "local"` pour LM Studio (prompt Chrome « Applis sur l'appareil » / "Apps on device").
+  Un bandeau d'information temporaire orange clair (`src/ui/LocalAccessBanner.js`) rappelle cette autorisation
+  en ligne quand LM Studio est sélectionné, et réapparaît avec une explication + bouton d'accès aux services
+  cloud gratuits si l'utilisateur l'a fermé puis refuse l'accès local au clic sur Play.
   `LlmClient` = API OpenAI, `GeminiClient` = API Gemini (clé dans `x-goog-api-key`).
 - Version web publiée : https://editor.proce55us.com/ (dépôt `gaelhugo/editor.proce55us`,
   build seul ; page d'accueil sur https://proce55us.com/, dépôt `gaelhugo/proce55us`). `deploy-web.sh` construit (`VITE_DIRECT_API=1`, `--base ./`, `CNAME` `editor.proce55us.com`) et pousse ;
