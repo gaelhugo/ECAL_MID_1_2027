@@ -101,27 +101,24 @@ Each free service still needs **its own free API key**: sign up for a free accou
 | **LM Studio**    | model loaded locally                  | **Yes** (100% local)       | Unlimited, private      | Needs LM Studio running locally (`http://localhost:1234`) | — |
 | **Google AI Studio** | `gemini-3.8-flash`                | **Yes** (no card for personal testing keys) | **Excellent for coding.** ~15 req/min, 250–1,500 req/day. | In **Switzerland / EEA / UK**, the dashboard displays "Pay-as-you-go" banners prominently, but personal API keys created in AI Studio without linking a Cloud Billing account still get free-tier quotas (and EU/CH/UK prompts are not used for model training). | <https://aistudio.google.com/apikey> |
 | **Groq**         | `openai/gpt-oss-120b`                 | **Yes — 100% free** (no card, no phone) | **Very good & ultra-fast.** ~30 req/min, **1,000 req/day** (~200k tokens/day). | **Lowest friction:** sign in with Google/GitHub/email and copy the key immediately. | <https://console.groq.com/keys> |
-| **Cerebras**     | `qwen-3.8-27b`                        | **Yes — 100% free** (no card) | **Very good & fastest inference (>1,850 tokens/s).** ~30 req/min, **1,000,000 tokens/day** (~14,400 req/day). | Sign in at <https://cloud.cerebras.ai/> → **API Keys** → **Generate API Key**. (Replaced Mistral after Mistral discontinued its free API tier). | <https://cloud.cerebras.ai/> |
+| **Cohere**       | `command-a-03-2025`                   | **Yes — 100% free** (Trial key, no card) | **Very good (256K context, 8K output, 23 languages).** **20 req/min, 1,000 req/month**. | Every new Cohere account automatically gets a free Trial API key upon registration (<https://dashboard.cohere.com/api-keys>), with an OpenAI-compatible endpoint (`https://api.cohere.ai/compatibility/v1`) and browser CORS enabled. | <https://dashboard.cohere.com/api-keys> |
 | **OpenRouter**   | `openrouter/free` (random free model) | **Yes** (no card)          | **Inconsistent** (routes randomly). **20 req/min, 50 req/day** (or 1,000 req/day if the account has ever topped up $10). | `openrouter/free` picks *any* currently available `:free` model at random — quality varies from call to call, and shared upstream `:free` providers can return `429 Rate Limit` at peak hours. | <https://openrouter.ai/keys> |
 
 The free tiers need no credit card but are rate-limited, and some providers may use free-tier prompts to improve their models. Services are defined in `src/llm/providers.js`; each goes through a proxy route in `vite.config.js` (so it works with `npm run dev` / `npm run preview`).
 
-### Other Cloud Providers (Reference & Browser CORS Compatibility)
+### Other Cloud Providers (Live Audit & Browser CORS Compatibility)
 
-Because the hosted web editor (`https://editor.proce55us.com/`) calls APIs directly from the browser (`VITE_DIRECT_API=1`), any cloud provider must also support **browser CORS (`Access-Control-Allow-Origin: *`)**:
+Because the hosted web editor (`https://editor.proce55us.com/`) calls APIs directly from the browser (`VITE_DIRECT_API=1`), any cloud provider must be **genuinely free without a credit card** AND support **browser CORS (`Access-Control-Allow-Origin: *`)**:
 
-- **Hugging Face Inference Providers (`https://router.huggingface.co/v1`):**
-  - **Truly Free:** Free Hugging Face account (<https://huggingface.co/settings/tokens>), no credit card required.
-  - **Coding Models:** `Qwen/Qwen2.5-Coder-32B-Instruct` (the 32B sibling of the default local 14B model).
-  - **Quotas:** Small free monthly serverless credit allocation (~a few hundred requests/month).
-  - **Compatibility:** OpenAI-compatible and **CORS-enabled** (`access-control-allow-origin: *`).
 - **Pinning a specific `:free` coding model on OpenRouter:**
   - Instead of the random `openrouter/free` router, OpenRouter offers dedicated free coding/instruct models such as `qwen/qwen3-coder:free`, `deepseek/deepseek-chat-v3-0324:free`, and `meta-llama/llama-3.3-70b-instruct:free` (still capped at 50 req/day on $0 accounts).
-- **Mistral (`https://api.mistral.ai` — removed, no longer free for API):**
-  - Mistral discontinued its old free "Experiment" API plan. As documented on <https://docs.mistral.ai/fr/admin/billing-usage/usage-limits>, **Mode gratuit (`Free mode`)** only covers trying Vibe and Studio in the browser and **does not include API access**; creating and using API keys now requires activating billing and prepaid pay-as-you-go credits (<https://admin.mistral.ai/organization/billing>) or a paid Pro/Education plan (<https://admin.mistral.ai/subscription>).
+- **Providers that discontinued no-card free API tiers:**
+  - **Mistral (`https://api.mistral.ai` — removed):** Discontinued its old free "Experiment" API plan. As documented on <https://docs.mistral.ai/fr/admin/billing-usage/usage-limits>, **Mode gratuit (`Free mode`)** only covers trying Vibe and Studio in the browser and **does not include API access**; creating and using API keys now requires activating billing and prepaid pay-as-you-go credits (<https://admin.mistral.ai/organization/billing>) or a paid Pro/Education plan (<https://admin.mistral.ai/subscription>).
+  - **Cerebras (`https://cloud.cerebras.ai` — removed):** Eliminated its permanently free no-card tier. As documented on <https://inference-docs.cerebras.ai/support/rate-limits>, new accounts only receive a 30-day / $5 Free Trial **after adding a verified payment method** (*"If you skip adding a payment method at sign-up, Playground and API access remain inactive until you do"*).
+  - **Hugging Face Inference Providers (`https://router.huggingface.co/v1`):** Discontinued free monthly inference credits for free accounts (<https://huggingface.co/docs/inference-providers/pricing>: *"Free Users — Monthly Credits: None — credits purchase required"*).
 - **Providers without browser CORS (Desktop/Proxy only):**
   - **GitHub Models (`https://models.github.ai/inference`):** Free with a standard GitHub account (Personal Access Token, no card; `gpt-4.1`, `gpt-4o-mini`, `Codestral`, `Llama-3.3-70B`; 15–150 req/day), but **does not send `Access-Control-Allow-Origin` headers** on preflight requests (works via a local proxy/desktop app, fails directly in the browser on `editor.proce55us.com`).
-  - **SambaNova Cloud (`https://api.sambanova.ai/v1`):** Free developer tier (no card, ~200k tokens/day), but **also lacks browser CORS headers** for direct calls from `editor.proce55us.com`.
+  - **SambaNova Cloud (`https://api.sambanova.ai/v1`):** Free developer tier, but **also lacks browser CORS headers** for direct calls from `editor.proce55us.com`.
 
 ## Code conventions for step cells
 

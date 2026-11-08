@@ -61,7 +61,7 @@ npm run dev
 Open <http://localhost:5173>. Pick a mode in the pill next to the title — **JavaScript** canvas (default), **p5.js**, **three.js** or **DOM** — then a processus in the title dropdown (**Raster Image** by default, one example per mode, or **Nouveau processus** for an empty one). Browsing and running the steps works as-is — **a model is only needed to regenerate code from a modified prompt**:
 
 - **LM Studio (default):** start the LM Studio local server (default `http://localhost:1234`); the model can be set in `.env` (`VITE_LMSTUDIO_MODEL`).
-- **Or a free online model:** open the ⚙︎ settings in the header, choose Google AI Studio, Groq, Mistral or OpenRouter, and paste a free API key (each needs a free account, no credit card).
+- **Or a free online model:** open the ⚙︎ settings in the header, choose Google AI Studio, Groq, Cohere or OpenRouter, and paste a free API key (each needs a free account, no credit card).
 
 ### `Tools/AgentCodingWithLMStudio-mac/` — **proce55us**, the same app as a macOS application
 

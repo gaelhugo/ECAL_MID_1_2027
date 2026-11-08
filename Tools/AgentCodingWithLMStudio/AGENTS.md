@@ -46,7 +46,7 @@ Vanilla JS + Vite. Commentaires du code source en français.
 - Réglages (⚙︎, `src/ui/SettingsPanel.js`, localStorage `atelier.settings`) : choix du service, LM Studio par défaut.
   Services dans `src/llm/providers.js` ; adresses dans `src/llm/endpoints.js` (`TARGETS`, partagées avec
   le proxy Vite et `../AgentCodingWithLMStudio-mac/electron/server.js`). Par défaut chacun passe par
-  un proxy Vite (`/gemini`, `/groq`, `/cerebras`, `/openrouter`) ; en build `VITE_DIRECT_API=1`
+  un proxy Vite (`/gemini`, `/groq`, `/cohere`, `/openrouter`) ; en build `VITE_DIRECT_API=1`
   (version web GitHub Pages), le navigateur appelle les services directement et `LlmClient` ajoute
   `targetAddressSpace: "local"` pour LM Studio (prompt Chrome « Applis sur l'appareil » / "Apps on device").
   Un bandeau d'information temporaire orange clair (`src/ui/LocalAccessBanner.js`) rappelle cette autorisation

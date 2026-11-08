@@ -1,7 +1,7 @@
 /**
  * Clients minimaux pour les modèles, appelés via le proxy Vite (vite.config.js),
  * ou directement dans la version web publiée (voir endpoints.js).
- * - LlmClient : API compatible OpenAI (LM Studio, Groq, Cerebras, OpenRouter).
+ * - LlmClient : API compatible OpenAI (LM Studio, Groq, Cohere, OpenRouter).
  *   Par défaut : LM Studio, avec le modèle VITE_LMSTUDIO_MODEL (.env) ou,
  *   à défaut, le modèle actuellement chargé dans LM Studio.
  * - GeminiClient : API Gemini (Google AI Studio).

@@ -15,7 +15,7 @@ const ROUTES = {
   "/lmstudio": process.env.LMSTUDIO_URL || "http://localhost:1234",
   "/gemini": "https://generativelanguage.googleapis.com",
   "/groq": "https://api.groq.com/openai",
-  "/cerebras": "https://api.cerebras.ai",
+  "/cohere": "https://api.cohere.ai/compatibility",
   "/openrouter": "https://openrouter.ai/api",
 };
 

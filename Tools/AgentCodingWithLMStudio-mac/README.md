@@ -61,7 +61,7 @@ The app follows the **macOS language**: French if the preferred language is Fren
 ## Model used for code generation
 
 - **LM Studio (default)**: the app uses whatever model is **currently loaded in LM Studio on that Mac** (the `.env` model is intentionally not forced, since other Macs have other models). To force one: `VITE_LMSTUDIO_MODEL=model-name ./build-mac.sh`.
-- **Free online models**: in the app, open ⚙︎ and paste a free API key (Google AI Studio, Groq, Cerebras, OpenRouter) — same as the web version. Settings and keys are stored locally per Mac.
+- **Free online models**: in the app, open ⚙︎ and paste a free API key (Google AI Studio, Groq, Cohere, OpenRouter) — same as the web version. Settings and keys are stored locally per Mac.
 
 ### Cloud Free Tiers Verification & Alternatives
 
@@ -69,12 +69,13 @@ The app follows the **macOS language**: French if the preferred language is Fren
 | :--- | :--- | :--- | :--- | :--- |
 | **Google AI Studio** (`gemini`) | `gemini-3.8-flash` | **Yes** (no card for personal testing keys) | **Excellent for coding.** ~15 req/min, 250–1,500 req/day. | In **Switzerland / EEA / UK**, Google displays "Pay-as-you-go" banners, but personal keys created at <https://aistudio.google.com/apikey> without linking a Cloud Billing account still get free quotas. |
 | **Groq** (`groq`) | `openai/gpt-oss-120b` | **Yes — 100% free** (no card, no phone) | **Very good & ultra-fast.** ~30 req/min, **1,000 req/day** (~200k tokens/day). | **Lowest friction:** sign in at <https://console.groq.com/keys> and copy the key immediately. |
-| **Cerebras** (`cerebras`) | `qwen-3.8-27b` | **Yes — 100% free** (no card) | **Very good & fastest inference (>1,850 tokens/s).** ~30 req/min, **1,000,000 tokens/day** (~14,400 req/day). | Sign in at <https://cloud.cerebras.ai/> → **API Keys** → **Generate API Key**. (Replaced Mistral after Mistral removed its free API tier). |
+| **Cohere** (`cohere`) | `command-a-03-2025` | **Yes — 100% free** (Trial key, no card) | **Very good (256K context, 8K output, 23 languages).** **20 req/min, 1,000 req/month**. | Every new Cohere account gets a free Trial API key upon registration (<https://dashboard.cohere.com/api-keys>). |
 | **OpenRouter** (`openrouter`) | `openrouter/free` | **Yes** (no card) | **Inconsistent** (random free model). **20 req/min, 50 req/day** (1,000 req/day after a $10 lifetime top-up). | `openrouter/free` routes randomly to any `:free` model; quality varies and shared upstream providers can return `429` at peak hours. Key: <https://openrouter.ai/keys>. |
 
 **Other cloud alternatives & notes:**
-- **Hugging Face Inference Providers (`https://router.huggingface.co/v1`):** Free HF account (<https://huggingface.co/settings/tokens>), no credit card, hosts `Qwen/Qwen2.5-Coder-32B-Instruct`, OpenAI-compatible + CORS-enabled (small monthly free credit cap).
 - **Mistral (`https://api.mistral.ai` — removed):** Discontinued its free "Experiment" API tier; *Mode gratuit / Free mode* no longer includes API access (<https://docs.mistral.ai/fr/admin/billing-usage/usage-limits>).
+- **Cerebras (`https://cloud.cerebras.ai` — removed):** Requires adding a verified payment method upfront for a 30-day / $5 trial (<https://inference-docs.cerebras.ai/support/rate-limits>).
+- **Hugging Face Inference Providers (`https://router.huggingface.co/v1`):** Discontinued free monthly inference credits for free accounts (<https://huggingface.co/docs/inference-providers/pricing>).
 - **GitHub Models (`https://models.github.ai/inference`) & SambaNova Cloud (`https://api.sambanova.ai/v1`):** Free with no credit card, and work through `electron/server.js` in the macOS app, but do **not** return `Access-Control-Allow-Origin` headers on preflight requests (so they cannot be called directly from the browser on `editor.proce55us.com`).
 
 ## Installing on another Mac

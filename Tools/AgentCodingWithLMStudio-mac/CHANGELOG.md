@@ -2,6 +2,10 @@
 
 `release.sh` publishes the section of the released version as the GitHub release notes — write it before releasing.
 
+## 1.4.4
+
+- **Replace Cerebras with Cohere (`Command A`) in Settings**: replaced Cerebras (which now requires a payment method upfront) with **Cohere** (`https://dashboard.cohere.com/api-keys`, `command-a-03-2025`, free Trial API key with 1,000 requests/month and no credit card required).
+
 ## 1.4.3
 
 - **Replace Mistral with Cerebras Cloud (`Qwen 3.8 27B`) in Settings**: replaced Mistral (which discontinued its free API tier) with **Cerebras Cloud** (`https://cloud.cerebras.ai/`, `qwen-3.8-27b`, free tier with 1M tokens/day and no credit card required).
